@@ -1,0 +1,38 @@
+{
+  "name": "angular-tim.zz",
+  "version": "0.0.0",
+  "authors": [
+    "NEAllin <NEAllin@1cbit.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-mask": "~1.5.1"
+  },
+  "devDependencies": {
+    "angular-bootstrap": "~0.14.2",
+    "angular-route": "~1.5.1",
+    "angular-sanitize": "~1.5.1",
+    "angular-resource": "~1.5.1",
+    "angular-mocks": "~1.5.1",
+    "angular-animate": "~1.5.1",
+    "angular-messages": "~1.5.1",
+    "angular": "~1.5.1",
+    "angular-i18n": "~1.5.1",
+    "lumx": "~0.3.96"
+  },
+  "resolutions": {
+    "angular": "1.5.1"
+  }
+}
