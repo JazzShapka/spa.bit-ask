@@ -1,33 +1,35 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-// Объявления приложения и модулей для представлений и компонент
+// РћР±СЉСЏРІР»РµРЅРёСЏ РїСЂРёР»РѕР¶РµРЅРёСЏ Рё РјРѕРґСѓР»РµР№ РґР»СЏ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёР№ Рё РєРѕРјРїРѕРЅРµРЅС‚
 var myApp = angular.module('myApp', [
     'ngRoute',
     'lumx',
     'myApp.index',
     'myApp.view1',
-    'myApp.view2'
+    'myApp.view2',
+    'myApp.login'
 ])
 
-//конфигурация роутера
+// РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ СЂРѕСѓС‚РµСЂР°
 .config(['$routeProvider', '$httpProvider' ,'$locationProvider', function($routeProvider, $httpProvider, $locationProvider) {
-    //Используем html5 router, когда точка входа идёт на старт приложения
+    //РСЃРїРѕР»СЊР·СѓРµРј html5 router, РєРѕРіРґР° С‚РѕС‡РєР° РІС…РѕРґР° РёРґС‘С‚ РЅР° СЃС‚Р°СЂС‚ РїСЂРёР»РѕР¶РµРЅРёСЏ
     $locationProvider.html5Mode(true);
-    //Использование для кроссдоменных платформ
+
+    //РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РґР»СЏ РєСЂРѕСЃСЃРґРѕРјРµРЅРЅС‹С… РїР»Р°С‚С„РѕСЂРј
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.headers.common = 'Content-Type: application/json';
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    //TODO: Вызывает эроры,
-    //если стр нет то выкинет на логинн
-    //$routeProvider.otherwise({redirectTo: '/login'});
-    //добовляем провайдеру Interceptor (см в вюм-логин)
+
+    //РµСЃР»Рё СЃС‚СЂ РЅРµС‚ С‚Рѕ РІС‹РєРёРЅРµС‚ РЅР° Р»РѕРіРёРЅРЅ
+    $routeProvider.otherwise({redirectTo: '/'});
+    //РґРѕР±РѕРІР»СЏРµРј РїСЂРѕРІР°Р№РґРµСЂСѓ Interceptor (СЃРј РІ РІСЋРј-Р»РѕРіРёРЅ)
     //$httpProvider.interceptors.push('authInterceptor');
 }])
 
-//На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
+//РќР° РєР°Р¶РґРѕРµ СѓРґР°С‡РЅРѕ РёР·РјРµРЅРµРЅРёРµ СЂРѕСѓС‚РµСЂР° РјС‹ РѕР±РЅРѕРІР»СЏРµРј router, РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РІ Р»СЋР±РѕРј С‚РёРјРїР»РµР№С‚Рµ {{router}}
+.run(['$rootScope','$location', function($rootScope, $location, localStorage) {
 
-.run(['$rootScope','$location', function($rootScope, $location) {
+
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
         $rootScope.router = $location.path();

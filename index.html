@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>My AngularJS App</title>
+    <title>bitask</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href='/'>
@@ -16,57 +16,9 @@
 
 <body ng-app="myApp">
 
-
-    <div class="toolbar bgc-purple-500 tc-white">
-
-        <div class="toolbar__left">
-
-            <lx-dropdown position="left" from-top>
-                <button class="btn btn--l btn--white btn--icon" lx-ripple lx-dropdown-toggle  lx-tooltip="Меню" tooltip-position="right">
-                    <i class="mdi mdi-menu"></i>
-                </button>
-
-                <lx-dropdown-menu>
-                    <ul>
-                        <li><a href="/" class="dropdown-link">Главная</a></li>
-                        <li><a href="/view1" class="dropdown-link">Индекс 1 </a></li>
-                        <li><a href="/view2" class="dropdown-link">Индекс 2</a></li>
-                    </ul>
-                </lx-dropdown-menu>
-            </lx-dropdown>
-
-        </div>
-
-    </div>
-
+    <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
 
-    <div class="mt mh0 p+++" flex-container="row" flex-gutter="24"  flex-align="space-between center" >
-
-        <div flex-item="10">
-        </div>
-
-        <div flex-item="1">
-            <!-- Up direction -->
-            <div class="fab">
-                <button class="fab__primary btn btn--xl btn--blue btn--fab" lx-ripple lx-tooltip="И на + можно повесить действие тоже!" tooltip-position="left">
-                    <i class="mdi mdi-android"></i>
-                    <i class="mdi mdi-plus"></i>
-                </button>
-
-                <div class="fab__actions fab__actions--up">
-                    <button class="btn btn--l btn--black btn--fab" lx-ripple lx-tooltip="Lorem Ipsum" tooltip-position="left"><i class="mdi mdi-delete"></i></button>
-                    <button class="btn btn--l btn--black btn--fab" lx-ripple lx-tooltip="Lorem Ipsum" tooltip-position="left"><i class="mdi mdi-package"></i></button>
-                    <button class="btn btn--l btn--black btn--fab" lx-ripple lx-tooltip="Lorem Ipsum" tooltip-position="left"><i class="mdi mdi-pencil"></i></button>
-                </div>
-            </div>
-            <!--libs-->
-        </div>
-
-        <div flex-item="1">
-        </div>
-
-    </div>
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/velocity/velocity.js"></script>
@@ -79,12 +31,17 @@
     <!-- use minify in prod-->
     <!--<script src="app/app.min.js"></script>-->
 
+    <!-- Основной модуль приложения -->
     <script src="app/app.js"></script>
 
-
+    <!-- Контроллеры представлений -->
     <script src="app/views/index/index.js"></script>
     <script src="app/views/view1/view1.js"></script>
     <script src="app/views/view2/view2.js"></script>
+    <script src="app/views/login/login.js"></script>
+
+    <!-- Фактори -->
+    <script src="app/components/factory/localStorage.js"></script>
 
 </body>
 </html>
