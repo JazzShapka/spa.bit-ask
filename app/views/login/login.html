@@ -1,31 +1,30 @@
-<div class="auth-form mt mh0 p+++" flex-container="row" flex-gutter="24"  flex-align="space-between center" >
+<div class="login_form">
 
-    <div flex-item="3" flex-item-order="1"></div>
-
-    <div flex-item="6" flex-item-order="2">
-        <div class="card">
-            <div class="p+">
-                <div class="paragraph fs-body-1">
-                    <lx-text-field label="Логин">
-                        <input type="text" ng-model="login">
-                    </lx-text-field>
-                </div>
+    <md-card>
+        <md-card-content>
+            <div>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Логин</label>
+                    <input type="text" ng-model="textFields.username">
+                </md-input-container>
             </div>
-            <div class="p+">
-                <div class="paragraph fs-body-1">
-                    <lx-text-field label="Пароль">
-                        <input type="password" ng-model="password">
-                    </lx-text-field>
-                </div>
+            <div>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Пароль</label>
+                    <input type="password" ng-model="textFields.password">
+                </md-input-container>
             </div>
 
-            <div class="card__actions">
-                <button class="btn btn--m btn--green btn--flat" lx-ripple ng-click="submit()">ВХОД</button>
+            <div>
+                <button class="social_network_btn google_btn" ng-click="socialAuth('google')"></button>
+                <button class="social_network_btn twitter_btn btn"></button>
+                <button class="social_network_btn facebook_btn btn"></button>
+                <button class="social_network_btn vk_btn btn" ng-click="socialAuth('vk')"></button>
+
+
+                <md-button class="submit md-raised" ng-click="submit()">ВХОД</md-button>
             </div>
-        </div>
-    </div>
-
-    <div flex-item="3" flex-item-order="3"></div>
-
+        </md-card-content>
+    </md-card>
 
 </div>

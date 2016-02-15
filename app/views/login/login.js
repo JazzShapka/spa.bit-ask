@@ -3,7 +3,7 @@
  */
 'use strict';
 
-angular.module('myApp.login', ['ngRoute'])
+angular.module('bitaskApp.login', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -20,13 +20,35 @@ angular.module('myApp.login', ['ngRoute'])
     });
 }])
 
-.controller('LoginCtrl', function($scope) {
+.controller('LoginCtrl', function($http, $scope, $rootScope, $route, $location, $window, $auth) {
+
+
+    $scope.checkUser = function(){
+        $scope.userApi = $scope.userData != undefined;
+    };
+    $scope.checkUser();
+
+    $scope.logout = function () {
+
+    };
+
+    $scope.textFields = {
+        username: '',
+        password: ''
+    };
+
+    $scope.socialAuth = function (socialName) {
+
+        $auth.authenticate(socialName);
+
+    };
+
+    $scope.logged = function () {
+        console.log($scope.textFields);
+    };
+
     $scope.submit = function(){
-
-        $scope.login;
-        $scope.password;
-
-        debugger;
+        $http.post(bitaskAppConfig.api_url + 'index.php/auth/vk', {hello:'hello'});
     };
 
 

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-myApp.factory('localStorage', function(){
+bitaskApp.factory('localStorage', function(){
     return {
         get: function(key){
             return JSON.parse(localStorage.getItem(key));
