@@ -1,4 +1,12 @@
 <!-- Шапка -->
+<md-toolbar md-scroll-shrink="">
+        <md-button class="md-icon-button" aria-label="More" ng-click="logout()">
+           H
+        </md-button>
+</md-toolbar>
+
+
+
 <div class="toolbar bgc-purple-500 tc-white">
 
     <div class="toolbar__left">
@@ -11,8 +19,8 @@
             <lx-dropdown-menu>
                 <ul>
                     <li><a href="/" class="dropdown-link">Главная</a></li>
-                    <li><a href="/view1" class="dropdown-link">Индекс 1 </a></li>
-                    <li><a href="/view2" class="dropdown-link">Индекс 2</a></li>
+                    <li><a href="/#/view1" class="dropdown-link">Индекс 1 </a></li>
+                    <li><a href="/#/view2" class="dropdown-link">Индекс 2</a></li>
                 </ul>
             </lx-dropdown-menu>
         </lx-dropdown>

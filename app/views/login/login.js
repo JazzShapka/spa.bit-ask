@@ -22,36 +22,41 @@ angular.module('bitaskApp.login', ['ngRoute'])
 
 .controller('LoginCtrl', function($http, $scope, $rootScope, $route, $location, $window, $auth) {
 
-
-    $scope.checkUser = function(){
-        $scope.userApi = $scope.userData != undefined;
-    };
-    $scope.checkUser();
-
-    $scope.logout = function () {
-
-    };
-
+    /**
+     * Поля формы входа
+     * @type {{username: string, password: string}}
+     */
     $scope.textFields = {
         username: '',
         password: ''
     };
 
+    /**
+     * Вход через соц сеть
+     * @param socialName
+     */
     $scope.socialAuth = function (socialName) {
 
-        $auth.authenticate(socialName);
+        $auth.authenticate(socialName).then(function(){
+
+            $location.path('/');
+        })
 
     };
 
-    $scope.logged = function () {
-        console.log($scope.textFields);
-    };
-
+    /**
+     * Нажатие на кнопку войти
+     */
     $scope.submit = function(){
         $http.post(bitaskAppConfig.api_url + 'index.php/auth/vk', {hello:'hello'});
     };
 
-
-    //debugger;
+    /**
+     * Нажатие на выход
+     */
+    $scope.logout = function () {
+        $auth.logout();
+        $location.url('/#/login');
+    };
 
 });

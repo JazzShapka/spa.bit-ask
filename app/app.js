@@ -45,11 +45,20 @@ var bitaskApp = angular.module('bitaskApp', [
             url: bitaskAppConfig.api_url + 'index.php/auth/google'
         });
         $authProvider.authToken = false;
+        $authProvider.tokenName = "token";
     }
 ])
 
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
-.run(['$rootScope','$location', function($rootScope, $location) {
+.run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
+
+    if($auth.isAuthenticated() && $location.path() == "/login")
+    {
+        $location.url('/');
+    }
+    else if(!$auth.isAuthenticated()){
+        $location.url('/login');
+    }
 
 
     $rootScope.router = $location.path();
