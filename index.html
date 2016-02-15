@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>bitask</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href='/'>
+
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" href="app/app.css">
+
+    <script src="app/config.js"></script>
+
+</head>
+
+<body ng-app="bitaskApp">
+
+    <!-- Вид (сюда загружаются представления) -->
+    <div ng-view></div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-material/angular-material.js"></script>
+
+    <script src="bower_components/satellizer/satellizer.js"></script>
+
+
+
+    <!-- use minify in prod-->
+    <!--<script src="app/app.min.js"></script>-->
+
+    <!-- Основной модуль приложения -->
+    <script src="app/app.js"></script>
+
+    <!-- Контроллеры представлений -->
+    <script src="app/views/index/index.js"></script>
+    <script src="app/views/view1/view1.js"></script>
+    <script src="app/views/view2/view2.js"></script>
+    <script src="app/views/login/login.js"></script>
+
+    <!-- Фактори -->
+    <script src="app/components/factory/localStorage.js"></script>
+
+</body>
+</html>

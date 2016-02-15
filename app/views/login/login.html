@@ -1,0 +1,30 @@
+<div class="login_form">
+
+    <md-card>
+        <md-card-content>
+            <div>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Логин</label>
+                    <input type="text" ng-model="textFields.username">
+                </md-input-container>
+            </div>
+            <div>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Пароль</label>
+                    <input type="password" ng-model="textFields.password">
+                </md-input-container>
+            </div>
+
+            <div>
+                <button class="social_network_btn google_btn" ng-click="socialAuth('google')"></button>
+                <button class="social_network_btn twitter_btn btn"></button>
+                <button class="social_network_btn facebook_btn btn"></button>
+                <button class="social_network_btn vk_btn btn" ng-click="socialAuth('vk')"></button>
+
+
+                <md-button class="submit md-raised" ng-click="submit()">ВХОД</md-button>
+            </div>
+        </md-card-content>
+    </md-card>
+
+</div>
