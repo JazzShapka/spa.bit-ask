@@ -4,6 +4,7 @@
 var bitaskApp = angular.module('bitaskApp', [
     'ngRoute',
     'ngMaterial',
+    'ngAnimate',
     'satellizer',
     'bitaskApp.index',
     'bitaskApp.view1',

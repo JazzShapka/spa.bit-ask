@@ -1,0 +1,43 @@
+/* Toolbar */
+md-toolbar.header{
+    background-color: #BB418C;
+    box-shadow: 0 1px 3px black;
+    position: fixed;
+}
+md-toolbar.header .md-toolbar-tools{
+    outline: none;
+}
+md-toolbar .md-toolbar-tools span{
+    cursor: pointer;
+}
+/* Left toolbar */
+.left-toolbar{
+    left: 0;
+    height: 100%;
+    width: 200px;
+    border: 1px solid black;
+    position: fixed;
+    z-index: 10;
+    -webkit-transition: 300ms;
+}
+.left-toolbar.ng-hide-remove {
+    left: - 200px;
+}
+.left-toolbar.ng-hide-remove.ng-hide-remove-active {
+    left: 0;
+}
+.left-toolbar.ng-hide-add {
+    left: 0;
+}
+.left-toolbar.ng-hide-add.ng-hide-add-active {
+    left: - 200px;
+}
+.left-toolbar-shadow{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 9;
+}
+.left-toolbar .caption{
+
+}

@@ -11,11 +11,28 @@
         </div>
     </md-toolbar>
 
-    <div class="left-toolbar sample-show-hide" ng-view="left_toolbar.show">
+    <!-- left bar -->
+    <div class="left-toolbar" ng-show="left_toolbar.show">
         <div class="caption">
+            <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
             <span>Меню</span>
         </div>
+        <ul class="top-menu">
+            <li>Лента задач</li>
+            <li>Цели показатели</li>
+            <li>Расписание</li>
+            <li>Структура</li>
+            <li>Карта задач</li>
+        </ul>
+        <ul class="bottom-menu">
+            <li>О битаске</li>
+            <li>О разработчиках</li>
+            <li>Помощь</li>
+        </ul>
     </div>
+    <div class="left-toolbar-shadow" ng-click="hideLeftToolbar()" ng-show="left_toolbar.show"></div>
+
+
 </div>
 
 
