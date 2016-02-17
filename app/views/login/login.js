@@ -11,10 +11,8 @@ angular.module('bitaskApp.login', ['ngRoute'])
         controller: 'LoginCtrl'
     }).when('/logout', {
         template:'',
-        controller: function($location){
-
-
-
+        controller: function($location, $auth){
+            $auth.logout();
             $location.path('/')
         }
     });
@@ -40,8 +38,7 @@ angular.module('bitaskApp.login', ['ngRoute'])
         $auth.authenticate(socialName).then(function(){
 
             $location.path('/');
-        })
-
+        });
     };
 
     /**
@@ -56,7 +53,7 @@ angular.module('bitaskApp.login', ['ngRoute'])
      */
     $scope.logout = function () {
         $auth.logout();
-        $location.url('/#/login');
+        $location.url('/login');
     };
 
 });

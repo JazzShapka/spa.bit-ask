@@ -8,7 +8,9 @@ var bitaskApp = angular.module('bitaskApp', [
     'bitaskApp.index',
     'bitaskApp.view1',
     'bitaskApp.view2',
-    'bitaskApp.login'
+    'bitaskApp.login',
+    'bitaskApp.header',
+    'bitaskApp.floating_button'
 ])
 
 // Конфигурация роутера
@@ -52,17 +54,19 @@ var bitaskApp = angular.module('bitaskApp', [
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
 .run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
 
-    if($auth.isAuthenticated() && $location.path() == "/login")
-    {
-        $location.url('/');
-    }
-    else if(!$auth.isAuthenticated()){
-        $location.url('/login');
-    }
-
-
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
+
+        // Если пользователь авторизован отправляем его в корень
+        if($auth.isAuthenticated() && $location.path() == "/login")
+        {
+            $location.url('/');
+        }
+        // Если не авторизован кидаем его на страницу авторизации
+        else if(!$auth.isAuthenticated()){
+            $location.url('/login');
+        }
+
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;
     });

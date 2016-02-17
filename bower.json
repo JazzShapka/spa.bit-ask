@@ -30,7 +30,8 @@
     "angular-messages": "~1.5.1",
     "angular": "~1.5.1",
     "angular-i18n": "~1.5.1",
-    "lumx": "~0.3.96"
+    "satellizer": "~0.13.4",
+    "material-design-icons": "2.2.0"
   },
   "resolutions": {
     "angular": "1.5.1"
