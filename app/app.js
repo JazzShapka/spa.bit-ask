@@ -11,13 +11,14 @@ var bitaskApp = angular.module('bitaskApp', [
     'bitaskApp.view2',
     'bitaskApp.login',
     'bitaskApp.header',
-    'bitaskApp.floating_button'
+    'bitaskApp.floating_button',
+    'bitaskApp.config'
 ])
 
 // Конфигурация роутера
-.config(['$routeProvider', '$httpProvider' ,'$locationProvider', '$authProvider', 'SatellizerConfig',
+.config(['$routeProvider', '$httpProvider' ,'$locationProvider', '$authProvider',
 
-    function($routeProvider, $httpProvider, $locationProvider, $authProvider, SatellizerConfig) {
+    function($routeProvider, $httpProvider, $locationProvider, $authProvider) {
 
         //Используем html5 router, когда точка входа идёт на старт приложения
         $locationProvider.html5Mode(true);
@@ -31,21 +32,22 @@ var bitaskApp = angular.module('bitaskApp', [
         // Eсли стр нет то выкинет на логинн
         $routeProvider.otherwise({redirectTo: '/'});
 
-        // Настраиваем провайдер vk
-        SatellizerConfig.providers['vk'] = {
-            name: 'vk',
-            clientId: bitaskAppConfig.vk_id,
-            url: bitaskAppConfig.api_url + 'index.php/auth/vk',
-            authorizationEndpoint: 'https://oauth.vk.com/authorize',
-            scope: 'email',
-            redirectUri: window.location.origin,
-            type: '2.0',
-            popupOptions: { width: 700, height: 380 }
-        };
 
+        // Получаем сохраненные настройки, если они есть
+        var setting = JSON.parse(localStorage.getItem('setting'));
+        if(setting)
+        {
+            bitaskAppConfig = setting;
+        }
+
+        // Настраиваем сервис авторизации
         $authProvider.google({
             clientId: bitaskAppConfig.google_id,
-            url: bitaskAppConfig.api_url + 'index.php/auth/google'
+            url: bitaskAppConfig.auth_url + 'index.php/auth/google'
+        });
+        $authProvider.facebook({
+            clientId: bitaskAppConfig.facebook_id,
+            url: bitaskAppConfig.auth_url + 'index.php/auth/facebook'
         });
         $authProvider.authToken = false;
         $authProvider.tokenName = "token";
@@ -53,7 +55,7 @@ var bitaskApp = angular.module('bitaskApp', [
 ])
 
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
-.run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
+.run(['$rootScope','$location', '$auth', 'localStorage', function($rootScope, $location, $auth, localStorage) {
 
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
@@ -63,14 +65,14 @@ var bitaskApp = angular.module('bitaskApp', [
         {
             $location.url('/');
         }
-        // Если не авторизован кидаем его на страницу авторизации
-        else if(!$auth.isAuthenticated()){
+        // Если не авторизован кидаем его на страницу авторизации  и разрешаем переход на settings
+        else if(!$auth.isAuthenticated() && $location.path() != "/config")
+        {
             $location.url('/login');
         }
 
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;
     });
-
 }]);
 

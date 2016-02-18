@@ -4,21 +4,17 @@ md-toolbar.header{
     box-shadow: 0 1px 3px black;
     position: fixed;
 }
-md-toolbar.header .md-toolbar-tools{
-    outline: none;
-}
-md-toolbar .md-toolbar-tools span{
-    cursor: pointer;
-}
+
 /* Left toolbar */
 .left-toolbar{
     left: 0;
     height: 100%;
     width: 200px;
-    border: 1px solid black;
+    background: white;
+    box-shadow: 2px 0 4px gray;
     position: fixed;
-    z-index: 10;
     -webkit-transition: 300ms;
+    z-index: 10;
 }
 .left-toolbar.ng-hide-remove {
     left: - 200px;
@@ -38,6 +34,17 @@ md-toolbar .md-toolbar-tools span{
     position: absolute;
     z-index: 9;
 }
-.left-toolbar .caption{
+.left-toolbar md-toolbar{
+    background-color: #BB418C;
+    box-shadow: 0 1px 3px black;
+}
+.left-toolbar md-toolbar span{
+    cursor: pointer;
+}
+.left-toolbar .top-menu{
 
+}
+.left-toolbar .bottom-menu{
+    bottom: 0;
+    position: absolute;
 }

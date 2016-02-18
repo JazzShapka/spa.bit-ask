@@ -1,8 +1,8 @@
 <!-- Шапка -->
 <div class="top-toolbar" ng-controller="HeaderCtrl">
     <md-toolbar class="header">
-        <div class="md-toolbar-tools" ng-click="showLeftToolbar()">
-            <md-button class="md-icon-button">
+        <div class="md-toolbar-tools" >
+            <md-button class="md-icon-button" ng-click="showLeftToolbar()">
                 <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
             </md-button>
             <h2>
@@ -13,10 +13,14 @@
 
     <!-- left bar -->
     <div class="left-toolbar" ng-show="left_toolbar.show">
-        <div class="caption">
-            <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
-            <span>Меню</span>
-        </div>
+        <md-toolbar>
+            <div class="md-toolbar-tools" ng-click="hideLeftToolbar()">
+                <md-button class="md-icon-button">
+                    <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
+                </md-button>
+                <span>Меню</span>
+            </div>
+        </md-toolbar>
         <ul class="top-menu">
             <li>Лента задач</li>
             <li>Цели показатели</li>

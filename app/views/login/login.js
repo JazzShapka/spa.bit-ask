@@ -3,7 +3,7 @@
  */
 'use strict';
 
-angular.module('bitaskApp.login', ['ngRoute'])
+angular.module('bitaskApp.login', ['ngRoute', 'bitaskApp.config'])
 
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -45,7 +45,7 @@ angular.module('bitaskApp.login', ['ngRoute'])
      * Нажатие на кнопку войти
      */
     $scope.submit = function(){
-        $http.post(bitaskAppConfig.api_url + 'index.php/auth/vk', {hello:'hello'});
+        $http.post(bitaskAppConfig.auth_url + 'index.php/auth/vk', {hello:'hello'});
     };
 
     /**

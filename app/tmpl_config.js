@@ -1,6 +1,5 @@
 /**
  * Created by SNKraynov on 12.02.2016.
- * Конфигурация по умолчанию
  */
 var bitaskAppConfig = {
     // Адрес сервера api
