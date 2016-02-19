@@ -18,7 +18,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular-ui-mask": "~1.5.1"
+    "angular-ui-mask": "~1.5.1",
+    "sockjs-client": "^1.0.3"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",
@@ -32,7 +33,7 @@
     "angular-i18n": "~1.5.1",
     "satellizer": "~0.13.4",
     "material-design-icons": "~2.2.0",
-    "angular-material":"1.0.5"
+    "angular-material": "1.0.5"
   },
   "resolutions": {
     "angular": "1.5.1"
