@@ -5,9 +5,6 @@
             <md-button class="md-icon-button" ng-click="showLeftToolbar()">
                 <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
             </md-button>
-            <h2>
-                <span>Меню</span>
-            </h2>
         </div>
     </md-toolbar>
 
@@ -15,16 +12,13 @@
     <div class="left-toolbar" ng-show="left_toolbar.show">
         <md-toolbar>
             <div class="md-toolbar-tools" ng-click="hideLeftToolbar()">
-                <md-button class="md-icon-button">
-                    <md-icon md-svg-src="app/assets/images/icon/menu.svg"></md-icon>
-                </md-button>
                 <span>Меню</span>
             </div>
         </md-toolbar>
         <ul class="top-menu">
-            <li>Лента задач</li>
-            <li>Цели показатели</li>
-            <li>Расписание</li>
+            <li><a href="/">Лента задач</a></li>
+            <li><a href="/#/goals">Цели показатели</a></li>
+            <li><a href="/#/schedule">Расписание</a></li>
             <li>Структура</li>
             <li>Карта задач</li>
         </ul>

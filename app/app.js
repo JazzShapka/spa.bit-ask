@@ -7,15 +7,15 @@ var bitaskApp = angular.module('bitaskApp', [
     'ngAnimate',
     'satellizer',
     'bitaskApp.index',
-    'bitaskApp.view1',
-    'bitaskApp.view2',
+    'bitaskApp.goals',
+    'bitaskApp.schedule',
     'bitaskApp.login',
     'bitaskApp.header',
     'bitaskApp.floating_button',
     'bitaskApp.config'
 ])
 
-// Конфигурация роутера
+// Конфигурация приложения
 .config(['$routeProvider', '$httpProvider' ,'$locationProvider', '$authProvider',
 
     function($routeProvider, $httpProvider, $locationProvider, $authProvider) {

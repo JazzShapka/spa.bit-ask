@@ -34,6 +34,8 @@ md-toolbar.header{
     position: absolute;
     z-index: 9;
 }
+
+/* Список пунктов меню */
 .left-toolbar md-toolbar{
     background-color: #BB418C;
     box-shadow: 0 1px 3px black;
@@ -47,4 +49,7 @@ md-toolbar.header{
 .left-toolbar .bottom-menu{
     bottom: 0;
     position: absolute;
+}
+.left-toolbar li{
+
 }
