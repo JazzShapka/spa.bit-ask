@@ -1,55 +1,24 @@
 /* Toolbar */
 md-toolbar.header{
-    background-color: #BB418C;
-    box-shadow: 0 1px 3px black;
+    background-color: $main-color;
     position: fixed;
 }
 
 /* Left toolbar */
-.left-toolbar{
-    left: 0;
-    height: 100%;
-    width: 200px;
-    background: white;
-    box-shadow: 2px 0 4px gray;
-    position: fixed;
-    -webkit-transition: 300ms;
-    z-index: 10;
-}
-.left-toolbar.ng-hide-remove {
-    left: - 200px;
-}
-.left-toolbar.ng-hide-remove.ng-hide-remove-active {
-    left: 0;
-}
-.left-toolbar.ng-hide-add {
-    left: 0;
-}
-.left-toolbar.ng-hide-add.ng-hide-add-active {
-    left: - 200px;
-}
-.left-toolbar-shadow{
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 9;
-}
-
-/* Список пунктов меню */
-.left-toolbar md-toolbar{
-    background-color: #BB418C;
-    box-shadow: 0 1px 3px black;
-}
-.left-toolbar md-toolbar span{
-    cursor: pointer;
-}
-.left-toolbar .top-menu{
+.md-sidenav-left{
 
 }
-.left-toolbar .bottom-menu{
+.md-sidenav-left .md-theme-indigo{
+    background: $main-color;
+}
+.md-sidenav-left md-content{
+    position: static;
+}
+.md-sidenav-left .top-menu{
+    outline: none;
+}
+.md-sidenav-left .bottom-menu{
     bottom: 0;
     position: absolute;
-}
-.left-toolbar li{
-
+    outline: none;
 }

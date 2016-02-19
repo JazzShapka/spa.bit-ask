@@ -4,18 +4,16 @@
 'use strict';
 
 angular.module('bitaskApp.header', ['ngAnimate'])
-    .controller('HeaderCtrl', function($scope) {
+    .controller('HeaderCtrl', function($scope, $mdSidenav) {
 
-        $scope.left_toolbar = {
-            show:false
+        $scope.toggle = function (){
+            $mdSidenav('sidenav-left').toggle();
         };
 
-        $scope.showLeftToolbar = function (){
-            $scope.left_toolbar.show = true;
-        };
+    })
+    .controller('LeftMenuCtrl', function ($scope, $mdSidenav){
 
-        $scope.hideLeftToolbar = function(){
-            $scope.left_toolbar.show = false;
-        };
-
+        $scope.hideLeftToolbar = function (){
+            $mdSidenav('sidenav-left').close();
+        }
     });
