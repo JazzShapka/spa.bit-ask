@@ -12,7 +12,9 @@ var bitaskApp = angular.module('bitaskApp', [
     'bitaskApp.login',
     'bitaskApp.header',
     'bitaskApp.floating_button',
-    'bitaskApp.config'
+    'bitaskApp.config',
+    'bitaskApp.hierarchy_task',
+    'bitaskApp.service.task'
 ])
 
 // Конфигурация приложения

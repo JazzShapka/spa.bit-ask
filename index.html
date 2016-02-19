@@ -17,8 +17,15 @@
 
 <body ng-app="bitaskApp">
 
+    <!-- Показываем шапку, если вход выполнен -->
+    <div ng-show="router!='/login'&&router!='/config'" ng-include="'app/views/header/header.html'"></div>
+
     <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
+
+    <!-- Круглая кнопка меню -->
+    <div ng-show="router!='/login'&&router!='/config'" ng-include="'app/views/floating_button/floating_button.html'"></div>
+
 
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
@@ -27,8 +34,6 @@
     <script src="bower_components/angular-material/angular-material.js"></script>
 
     <script src="bower_components/satellizer/satellizer.js"></script>
-
-
 
     <!-- use minify in prod-->
     <!--<script src="app/app.min.js"></script>-->
@@ -44,9 +49,13 @@
     <script src="app/views/goals/goals.js"></script>
     <script src="app/views/schedule/schedule.js"></script>
     <script src="app/views/login/login.js"></script>
+    <script src="app/views/hierarchy_task/hierarchy_task.js"></script>
 
     <!-- Фактори -->
     <script src="app/components/factory/localStorage.js"></script>
+
+    <!-- Сервисы -->
+    <script src="app/components/services/taskService.js"></script>
 
 </body>
 </html>
