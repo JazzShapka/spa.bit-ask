@@ -19,7 +19,8 @@
   ],
   "dependencies": {
     "angular-ui-mask": "~1.5.1",
-    "sockjs-client": "^1.0.3"
+    "sockjs-client": "^1.0.3",
+    "stomp-websocket": "^2.3.4"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",
