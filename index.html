@@ -18,13 +18,13 @@
 <body ng-app="bitaskApp">
 
     <!-- Показываем шапку, если вход выполнен -->
-    <div ng-show="router!='/login'&&router!='/config'" ng-include="'app/views/header/header.html'"></div>
+    <div ng-show="show_menu" ng-include="'app/views/header/header.html'"></div>
 
     <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
 
     <!-- Круглая кнопка меню -->
-    <div ng-show="router!='/login'&&router!='/config'" ng-include="'app/views/floating_button/floating_button.html'"></div>
+    <div ng-show="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
 
 
     <script src="bower_components/angular/angular.js"></script>
@@ -37,6 +37,7 @@
 
     <script src="bower_components/sockjs-client/dist/sockjs-1.0.3.js"></script>
     <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
     <!-- use minify in prod-->
     <!--<script src="app/app.min.js"></script>-->
@@ -59,6 +60,9 @@
 
     <!-- Сервисы -->
     <script src="app/components/services/taskService.js"></script>
+
+    <!-- Директивы -->
+    <script src="app/components/directives/draggable.js"></script>
 
 </body>
 </html>

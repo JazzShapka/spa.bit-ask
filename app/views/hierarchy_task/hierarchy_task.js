@@ -11,7 +11,13 @@ angular.module('bitaskApp.hierarchy_task', ['ngRoute', 'bitaskApp.service.task']
             controller: 'HierarchyTaskCtrl'
         });
     }])
-    .controller('HierarchyTaskCtrl', function($scope, tasks) {
+    .controller('HierarchyTaskCtrl', function($scope, $log, tasks) {
 
+        $scope.start = function (){
+            $log.debug('start');
+        };
 
+        $scope.stop = function (){
+            $log.debug('stop');
+        };
     });

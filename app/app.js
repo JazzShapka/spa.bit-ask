@@ -1,7 +1,7 @@
 'use strict';
 
 // Объявления приложения и модулей для представлений и компонент
-var bitaskApp = angular.module('bitaskApp', [
+angular.module('bitaskApp', [
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
@@ -31,7 +31,7 @@ var bitaskApp = angular.module('bitaskApp', [
 
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-        // Eсли стр нет то выкинет на логинн
+        // Eсли стр нет то выкинет в корень
         $routeProvider.otherwise({redirectTo: '/'});
 
 
@@ -57,7 +57,7 @@ var bitaskApp = angular.module('bitaskApp', [
 ])
 
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
-.run(['$rootScope','$location', '$auth', 'localStorage', function($rootScope, $location, $auth, localStorage) {
+.run(['$rootScope','$location', '$auth', 'localStorage', function($rootScope, $location, $auth) {
 
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
@@ -75,6 +75,10 @@ var bitaskApp = angular.module('bitaskApp', [
 
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;
+
+        $rootScope.show_menu = $rootScope.router!='/login'
+            &&$rootScope.router!='/config'
+            &&$rootScope.router!='/change-password';
     });
 }]);
 

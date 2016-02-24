@@ -2,25 +2,66 @@
 
     <md-card>
         <md-card-content>
-            <div>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Логин</label>
-                    <input type="text" ng-model="textFields.username">
-                </md-input-container>
-            </div>
-            <div>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Пароль</label>
-                    <input type="password" ng-model="textFields.password">
-                </md-input-container>
-            </div>
 
-            <div>
-                <button class="social_network_btn google_btn" ng-click="socialAuth('google')"></button>
-                <button class="social_network_btn facebook_btn btn" ng-click="socialAuth('facebook')"></button>
+            <md-tabs md-dynamic-height md-border-bottom>
 
-                <md-button class="submit md-raised" ng-click="submit()">ВХОД</md-button>
-            </div>
+                <!-- ВХОД -->
+                <md-tab label="Вход">
+                    <form ng-submit="login()">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email</label>
+                            <input type="text" ng-model="textFields.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/">
+                        </md-input-container>
+
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Пароль</label>
+                            <input type="password" ng-model="textFields.password" required  minlength="6" maxlength="100">
+                        </md-input-container>
+
+                        <div>
+                            <button type="button" class="social_network_btn google_btn" ng-click="socialAuth('google')"></button>
+                            <button type="button" class="social_network_btn facebook_btn btn" ng-click="socialAuth('facebook')"></button>
+
+                            <md-button type="submit" class="submit md-raised">ВХОД</md-button>
+                        </div>
+                    </form>
+                </md-tab>
+
+                <!-- РЕГИСТРАЦИЯ -->
+                <md-tab label="Регистрация">
+                    <form ng-submit="registration()">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Имя</label>
+                            <input type="text" ng-model="textFields.username" required maxlength="100">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email</label>
+                            <input type="text" ng-model="textFields.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Пароль</label>
+                            <input type="password" ng-model="textFields.password" required  minlength="6" maxlength="100">
+                        </md-input-container>
+                        <div>
+                            <md-button type="submit" class="submit md-raised">РЕГИСТРАЦИЯ</md-button>
+                        </div>
+                    </form>
+                </md-tab>
+
+                <!-- ВОССТАНОВИТЬ ПАРОЛЬ -->
+                <md-tab label="Напомнить пароль">
+                    <form ng-submit="recover()">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email</label>
+                            <input type="text" ng-model="textFields.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/">
+                        </md-input-container>
+                        <div>
+                            <md-button type="submit" class="submit md-raised">НАПОМНИТЬ</md-button>
+                        </div>
+                    </form>
+                </md-tab>
+
+            </md-tabs>
         </md-card-content>
     </md-card>
 

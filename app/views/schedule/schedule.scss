@@ -1,0 +1,17 @@
+.hierarchy_task_window{
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.draggable{
+    left: 100px;
+    top: 100px;
+    width: 60px;
+    height: 40px;
+    border: 1px solid black;
+    background-color: grey;
+    position: absolute;
+    cursor: pointer;
+}
