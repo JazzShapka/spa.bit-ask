@@ -6,8 +6,13 @@
     position: fixed;
 }
 .hierarchy_task_backgriund{
-    min-height: 4000%;
-    min-width: 100%;
+    min-width: 101%; //21205px;
+    min-height: 101%; //8590px;
+    padding: 120px 100px 40px 100px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    //border: 1px solid black;
 }
 
 .task_block{

@@ -1,9 +1,9 @@
 <div class="hierarchy_task_window">
-    <div class="hierarchy_task_backgriund" bt-draggable >
+    <div class="hierarchy_task_backgriund" bt-draggable on-stop="dropCanvas">
 
         <div class="task_block" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:null}" bt-draggable helper="clone">
-            <text class="name">{{task.name}}</text>
-            <div class="children"><div>
+            <span class="name">{{task.name}}</span>
+            <div class="children"></div>
         </div>
 
     </div>

@@ -9,6 +9,12 @@ angular.module('bitaskApp.index', ['ngRoute'])
   });
 }])
 
-.controller('IndexCtrl', [function() {
+.controller('IndexCtrl', function($scope, $http) {
 
-}]);
+    $scope.send = function (){
+        $http.post(bitaskAppConfig.api_url + 'index.php/event/all', [
+            "hello",
+            'World!!!'
+        ])
+    }
+});
