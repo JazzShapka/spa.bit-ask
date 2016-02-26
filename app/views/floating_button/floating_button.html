@@ -9,21 +9,25 @@
             class="md-scale md-fab-bottom-right">
         <md-fab-trigger>
             <md-button aria-label="FAB" class="md-fab md-warn">
+                <md-tooltip md-direction="left">Меню</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
         </md-fab-trigger>
         <md-fab-actions>
              <md-button aria-label="logout" class="md-fab md-raised md-mini">
-                 <a href="/#/logout">
+                 <md-tooltip md-direction="left">Выход</md-tooltip>
+                 <a href="/#/auth/logout">
                      <md-icon class="material-icons">exit_to_app</md-icon>
                  </a>
              </md-button>
              <md-button aria-label="na" class="md-fab md-raised md-mini">
-                 <a href="/#/change-password">
+                 <md-tooltip md-direction="left">Изменить пароль</md-tooltip>
+                 <a href="/#/auth/change-password">
                      <md-icon class="material-icons">fingerprint</md-icon>
                  </a>
              </md-button>
              <md-button aria-label="na" class="md-fab md-raised md-mini">
+                 <md-tooltip md-direction="left">На главную</md-tooltip>
                  <a href="/">
                     <md-icon class="material-icons">home</md-icon>
                  </a>

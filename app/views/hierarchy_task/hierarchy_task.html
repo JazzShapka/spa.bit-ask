@@ -1,3 +1,10 @@
 <div class="hierarchy_task_window">
-    <div class="draggable" bt-draggable on-stop="stop" on-start="start" z-index="200"></div>
+    <div class="hierarchy_task_backgriund" bt-draggable >
+
+        <div class="task_block" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:null}" bt-draggable helper="clone">
+            <text class="name">{{task.name}}</text>
+            <div class="children"><div>
+        </div>
+
+    </div>
 </div>

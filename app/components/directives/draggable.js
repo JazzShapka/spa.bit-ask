@@ -19,13 +19,58 @@ angular.module('bitaskApp')
                     cursor: 'move'          // Курсор
                 };
 
-
                 var clone = false;
 
                 var start_pos = {};
                 var mouse_offset = {};
                 var mouse_down_flag = false;
                 var distance = 5; // px
+
+                var disableSelect = function (){
+                    $('body').css({
+                        "-moz-user-select":"none",
+                        "-webkit-user-select": "none",
+                        "-ms-user-select": "none",
+                        "-o-user-select": "none",
+                        "user-select":"none"
+                    });
+                };
+                var enableSelect = function (){
+                    $('body').css({
+                        "-moz-user-select":"text",
+                        "-webkit-user-select": "text",
+                        "-ms-user-select": "text",
+                        "-o-user-select": "text",
+                        "user-select":"text"
+                    });
+                };
+                var getCurrentTarget = function (event){
+                    if(elem)
+                    {
+                        $(elem).css({display:'none'});
+                        if(clone)
+                            $(clone).css({display:'none'});
+
+                        var hoverElem;
+                        if (navigator.userAgent.match('MSIE') || navigator.userAgent.match('Gecko'))
+                        {
+                            hoverElem = document.elementFromPoint(event.clientX,event.clientY);
+                        }
+                        else
+                        {
+                            hoverElem = document.elementFromPoint(event.pageX,event.pageY);
+                        }
+
+                        $(elem).css({display:'block'});
+                        if(clone)
+                            $(clone).css({display:'block'});
+                        return hoverElem;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                };
 
                 var mousemove = function (event){
 
@@ -40,12 +85,16 @@ angular.module('bitaskApp')
                             clone.css({opacity:'0.7'});
                         }
 
-                        if(config.helper == 'clone')
-                            clone.offset({left:event.pageX-mouse_offset.x, top: event.pageY-mouse_offset.y});
-                        else
-                            elem.offset({left:event.pageX-mouse_offset.x, top: event.pageY-mouse_offset.y});
+                        if(config.onMove.apply(elem[0], [event, getCurrentTarget(event)]) != false)
+                        {
+                            if(config.helper == 'clone')
+                                clone.offset({left:event.pageX-mouse_offset.x, top: event.pageY-mouse_offset.y});
+                            else
+                                elem.offset({left:event.pageX-mouse_offset.x, top: event.pageY-mouse_offset.y});
+                        }
 
-                        config.onMove();
+
+
                     }
 
                 };
@@ -59,10 +108,15 @@ angular.module('bitaskApp')
                         clone.remove();
                         clone = false;
                     });
+                    enableSelect();
 
-                    config.onStop();
+                    config.onStop.apply(elem[0], [event, getCurrentTarget(event)]);
                 };
                 var mousedown = function (event){
+
+                    if(event.currentTarget != event.target)
+                        return true;
+
                     start_pos.x = event.pageX;
                     start_pos.y = event.pageY;
 
@@ -74,7 +128,9 @@ angular.module('bitaskApp')
                     $(document).on('mousemove', mousemove);
                     $(document).on('mouseup', mouseup);
 
-                    config.onStart();
+                    disableSelect();
+
+                    config.onStart.apply(this, [event, getCurrentTarget(event)]);
                 };
                 var __construct = function (){
 
@@ -97,10 +153,10 @@ angular.module('bitaskApp')
                         config.zIndex = parseInt(attrs.zIndex);
 
                     if(attrs.hasOwnProperty('helper'))
-                        config.helper = parseInt(attrs.helper);
+                        config.helper = attrs.helper;
 
                     if(attrs.hasOwnProperty('cursor'))
-                        config.cursor = parseInt(attrs.cursor);
+                        config.cursor = attrs.cursor;
 
                     elem.css({cursor:config.cursor});
 

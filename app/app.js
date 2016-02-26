@@ -31,6 +31,21 @@ angular.module('bitaskApp', [
 
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
+        //TODO: Сделать обработку ошибки доступа
+        $httpProvider.interceptors.push(function (){
+            return {
+                request: function (request) {
+                    return request;
+                },
+                response: function (response){
+                    return response;
+                },
+                responseError: function (response) {
+                    return response;
+                }
+            }
+        });
+
         // Eсли стр нет то выкинет в корень
         $routeProvider.otherwise({redirectTo: '/'});
 
@@ -57,28 +72,17 @@ angular.module('bitaskApp', [
 ])
 
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
-.run(['$rootScope','$location', '$auth', 'localStorage', function($rootScope, $location, $auth) {
+.run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
 
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
 
-        // Если пользователь авторизован отправляем его в корень
-        if($auth.isAuthenticated() && $location.path() == "/login")
-        {
-            $location.url('/');
-        }
-        // Если не авторизован кидаем его на страницу авторизации  и разрешаем переход на settings
-        else if(!$auth.isAuthenticated() && $location.path() != "/config")
-        {
-            $location.url('/login');
-        }
-
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;
 
-        $rootScope.show_menu = $rootScope.router!='/login'
-            &&$rootScope.router!='/config'
-            &&$rootScope.router!='/change-password';
+        var auth_page = $rootScope.router.split('/')[1] == 'auth';
+        // Если изображена страица авторизации или конфиг не показываем шапку и снежинку
+        $rootScope.show_menu = !auth_page && $rootScope.router!='/config';
     });
 }]);
 
