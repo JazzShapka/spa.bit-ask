@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true">
+    <div class="task_resize_block">
+        <div class="task" bt-draggable helper="clone">
+            <span class="name">{{task.name}}</span>
+        </div>
+    </div>
+    <div class="right_connect"></div>
 
-</body>
-</html>
+    <div class="children" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
+</div>

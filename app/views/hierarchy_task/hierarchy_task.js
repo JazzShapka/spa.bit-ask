@@ -50,7 +50,6 @@ angular.module('bitaskApp.hierarchy_task', ['ngRoute', 'bitaskApp.service.task']
                 canvas.animate({left:-(canvas_width-window_width)}, 200);
             else if(canvas_pos.left < 0 && canvas_pos.top > 0 && canvas_pos.right > 0 && canvas_pos.bottom < 0)
                 canvas.animate({left:-(canvas_width-window_width), top: 0}, 200);
-
         }
 
     });

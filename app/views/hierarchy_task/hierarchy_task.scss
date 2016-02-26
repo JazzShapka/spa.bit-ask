@@ -8,20 +8,20 @@
 .hierarchy_task_backgriund{
     min-width: 101%; //21205px;
     min-height: 101%; //8590px;
-    padding: 120px 100px 40px 100px;
+    padding: 120px 160px 40px 160px;
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     //border: 1px solid black;
 }
 
-.task_block{
-    width:200px;
-    height: 30px;
+.task_background{
+    //width:200px;
+    //height: 30px;
     margin:5px;
     border: 1px solid black;
 }
-.task_block .name{
+.task_background .name{
     top: 4px;
     left: 3px;
     position:relative;
