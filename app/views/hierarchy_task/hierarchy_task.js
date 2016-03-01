@@ -11,9 +11,9 @@ angular.module('bitaskApp.hierarchy_task', ['ngRoute', 'bitaskApp.service.task']
             controller: 'HierarchyTaskCtrl'
         });
     }])
-    .controller('HierarchyTaskCtrl', function($scope, $log, tasks, $document) {
+    .controller('HierarchyTaskCtrl', function($scope, $log, tasksService, $document) {
 
-        $scope.tasks = tasks.tasks;
+        $scope.tasks = tasksService.tasks;
 
         /**
          * Центровка холста.
@@ -50,6 +50,12 @@ angular.module('bitaskApp.hierarchy_task', ['ngRoute', 'bitaskApp.service.task']
                 canvas.animate({left:-(canvas_width-window_width)}, 200);
             else if(canvas_pos.left < 0 && canvas_pos.top > 0 && canvas_pos.right > 0 && canvas_pos.bottom < 0)
                 canvas.animate({left:-(canvas_width-window_width), top: 0}, 200);
-        }
+        };
 
+        $scope.$watch(function () {
+                return tasksService.tasks;
+            },
+            tasksService.refreshChildren,
+            true
+        );
     });

@@ -5,6 +5,7 @@ angular.module('bitaskApp', [
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
+    'ngDraggable',
     'satellizer',
     'bitaskApp.index',
     'bitaskApp.goals',

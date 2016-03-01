@@ -238,7 +238,6 @@ angular.module('bitaskApp.login', ['ngRoute', 'bitaskApp.config', 'ngMaterial'])
 
             var form_data = new FormData();
 
-
             var data_string = '';
             for(var field in data)
             {

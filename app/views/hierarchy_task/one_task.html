@@ -1,10 +1,18 @@
 <div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true">
-    <div class="task_resize_block">
-        <div class="task" bt-draggable helper="clone">
-            <span class="name">{{task.name}}</span>
+
+    <div class="left_connect"><div class="canvas_block"></div><div class="canvas_block"></div></div>
+
+    <div class="task" ng-draggable helper="clone" cursor="default">
+        <md-checkbox aria-label="complete" class="completebox md-primary"></md-checkbox>
+        <div class="name">
+            <span>{{task.name}}</span>
+        </div>
+        <div class="buttons">
+            <md-icon class="material-icons">more_vert</md-icon>
         </div>
     </div>
-    <div class="right_connect"></div>
 
     <div class="children" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
+
+    <div class="right_connect" ng-show="task.children_quantity"><div class="canvas_block"></div><div class="canvas_block"></div></div>
 </div>
