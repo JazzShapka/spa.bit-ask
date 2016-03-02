@@ -5,7 +5,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
         console.log("bufferService: ");
 
         //debugger;
-        console.log ($auth.getToken());
+        //console.log ($auth.getToken());
         var obj = {};
 
         obj.getCard = function(par) {
@@ -40,6 +40,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                 headers: {
                     //'Content-Type': undefined
                     //'Access-Control-Allow-Origin': '*'
+                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
                 data: '[1, false, "task/addtask", {"id": 2, "authorId": 3, "taskName": 4}]'
@@ -55,6 +56,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                     //'Access-Control-Allow-Origin': '*'
                     //'Content-Type': undefined
                     //'Content-Type': 'application/json; charset=UTF-8'
+                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
                 data: '[1, false, "task/subtasks", {"parentId": 2}]'
