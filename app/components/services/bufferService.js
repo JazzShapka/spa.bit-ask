@@ -1,7 +1,7 @@
-var bufferService = angular.module('bufferService', ['ngResource']);
+var bufferService = angular.module('bufferService', ['ngResource', 'uuid4']);
 
-bufferService.factory('bufferService', ['$resource', '$http', '$auth',
-    function($resource, $http, $auth) {
+bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
+    function($resource, $http, $auth, uuid4) {
         console.log("bufferService: ");
 
         //debugger;
@@ -9,6 +9,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
         console.log ("P: ", $auth.getPayload().sub);
         $uid = $auth.getPayload().sub;
         var obj = {};
+        
 
         obj.getCard = function(par) {
             
@@ -35,8 +36,10 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
             return $http.get(serviceBase + 'all');
         }
 
-        obj.addTask = function (parentId) {
-            data = [[1, false, "task/addtask", {"id": $uid, "authorId": $uid, "taskName": "tName"}]];
+        obj.setTask = function (parentId) {
+            $uuid = uuid4.generate();
+            console.log ("uuid: ", uuid4.generate());
+            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": "tName"}]];
             var req = {
                 method: 'POST',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -52,7 +55,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
 
             $http(req).then(function(result){ console.log(result); }, function(){});
         }
-        obj.subTasks = function (parentId) {
+        obj.getTasks = function (parentId) {
             var req = {
                 method: 'POST',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -66,7 +69,10 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                 data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
             }
 
-            $http(req).then(function(result){ console.log(result); }, function(){});
+            $http(req).then(function(result) {
+                console.log(result.data[0][2]);
+                return result.data[0][2];
+            }, function(){});
         }
         obj.test = function (parentId) {
             var req = {

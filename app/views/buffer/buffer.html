@@ -1,12 +1,18 @@
 <md-button ng-click="bufferService.getCard(12)">
 POST1
 </md-button>
-<md-button ng-click="bufferService.addTask()">
-addTask
+<md-button ng-click="bufferService.setTask()">
+setTask
 </md-button>
-<md-button ng-click="bufferService.subTasks(345)">
-subTasks
+<md-button ng-click="bufferService.getTasks(345)">
+getTasks
 </md-button>
 <md-button ng-click="bufferService.test()">
 Test
 </md-button>
+
+
+<pre>{{ tasks }}</pre>
+<div ng-repeat="task in tasks">
+  <pre>{{ task.taskName }}</pre>
+</div>
