@@ -15,7 +15,9 @@ angular.module('bitaskApp', [
     'bitaskApp.floating_button',
     'bitaskApp.config',
     'bitaskApp.hierarchy_task',
-    'bitaskApp.service.task'
+    'bitaskApp.service.task',
+    'bufferService',
+    'buffer'
 ])
 
 // Конфигурация приложения

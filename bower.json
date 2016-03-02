@@ -21,7 +21,8 @@
     "angular-ui-mask": "~1.5.1",
     "sockjs-client": "^1.0.3",
     "stomp-websocket": "^2.3.4",
-    "angular-draggable-bt": "*"
+    "angular-draggable-bt": "*",
+    "angular-resource": "^1.5.0"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",
