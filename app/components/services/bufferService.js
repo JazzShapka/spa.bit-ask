@@ -63,7 +63,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                     //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                data: '[[1, false, "task/subtasks", {"parentId": 2}]]'
+                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
             }
 
             $http(req).then(function(result){ console.log(result); }, function(){});
