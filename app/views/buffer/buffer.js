@@ -25,5 +25,7 @@ buffer.config(['$routeProvider',
 buffer.controller('BufferCtrl', ['$scope', 'bufferService',
   function($scope, bufferService) {
     //$scope.phones = Phone.query();
-    $scope.orderProp = 'age';
+    //$scope.orderProp = 'age';
+    $scope.bufferService = bufferService;
+    //bufferService.getCard();
   }]);
