@@ -27,6 +27,8 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';
     $scope.bufferService = bufferService;
-    $scope.tasks = bufferService.getTasks;
+    //$scope.tasks = bufferService.getTasks();
     //bufferService.getCard();
+    //$scope.tasks = "12123";
+    console.log("getTasks: ", bufferService.getTasks());
   }]);

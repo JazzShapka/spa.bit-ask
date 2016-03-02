@@ -56,6 +56,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
             $http(req).then(function(result){ console.log(result); }, function(){});
         }
         obj.getTasks = function (parentId) {
+            var tasks = [467, 123];
             var req = {
                 method: 'POST',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -71,8 +72,13 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
 
             $http(req).then(function(result) {
                 console.log(result.data[0][2]);
-                return result.data[0][2];
+                //return result.data[0][2];
+                //return 123;
+                tasks = result.data[0][2];
+                //return 123456;
             }, function(){});
+            console.log ("tasks1:", tasks);
+            return tasks;
         }
         obj.test = function (parentId) {
             var req = {
