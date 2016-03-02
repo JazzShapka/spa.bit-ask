@@ -6,6 +6,8 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
 
         //debugger;
         //console.log ($auth.getToken());
+        console.log ("P: ", $auth.getPayload().sub);
+        $uid = $auth.getPayload().sub;
         var obj = {};
 
         obj.getCard = function(par) {
@@ -34,6 +36,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
         }
 
         obj.addTask = function (parentId) {
+            data = [[1, false, "task/addtask", {"id": $uid, "authorId": $uid, "taskName": "tName"}]];
             var req = {
                 method: 'POST',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -43,7 +46,8 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                     //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                data: '[1, false, "task/addtask", {"id": 2, "authorId": 3, "taskName": 4}]'
+                //data: '[[1, false, "task/addtask", {"id": $uid, "authorId": 3, "taskName": 4}]]'
+                data: data
             }
 
             $http(req).then(function(result){ console.log(result); }, function(){});
@@ -59,11 +63,28 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth',
                     //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                data: '[1, false, "task/subtasks", {"parentId": 2}]'
+                data: '[[1, false, "task/subtasks", {"parentId": 2}]]'
             }
 
             $http(req).then(function(result){ console.log(result); }, function(){});
         }
+        obj.test = function (parentId) {
+            var req = {
+                method: 'POST',
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                headers: {
+                    //'Access-Control-Allow-Origin': '*'
+                    //'Content-Type': undefined
+                    //'Content-Type': 'application/json; charset=UTF-8'
+                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
+                data: '[[1,false,"task/subtasks",{"parentId":"123"}]]'
+            }
+
+            $http(req).then(function(result){ console.log(result); }, function(){});
+        }
+
 
         return obj;
 }])
