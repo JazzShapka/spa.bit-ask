@@ -12,7 +12,7 @@ Test
 </md-button>
 
 
-<pre> {{ tasks | json }} </pre>
-<div ng-repeat="task in tasks track by $index">
-  <pre> {{ task.taskName }} </pre>
+<!-- pre> {{ tasks[0][2] | json }} </pre !-->
+<div ng-repeat="task in tasks[0][2] track by $index">
+  <pre> {{ task.id }} {{ task.taskName }} </pre>
 </div>

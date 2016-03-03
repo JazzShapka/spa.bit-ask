@@ -29,6 +29,14 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
     $scope.bufferService = bufferService;
     //$scope.tasks = bufferService.getTasks();
     //bufferService.getCard();
-    //$scope.tasks = "12123";
-    console.log("getTasks: ", bufferService.getTasks());
+    
+    //console.log("getTasks: ", bufferService.getTasks());
+    //$scope.tasks = bufferService.getTasks();
+
+    bufferService.getTasks().success(function(data) {
+      $scope.tasks = data;
+      console.log(data);
+    });
+
+
   }]);

@@ -6,11 +6,34 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
 
         //debugger;
         //console.log ($auth.getToken());
-        console.log ("P: ", $auth.getPayload().sub);
+        console.log ("getPayload: ", $auth.getPayload().sub);
         $uid = $auth.getPayload().sub;
-        var obj = {};
-        
 
+
+    return {
+        getTasks : function() {
+            return $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+            })
+        },
+        setTask : function() {
+            $uuid = uuid4.generate();
+            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": "tName " + $uuid}]];
+            return $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data
+            })
+        }
+    }
+
+
+
+
+        /*
+        var obj = {};
         obj.getCard = function(par) {
             
             // http://api.dev2.bit-ask.com/index.php/event/all
@@ -96,7 +119,5 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
 
             $http(req).then(function(result){ console.log(result); }, function(){});
         }
-
-
-        return obj;
+        return obj;*/
 }])
