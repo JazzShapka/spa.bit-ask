@@ -21,7 +21,7 @@ stompdk.config(
 
             $routeProvider.
       		when('/stomp', {
-        		templateUrl: 'app/views/buffer/buffer.html',
+        		templateUrl: 'app/views/buffer/stompdk.html',
         		controller: 'stompdkController'
       		});
 
@@ -41,13 +41,13 @@ stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
     vm.items = [];
 
     ngstomp
-        .subscribeTo('/queue/queue')
-            .callback(whatToDoWhenMessageComming)
-            .withHeaders(headers)
-            .and()
+        //.subscribeTo('/queue/queue')
+            //.callback(whatToDoWhenMessageComming)
+            //.withHeaders(headers)
+            //.and()
         .subscribeTo('/queue/' + uid)
             .callback(whatToDoWhenMessageComming)
-            //.withHeaders(headers)
+            .withHeaders(headers)
         .connect();
 
     function whatToDoWhenMessageComming(message) {
