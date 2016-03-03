@@ -18,9 +18,13 @@ stompdk.config(
 
         });
 
-stompdk.controller('stompdkController', function($scope, ngstomp) {
+stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
 
 	console.log("STOMP START: ");
+
+	var uid = $auth.getPayload().sub;
+	console.log("uid: ", uid);
+
     //var items = [];
     var vm = this, headers = {
             foo : 'bar'            
@@ -32,7 +36,7 @@ stompdk.controller('stompdkController', function($scope, ngstomp) {
             .callback(whatToDoWhenMessageComming)
             .withHeaders(headers)
             .and()
-        .subscribeTo('/queue/q1')
+        .subscribeTo('/queue/' + uid)
             .callback(whatToDoWhenMessageComming)
             //.withHeaders(headers)
         .connect();
