@@ -18,27 +18,28 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
         //debugger;
         //console.log ($auth.getToken());
         console.log ("getPayload: ", $auth.getPayload().sub);
-        $uid = $auth.getPayload().sub;
+        var uid = $auth.getPayload().sub;
 
 
-    return {
-        getTasks : function() {
-            return $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-            })
-        },
-        setTask : function(taskName) {
-            $uuid = uuid4.generate();
-            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": taskName}]];
-            return $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data
-            })
-        }
-    };
+        return {
+            getTasks : function() {
+                return $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+                })
+            },
+            setTask : function(taskName) {
+                var uuid = uuid4.generate();
+                var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
+                //console.log ("data: ", data);
+                return $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data
+                })
+            }
+        };
 
 
 
