@@ -22,6 +22,7 @@
     "sockjs-client": "^1.0.3",
     "stomp-websocket": "^2.3.4",
     "angular-draggable-bt": "*",
+    "DateJS": "datejs#^1.0.0-rc3",
     "angular-resource": "^1.5.0",
     "angular-uuid4": "^0.3.1"
   },
