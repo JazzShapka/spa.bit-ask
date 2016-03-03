@@ -15,7 +15,7 @@ buffer.config(['$routeProvider',
       }).
       when('/buffer/:bufferId', {
         templateUrl: 'app/views/buffer/buffer-detail.html',
-        controller: 'bufferDetailCtrl'
+        controller: 'myController2'
       }).
       otherwise({
         redirectTo: '/buffer'

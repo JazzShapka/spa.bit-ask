@@ -42,7 +42,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
                 data: data
-            }).success(function (data, status, header, config){
+            }).success(function (data, status, header, config) {
                 callback(data);
             });
         };
