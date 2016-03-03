@@ -1,3 +1,14 @@
+'use strict';
+
+/* Services */
+
+/**
+ * Created by WebStorm.
+ * User: ANLyhin
+ * Date: 03.03.2016
+ * Time: 10:25
+ */
+
 var bufferService = angular.module('bufferService', ['ngResource', 'uuid4']);
 
 bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
