@@ -1,5 +1,5 @@
 <!-- Большая круглая летающая кнопка меню -->
-<div ng-controller="FloatingButtonCtrl as button" ng-cloak>
+<div ng-controller="FloatingButtonCtrl as button" ng-cloak class="floating-button">
     <md-fab-speed-dial
             md-direction="up"
             md-open="button.isOpen"
@@ -14,24 +14,32 @@
             </md-button>
         </md-fab-trigger>
         <md-fab-actions>
-             <md-button aria-label="logout" class="md-fab md-raised md-mini">
-                 <md-tooltip md-direction="left">Выход</md-tooltip>
-                 <a href="/#/auth/logout">
-                     <md-icon class="material-icons">exit_to_app</md-icon>
-                 </a>
-             </md-button>
              <md-button aria-label="na" class="md-fab md-raised md-mini">
-                 <md-tooltip md-direction="left">Изменить пароль</md-tooltip>
-                 <a href="/#/auth/change-password">
-                     <md-icon class="material-icons">fingerprint</md-icon>
-                 </a>
-             </md-button>
-             <md-button aria-label="na" class="md-fab md-raised md-mini">
-                 <md-tooltip md-direction="left">На главную</md-tooltip>
+                 <md-tooltip md-direction="left">Добавить цель</md-tooltip>
                  <a href="/">
-                    <md-icon class="material-icons">home</md-icon>
+                    <md-icon class="material-icons">star</md-icon>
                  </a>
              </md-button>
+            <md-button aria-label="na" class="md-fab md-raised md-mini">
+                <md-tooltip md-direction="left">Добавить структуру</md-tooltip>
+                <a href="/">
+                    <md-icon class="material-icons">person_add</md-icon>
+                </a>
+            </md-button>
+            <md-button aria-label="na" class="md-fab md-raised md-mini">
+                <md-tooltip md-direction="left">Добавить встречу</md-tooltip>
+                <a href="/">
+                    <md-icon class="material-icons">group_add</md-icon>
+                </a>
+            </md-button>
+            <md-button aria-label="na" class="md-fab md-raised md-mini" ng-click="addTask()">
+                <md-tooltip md-direction="left">Добавить задачу</md-tooltip>
+                <md-icon class="material-icons">assignment_turned_in</md-icon>
+            </md-button>
+            <md-button aria-label="logout" class="md-fab md-raised md-mini">
+                <md-tooltip md-direction="left">Добавить напоминание</md-tooltip>
+                <md-icon class="material-icons">alarm_add</md-icon>
+            </md-button>
         </md-fab-actions>
     </md-fab-speed-dial>
 </div>

@@ -15,9 +15,9 @@ angular.module('bitaskApp.hierarchy_task', [
             controller: 'HierarchyTaskCtrl'
         });
     }])
-    .controller('HierarchyTaskCtrl', function($scope, $log, tasksService, dateService, $document, $auth) {
+    .controller('HierarchyTaskCtrl', function($scope, $log, taskService, dateService, $document, $auth) {
 
-        $scope.tasks = tasksService.tasks;
+        $scope.tasks = taskService.tasks;
 
         /**
          * Центровка холста.
@@ -61,16 +61,21 @@ angular.module('bitaskApp.hierarchy_task', [
          * Обновляет счетчик детей задачи
          */
         $scope.$watch(function () {
-                return tasksService.tasks;
-            }, tasksService.refreshChildren, true);
+                return taskService.tasks;
+            }, taskService.refreshChildren, true);
 
+        /**
+         * Галочка - выполнить задачу.
+         * @param taskId
+         */
         $scope.comleteTask = function (taskId){
-            if(tasksService.tasks_indexed[taskId].status == 'delivered')
-                tasksService.tasks_indexed[taskId].status = 'completed';
-            else if(tasksService.tasks_indexed[taskId].status == 'completed')
-                tasksService.tasks_indexed[taskId].status = 'delivered';
+            if(taskService.tasks_indexed[taskId].status == 'delivered')
+                taskService.tasks_indexed[taskId].status = 'completed';
+            else if(taskService.tasks_indexed[taskId].status == 'completed')
+                taskService.tasks_indexed[taskId].status = 'delivered';
 
         };
+
 
         /**
          * Регулярная задача или нет
@@ -80,7 +85,7 @@ angular.module('bitaskApp.hierarchy_task', [
         $scope.isRegular = function (taskId){
             try
             {
-                var regularityData = JSON.parse(tasksService.tasks_indexed[taskId].regularSetting);
+                var regularityData = JSON.parse(taskService.tasks_indexed[taskId].regularSetting);
                 return regularityData.SelectedSetting != 'none';
             }
             catch(e){
@@ -94,7 +99,7 @@ angular.module('bitaskApp.hierarchy_task', [
          */
         $scope.getShareClass = function (taskId){
 
-            if(tasksService.tasks_indexed[taskId].shared)
+            if(taskService.tasks_indexed[taskId].shared)
                 return 'blue';
             else
                 return 'gray';
@@ -130,16 +135,15 @@ angular.module('bitaskApp.hierarchy_task', [
          */
         $scope.getUserName = function (taskId){
 
-
             // Автор, не исполнитель.
             if($scope.isAuthor(taskId) && !$scope.isPerformer(taskId))
             {
-                return 'Исполнитель: ' + tasksService.tasks_indexed[taskId].performer;
+                return 'Исполнитель: ' + taskService.tasks_indexed[taskId].performer;
             }
             // Исполнитель, не автор.
             else if(!$scope.isAuthor(taskId) && $scope.isPerformer(taskId))
             {
-                return 'От: ' + tasksService.tasks_indexed[taskId].author;
+                return 'От: ' + taskService.tasks_indexed[taskId].author;
             }
             // И автор, и исполнитель.
             else
@@ -152,14 +156,45 @@ angular.module('bitaskApp.hierarchy_task', [
          * @param taskId
          */
         $scope.getDateClass = function (taskId){
+            var task = taskService.tasks_indexed[taskId];
 
+            if(task.status == 'completed')
+                return 'gray';
+
+            var time_limit = $scope.userTimeLimit(taskId);
+            if(time_limit < dateService.dateServer)
+                return 'red';
+            else if(time_limit == 0)
+                return "gray";
+            else
+                return "blue";
         };
+        /**
+         * Определяет, показывать календарь или нет.
+         * @param taskId
+         * @returns {boolean}
+         */
+        $scope.isShowedDate = function (taskId){
+            if(taskService.tasks_indexed[taskId].status == "delivered")
+            {
+                return $scope.userTimeLimit(taskId) > 0;
+            }
+            else
+            {
+                return false;
+            }
+        };
+        /**
+         * Получить title к дате
+         * @param taskId
+         * @returns {*}
+         */
+        $scope.getDateString = function (taskId){
+            if(taskService.tasks_indexed[taskId].status == "delivered")
+                return new Date($scope.userTimeLimit(taskId) * 1000).toString('dd.MM.yyyy');
+            else if(taskService.tasks_indexed[taskId].status == "completed")
+                return "Выполнено: " + new Date(taskService.tasks_indexed[taskId].completeTime * 1000).toString('dd.MM.yyyy');
 
-        $scope.getDate = function (timestamp, format){
-            if(format === undefined)
-                format = 'dd.MM.yyyy';
-
-            return new Date(timestamp * 1000).toString(format);
         };
 
 
@@ -169,17 +204,14 @@ angular.module('bitaskApp.hierarchy_task', [
          * @returns {*}
          */
         $scope.userTimeLimit = function (taskId){
-            if(tasksService.tasks_indexed.hasOwnProperty(taskId))
-            {
-                if($scope.isAuthor(taskId))
-                    return tasksService.tasks_indexed[taskId].timeLimitAuthor;
-                else
-                    return tasksService.tasks_indexed[taskId].timeLimit;
-            }
+
+            var task = taskService.tasks_indexed[taskId];
+
+            if($scope.isAuthor(taskId))
+                return task.dateEndAuthor + (task.timeEndAuhor==null?0:task.timeEndAuhor);
             else
-            {
-                return null;
-            }
+                return task.dateEndPerformer + (task.timeEndPerformer==null?0:task.timeEndPerformer);
+
         };
 
         /**
@@ -188,8 +220,8 @@ angular.module('bitaskApp.hierarchy_task', [
          * @returns {boolean}
          */
         $scope.isAuthor = function (taskId){
-            if(tasksService.tasks_indexed.hasOwnProperty(taskId))
-                return (tasksService.tasks_indexed[taskId].role & CONST.ROLE_AUTHOR) != 0;
+            if(taskService.tasks_indexed.hasOwnProperty(taskId))
+                return (taskService.tasks_indexed[taskId].role & CONST.ROLE_AUTHOR) != 0;
             else
                 return false;
         };
@@ -200,13 +232,100 @@ angular.module('bitaskApp.hierarchy_task', [
          * @returns {boolean}
          */
         $scope.isPerformer = function (taskId){
-            if(tasksService.tasks_indexed.hasOwnProperty(taskId))
-                return (tasksService.tasks_indexed[taskId].role & CONST.ROLE_PERFORMER) != 0;
+            if(taskService.tasks_indexed.hasOwnProperty(taskId))
+                return (taskService.tasks_indexed[taskId].role & CONST.ROLE_PERFORMER) != 0;
             else
                 return false;
         };
 
+        /**
+         * Получить читаемую строку регулярности.
+         * @param setting
+         * @returns {*}
+         */
+        $scope.getRegularityString = function (setting){
+            var regulationCaptionsDefault = [
+                ['none', "Не установлено"],
+                ['everyDay', "Каждый день"],
+                ['everyWeek', "Каждую неделю"],
+                ['everyMounth', "Каждый месяц"],
+                ['everyYear', "Каждый год"],
+                ['custom', "Настроить..."]
+            ];
 
-        var asd = $auth.getPayload();
-        //debugger;
+            try {
+                var regularityData = JSON.parse(setting);
+            }
+            catch(e)
+            {
+                return "Не настроено";
+            }
+
+            var par, i, orderD, kindD;
+
+            orderD = {'first':"первый",'second':"второй",'third':"третий",'fourth':"четвертый",'last':"последний"};
+            kindD = {'Mon':"понедельник",'Tue':"вторник",'Wed':"среда",'Thu':"четверг",'Fri':"пятница",
+                'Sat':"суббота",'Sun':"воскресенье",'day':"день",'workday':"рабочий день",'weekend':"выходной"};
+
+            if(regularityData.SelectedSetting == 'custom')
+            {
+                if(regularityData.period == 'day')
+                {
+                    return "ПОВТОР: Каждый " + regularityData.frequency + " день";
+                }
+                else if(regularityData.period == 'week')
+                {
+                    var daysOfWeek = {'Mon':"Пн",'Tue':"Вт",'Wed':"Ср",'Thu':"Чт",'Fri':"Пт",'Sat':"Сб",'Sun':"Вс"};
+                    par = [];
+                    for(i=0; i<regularityData.parameter.length; i++)
+                    {
+                        par.push(daysOfWeek[regularityData.parameter[i]]);
+                    }
+                    return "ПОВТОР: Каждую " + regularityData.frequency + " неделю, по " + par;
+                }
+                else if(regularityData.period == 'mounth')
+                {
+                    if(typeof(regularityData.parameter) == 'object')
+                    {
+                        return "ПОВТОР: Каждый " + regularityData.frequency + " месяц, " + regularityData.parameter + " числа";
+                    }
+                    else
+                    {
+                        return "ПОВТОР: Каждый " + regularityData.frequency + " месяц, каждый "
+                            + orderD[regularityData.orderDay] + " " + kindD[regularityData.kindDay];
+                    }
+                }
+                else if(regularityData.period == 'year')
+                {
+                    var monthOfYear = {'jan':"январь",'feb':"февраль",'mar':"март",'apr':"апрель",
+                        'may':"май",'jun':"июнь",'jul':"июль",'aug':"август",'sep':"сентябрь",
+                        'oct':"октябрь",'nov':"ноябрь",'dec':"декабрь"};
+                    par = [];
+                    for(i=0;i<regularityData.parameter.length;i++)
+                    {
+                        par.push(monthOfYear[regularityData.parameter[i]]);
+                    }
+
+                    if(parseInt(regularityData.orderDay))
+                    {
+                        return "ПОВТОР: Каждый " + egularityData.frequency + " год, по " + par
+                            + ", каждый " + regularityData.orderDay + " день";
+                    }
+                    else
+                    {
+                        return "ПОВТОР: Каждый " + regularityData.frequency + " год, по " + par
+                            + "каждый " + orderD[regularityData.orderDay] + " " + kindD[regularityData.kindDay];
+
+                    }
+                }
+            }
+            for(i=0;i<regulationCaptionsDefault.length;i++)
+            {
+                if(regulationCaptionsDefault[i][0] == regularityData.SelectedSetting)
+                {
+                    return "ПОВТОР: " + regulationCaptionsDefault[i][1];
+                }
+            }
+            return "Не настроено";
+        }
     });

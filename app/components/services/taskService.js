@@ -1,8 +1,8 @@
 /**
  * Created by SNKraynov on 19.02.2016.
  */
-angular.module('bitaskApp.service.task', [])
-    .service('tasksService', function ($timeout, bufferService){
+angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
+    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', function ($timeout, $mdDialog, bufferService){
 
         var self = this;
 
@@ -11,6 +11,28 @@ angular.module('bitaskApp.service.task', [])
 
         // Проиндексированные задачи
         self.tasks_indexed = {};
+
+        /**
+         * Открыть редактор задачи.
+         * @param mode - 'sub_task' || 'brother_task' || 'edit_task'
+         */
+        self.showTaskEditor = function (mode){
+
+            var locals = {
+                mode:mode
+            }
+
+            $mdDialog.show({
+                controller: 'taskEditor',
+                templateUrl: 'app/views/editors/task/taskEditor.html',
+                onRemoving: function (){
+                    if(typeof locals.onClose == 'function')
+                        locals.onClose();
+                },
+                locals : locals,
+                clickOutsideToClose:true,
+            })
+        }
 
         self.refreshChildren = function (){
             for(var i=0; i<self.tasks.length; i++)
@@ -30,15 +52,11 @@ angular.module('bitaskApp.service.task', [])
         };
         self.refreshChildren();
 
-        bufferService.getTasks().success(function(data) {
-            console.log(data);
-        });
-
 
         $timeout(function (){
             self.tasks_indexed["13cb2b00-c37c-f52a-1f2a-59b934a4c2b8"].regularSetting = '';
         }, 3000);
-    });
+    }]);
 
 
 var __tasks = [
@@ -50,13 +68,13 @@ var __tasks = [
 
         "timeBeginAuthor": null,
         "timeEndAuhor": null,
-        "dateBeginAuthor": 1457136000,
-        "dateEndAuthor": 1457222400,
+        "dateBeginAuthor": 1456876800,
+        "dateEndAuthor": 1456876800,
 
         "timeBeginPerformer": null,
         "timeEndPerformer": null,
-        "dateBeginPerformer": 1457136000,
-        "dateEndPerformer": 1457222400,
+        "dateBeginPerformer": 1456876800,
+        "dateEndPerformer": 1456876800,
 
         "regularSetting":'{"SelectedSetting":"everyWeek"}',
 
@@ -65,6 +83,7 @@ var __tasks = [
 
         "shared":0,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -97,6 +116,7 @@ var __tasks = [
 
         "shared":0,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"completed",
         "completeTime": 0,
         "reminder": 0,
@@ -129,6 +149,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -161,6 +182,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -193,6 +215,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -225,6 +248,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -257,6 +281,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,
@@ -289,6 +314,7 @@ var __tasks = [
 
         "shared":1,
         "directionBranch": "right",
+        "viewBranch":"hide",
         "status":"delivered",
         "completeTime": 0,
         "reminder": 0,

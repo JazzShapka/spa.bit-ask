@@ -70,31 +70,6 @@
 .task_background .task .name > span{
     white-space: nowrap;
 }
-.task_background .task .buttons{
-    margin-left: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-flow: row nowrap;
-}
-.task_background .task .sub_buttons{
-    width: 96px;
-    margin-left: -96px;
-    align-items: center;
-    justify-content: flex-start;
-    flex-flow: row nowrap;
-    background-color: white;
-    display: none;
-}
-.task_background .task .sub_buttons:hover{
-    display: flex;
-}
-.task_background .task .buttons:hover + .sub_buttons{
-    display: flex;
-}
-.task_background .task .buttons .material-icons.gray.none{
-    display: none;
-}
 
 // Левый соеденитель
 .task_background .left_connect{
@@ -172,7 +147,34 @@
     order: 4;
 }
 
+// Кнопки задачи
+.task_background .task .buttons{
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+}
+.task_background .task .sub_buttons{
+    width: 96px;
+    margin-left: -96px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+    background-color: white;
+    display: none;
+}
+.task_background .task .sub_buttons:hover{
+    display: flex;
+}
+.task_background .task .buttons:hover + .sub_buttons{
+    display: flex;
+}
+.task_background .task .buttons .material-icons.gray.none{
+    display: none;
+}
 
+// Цвета иконок
 .task_background .material-icons.gray{
     color: $normal-icon-color;
 }

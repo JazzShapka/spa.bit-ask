@@ -4,8 +4,10 @@
 'use strict';
 
 angular.module('bitaskApp.floating_button', [])
-    .controller('FloatingButtonCtrl', function (){
+    .controller('FloatingButtonCtrl', ['$scope', 'taskService', function ($scope, taskService, $mdDialog){
 
+        $scope.addTask = function (){
+            taskService.showTaskEditor('sub_task');
+        }
 
-
-    });
+    }]);
