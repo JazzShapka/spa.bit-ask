@@ -33,9 +33,19 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
     //console.log("getTasks: ", bufferService.getTasks());
     //$scope.tasks = bufferService.getTasks();
 
-    bufferService.getTasks().success(function(data) {
+    /* factory */
+    /*bufferService.getTasks().success(function(data) {
       $scope.tasks = data;
       console.log(data);
+    });*/
+
+    bufferService.setTask(function(data) {
+      console.log("SETTASK: ");
+    }, 'Zadacha');
+
+    bufferService.getTasks(function(data) {
+      $scope.tasks = data;
+      console.log("data456: ", data);
     });
 
 
