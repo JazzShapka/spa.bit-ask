@@ -55,6 +55,7 @@ stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
         //items.push(JSON.parse(message.body));
         //vm.items.push(JSON.parse(message.body));
         vm.items.push(message.body);
+        $scope.items = vm.items;
         console.log("items: ", vm.items);
         console.log("STOMP message: ", message);
         console.log("STOMP message.body: ", message.body);
