@@ -6,33 +6,18 @@ angular.module('bitaskApp.service.task', [])
 
         var self = this;
 
-        self.tasks = [
-            {id:'1', name:'task_one', index:23, parentId: null},
-            {id:'2', name:'task_two', index:32, parentId: null},
-            {id:'3', name:'task_three', index:72.6, parentId: '2'},
-            {id:'4', name:'task_four', index:72.7, parentId: '2'},
-            {id:'5', name:'task_fife', index:72.8, parentId: '2'},
-            {id:'6', name:'Тра та та', index:72.9, parentId: '2'},
-            {id:'7', name:'Оло ло ло', index:72.1, parentId: '2'},
-            {id:'8', name:'Тру ту ту', index:98, parentId: null},
-            {id:'9', name:'Хе хей', index:98, parentId: null},
-            {id:'10', name:'Задачка', index:98, parentId: '8'},
-            {id:'11', name:'Суслик', index:98, parentId: '8'},
-            {id:'12', name:'!!!!!!!!!', index:98, parentId: '8'},
-            {id:'13', name:'Пшшшшшшш', index:98, parentId: null},
-            {id:'14', name:'Винни пух', index:98, parentId: null},
-            {id:'15', name:'Пятачек Пятачек Пятачек Пятачек Пятачек Пятачек Пятачек Пятачек', index:98, parentId: '10'},
-            {id:'16', name:'Иа', index:98, parentId: '10'},
-            {id:'17', name:'Иo=', index:98, parentId: '16'},
-            {id:'18', name:'Иn', index:98, parentId: '16'},
-            {id:'19', name:'sdfsdfsdf sdfsdfsdf sdfsdfsdf sdfsdfsdf sdfsdfsdf ', index:98, parentId: '15'},
-            {id:'20', name:'Иsdfsdfn', index:98, parentId: '15'},
-            {id:'21', name:'Иsdsdfsdfn', index:98, parentId: '15'}
-        ];
+        // Массив задач
+        self.tasks = __tasks;
+
+        // Проиндексированные задачи
+        self.tasks_indexed = {};
 
         self.refreshChildren = function (){
             for(var i=0; i<self.tasks.length; i++)
             {
+                // индексируем задачи
+                self.tasks_indexed[self.tasks[i].id] = self.tasks[i];
+
                 self.tasks[i].children_quantity = 0;
                 for(var j=0; j<self.tasks.length; j++)
                 {
@@ -46,16 +31,266 @@ angular.module('bitaskApp.service.task', [])
         self.refreshChildren();
 
         $timeout(function (){
-            self.tasks[9].parentId = '1';
-        }, 2000);
-
-        $timeout(function (){
-            self.tasks[12].parentId = '4';
-            self.tasks[13].parentId = '4';
-            self.tasks[8].parentId = '4';
-        }, 5000);
-
-        $timeout(function (){
-            self.tasks[3].parentId = '19';
-        }, 7000);
+            self.tasks_indexed["13cb2b00-c37c-f52a-1f2a-59b934a4c2b8"].regularSetting = '';
+        }, 3000);
     });
+
+
+var __tasks = [
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c2b8",
+        "taskName":"Задача ололо",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":0,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":null,
+        "role":18,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c218",
+        "taskName":"Задача qwe",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":0,
+        "directionBranch": "right",
+        "status":"completed",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":null,
+        "role":17,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c228",
+        "taskName":"Задача asdasd",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":"13cb2b00-c37c-f52a-1f2a-59b934a4c238",
+        "role":17,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c238",
+        "taskName":"Задача zxczxczxc",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":null,
+        "role":17,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c248",
+        "taskName":"Задача fghfghfgh",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":"13cb2b00-c37c-f52a-1f2a-59b934a4c238",
+        "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c258",
+        "taskName":"Задача убить всех людей",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":"13cb2b00-c37c-f52a-1f2a-59b934a4c238",
+        "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c268",
+        "taskName":"Купить атомную бомбу",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":"13cb2b00-c37c-f52a-1f2a-59b934a4c258",
+        "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    },
+    {
+        "id":"13cb2b00-c37c-f52a-1f2a-59b934a4c278",
+        "taskName":"Научиться пользоваться бомбой",
+        "taskDescription":"Описание задачи",
+        "createTime":1442895357,
+
+        "timeBeginAuthor": null,
+        "timeEndAuhor": null,
+        "dateBeginAuthor": 1457136000,
+        "dateEndAuthor": 1457222400,
+
+        "timeBeginPerformer": null,
+        "timeEndPerformer": null,
+        "dateBeginPerformer": 1457136000,
+        "dateEndPerformer": 1457222400,
+
+        "regularSetting":'{"SelectedSetting":"everyWeek"}',
+
+        "author": "author@mail.ru",
+        "performer": "performer@mail.ru",
+
+        "shared":1,
+        "directionBranch": "right",
+        "status":"delivered",
+        "completeTime": 0,
+        "reminder": 0,
+        "changed": 0,
+        "mapIndex":"0",
+        "parentId":"13cb2b00-c37c-f52a-1f2a-59b934a4c258",
+        "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+        "actions":"227"
+    }
+];

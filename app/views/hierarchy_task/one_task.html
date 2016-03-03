@@ -1,18 +1,74 @@
 <div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true">
 
-    <div class="left_connect"><div class="canvas_block"></div><div class="canvas_block"></div></div>
+    <!-- Соеденительные линии -->
+    <div class="left_connect">
+        <div class="canvas_block"></div>
+        <div class="canvas_block"></div>
+    </div>
 
+    <!-- Блок задачи -->
     <div class="task" ng-draggable helper="clone" cursor="default">
-        <md-checkbox aria-label="complete" class="completebox md-primary"></md-checkbox>
+        <div>
+            <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
+            <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id)" aria-label="complete" class="completebox md-primary"></md-checkbox>
+        </div>
+
         <div class="name">
-            <span>{{task.name}}</span>
+            <md-tooltip md-direction="top">{{task.taskName}}</md-tooltip>
+            <span>{{task.taskName}}</span>
         </div>
+
+
         <div class="buttons">
-            <md-icon class="material-icons">more_vert</md-icon>
+            <div>
+                <md-icon ng-show="!!task.shared" class="material-icons blue">share</md-icon>
+            </div>
+            <div>
+                <md-icon class="material-icons" ng-class="getUserClass(task.id)">account_box</md-icon>
+            </div>
+            <div ng-switch on="isRegular(task.id)">
+                <md-icon ng-switch-when="false" ng-show="task.timeLimit > 0" class="material-icons" ng-class="getDateClass(task.id)">date_range</md-icon>
+                <md-icon ng-switch-when="true" class="material-icons gray">cached</md-icon>
+            </div>
+            <div>
+                <md-icon class="material-icons gray">more_vert</md-icon>
+            </div>
         </div>
+
+
+        <div class="sub_buttons">
+            <div>
+                <md-tooltip md-direction="bottom">Поделиться…</md-tooltip>
+                <md-icon class="material-icons" ng-class="getShareClass(task.id)">share</md-icon>
+            </div>
+            <div>
+                <md-tooltip md-direction="top">{{getUserName(task.id)}}</md-tooltip>
+                <md-icon class="material-icons" ng-class="getUserClass(task.id)">account_box</md-icon>
+            </div>
+            <div ng-switch on="isRegular(task.id)" >
+                <div ng-switch-when="false">
+                    <md-tooltip md-direction="bottom">Календарь</md-tooltip>
+                    <md-icon class="material-icons" ng-class="getDateClass(task.id)">date_range</md-icon>
+                </div>
+                <div ng-switch-when="true">
+                    <md-tooltip md-direction="bottom">Повторение</md-tooltip>
+                    <md-icon class="material-icons gray">cached</md-icon>
+                </div>
+            </div>
+            <div>
+                <md-tooltip md-direction="top">Контекстное меню</md-tooltip>
+                <md-icon class="material-icons gray">more_vert</md-icon>
+            </div>
+        </div>
+
+
     </div>
 
     <div class="children" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
 
-    <div class="right_connect" ng-show="task.children_quantity"><div class="canvas_block"></div><div class="canvas_block"></div></div>
+    <!-- Соеденительные линии -->
+    <div class="right_connect" ng-show="task.children_quantity">
+        <div class="canvas_block"></div>
+        <div class="canvas_block"></div>
+    </div>
 </div>
