@@ -2,7 +2,7 @@
  * Created by SNKraynov on 19.02.2016.
  */
 angular.module('bitaskApp.service.task', [])
-    .service('tasksService', function ($timeout){
+    .service('tasksService', function ($timeout, bufferService){
 
         var self = this;
 
@@ -29,6 +29,11 @@ angular.module('bitaskApp.service.task', [])
             }
         };
         self.refreshChildren();
+
+        bufferService.getTasks().success(function(data) {
+            console.log(data);
+        });
+
 
         $timeout(function (){
             self.tasks_indexed["13cb2b00-c37c-f52a-1f2a-59b934a4c2b8"].regularSetting = '';

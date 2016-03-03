@@ -27,7 +27,7 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 data: data
             })
         }
-    }
+    };
 
 
 
