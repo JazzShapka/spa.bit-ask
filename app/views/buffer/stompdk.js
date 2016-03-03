@@ -5,7 +5,7 @@ stompdk.config(
             ngstompProvider
                 .url('http://bitask-dev5.app.kras.1cbit.ru:15674/stomp')
                 .credential('guest', 'guest')
-                .debug(true)
+                //.debug(true)
                 .vhost('/')
                 .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
@@ -24,12 +24,14 @@ stompdk.controller('stompdkController', function($scope, ngstomp) {
     var items = [];
 
     ngstomp
-        .subscribeTo('/topic/item')
+        .subscribeTo('/queue/queue')
             .callback(whatToDoWhenMessageComming)
         .connect()
 
     function whatToDoWhenMessageComming(message) {
         items.push(JSON.parse(message.body));
+        console.log("items: ", items);
+        console.log("STOMP message: ", message);
         console.log("STOMP message.body: ", message.body);
     }
 });
