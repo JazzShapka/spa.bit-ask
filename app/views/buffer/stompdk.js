@@ -1,3 +1,12 @@
+'use strict';
+
+/**
+ * Created by WebStorm.
+ * User: ANLyhin
+ * Date: 03.03.2016
+ * Time: 17:09
+ */
+
 var stompdk = angular.module('stompdk', [ 'AngularStompDK' ]);
 
 stompdk.config(
