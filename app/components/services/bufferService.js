@@ -18,9 +18,9 @@ bufferService.factory('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
             })
         },
-        setTask : function() {
+        setTask : function(taskName) {
             $uuid = uuid4.generate();
-            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": "tName " + $uuid}]];
+            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": taskName}]];
             return $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
