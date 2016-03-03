@@ -27,7 +27,8 @@ stompdk.config(
 
         });
 
-stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
+stompdk.controller('stompdkController', ['bufferService', '$auth',
+	function($scope, ngstomp, $auth) {
 
 	console.log("STOMP START: ");
 
@@ -39,6 +40,12 @@ stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
             foo : 'bar'            
         };
     vm.items = [];
+
+    $scope.bufferService = bufferService;
+    bufferService.getId(function(data) {
+      //$scope.tasks = data;
+      console.log("id: ", data);
+    });
 
     ngstomp
         //.subscribeTo('/queue/queue')
@@ -63,4 +70,4 @@ stompdk.controller('stompdkController', function($scope, ngstomp, $auth) {
     //console.log("items: ", vm.items);
     //console.log("STOMP message: ", vm.message);
     //console.log("STOMP message.body: ", vm.message.body);
-});
+}]);

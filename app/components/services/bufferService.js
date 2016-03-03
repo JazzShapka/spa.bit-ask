@@ -23,6 +23,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
 
         this.getTasks = getTasks;
         this.setTask = setTask;
+        this.getId = getId;
         
         /* service */
         function getTasks(callback) {
@@ -46,6 +47,16 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 callback(data);
             });
         };
+        function getId(callback) {
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: '[[1, false, "user/getid"]]'
+            }).success(function (data, status, header, config) {
+                callback(data);
+            });
+        };
+
 
 
 

@@ -48,5 +48,10 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
       console.log("data456: ", data);
     });
 
+    bufferService.getId(function(data) {
+      //$scope.tasks = data;
+      console.log("id: ", data);
+    });
+
 
   }]);
