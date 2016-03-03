@@ -7,6 +7,7 @@ stompdk.config(
                 .credential('guest', 'guest')
                 .debug(true)
                 .vhost('/')
+                .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
 
             $routeProvider.
