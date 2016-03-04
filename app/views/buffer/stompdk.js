@@ -46,9 +46,9 @@ stompdk.controller('stompdkController',
     //$scope.bufferService = bufferService;
     //var id = 789;
     bufferService.getId(function(data) {
-      id = data[0][2];
+      //var id = data[0][2];
       console.log("id: ", data[0][2]);
-      ngstompSubscribe();
+      ngstompSubscribe(data[0][2]);
       //console.log(ide);
     });
     //console.log("ide: ", ide);
@@ -59,7 +59,7 @@ stompdk.controller('stompdkController',
       console.log("data456: ", data);
     });*/
 
-    function ngstompSubscribe() {
+    function ngstompSubscribe(id) {
 	    ngstomp
 	        //.subscribeTo('/queue/queue')
 	            //.callback(whatToDoWhenMessageComming)
