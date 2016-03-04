@@ -48,7 +48,7 @@ stompdk.controller('stompdkController',
     bufferService.getId(function(data) {
       id = data[0][2];
       console.log("id: ", data[0][2]);
-      initngStomp();
+      ngstompSubscribe();
       //console.log(ide);
     });
     //console.log("ide: ", ide);
@@ -59,7 +59,7 @@ stompdk.controller('stompdkController',
       console.log("data456: ", data);
     });*/
 
-    function initngStomp() {
+    function ngstompSubscribe() {
 	    ngstomp
 	        //.subscribeTo('/queue/queue')
 	            //.callback(whatToDoWhenMessageComming)
