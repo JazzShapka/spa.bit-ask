@@ -11,7 +11,7 @@
 
 var bitaskServices = angular.module('bitaskServices', ['ngResource']);
 
-bitaskServices.service('SessionService', function($stomp, $rootScope) {
+bitaskServices.service('sessionService', function($stomp, $rootScope) {
 
     // Connect to the server on path /sockjs and then create
     // the STOMP protocol client
