@@ -9,7 +9,7 @@
 
 var stompService = angular.module('stompService', [ 'AngularStompDK' ]);
 
-/*stompService.config(
+stompService.config(
 	function(ngstompProvider, $routeProvider){
             ngstompProvider
                 .url('http://bitask-dev5.app.kras.1cbit.ru:15674/stomp')
@@ -19,23 +19,23 @@ var stompService = angular.module('stompService', [ 'AngularStompDK' ]);
                 .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
 
-            $routeProvider.
+            /*$routeProvider.
       		when('/stomp', {
         		templateUrl: 'app/views/buffer/stompdk.html',
         		controller: 'stompdkController'
-      		});
+      		});*/
 
-        });*/
+        });
 
 
-stompService.service('stompService', ['uuid4', 'ngstomp',
+stompService.service('stompService', ['ngstomp',
 	function(ngstomp) {
 
-	console.log("STOMP START: ");
+	console.log("STOMP START from service: ");
     //$scope.bufferService = bufferService;
 
-	var uid = $auth.getPayload().sub;
-	console.log("uid: ", uid);
+	//var uid = $auth.getPayload().sub;
+	//console.log("uid: ", uid);
     //var uid = '123';
 
     //var items = [];

@@ -30,7 +30,7 @@ stompdk.config(
 stompdk.controller('stompdkController',
 	function($scope, ngstomp, bufferService, $auth) {
 
-	console.log("STOMP START: ");
+	console.log("STOMP START from stompdk: ");
     //$scope.bufferService = bufferService;
 
 	var uid = $auth.getPayload().sub;
@@ -48,7 +48,7 @@ stompdk.controller('stompdkController',
     bufferService.getId(function(data) {
       //var id = data[0][2];
       console.log("id: ", data[0][2]);
-      ngstompSubscribe(data[0][2]);
+      //ngstompSubscribe(data[0][2]);
       //console.log(ide);
     });
     //console.log("ide: ", ide);

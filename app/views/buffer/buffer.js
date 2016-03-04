@@ -53,7 +53,8 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService',
 
     bufferService.getId(function(data) {
       $scope.id = data;
-      console.log("getId: ", data);
+      console.log("getId: ", data[0][2]);
+      stompService.stompSubscribe(data[0][2]);
     });
 
 
