@@ -22,11 +22,14 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService',
-  function($scope, bufferService) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService',
+  function($scope, bufferService, stompService) {
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';
     $scope.bufferService = bufferService;
+    $scope.stompService = stompService;
+    //stompService.stompSubscribe();
+    
     //$scope.tasks = bufferService.getTasks();
     //bufferService.getCard();
     

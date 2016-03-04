@@ -18,7 +18,7 @@ angular.module('bitaskApp', [
     'bitaskApp.service.task',
     'bufferService',
     'buffer',
-    'stompdk'
+    //'stompdk'
 ])
 
 // Конфигурация приложения
