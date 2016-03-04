@@ -40,17 +40,17 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
     });*/
 
     bufferService.setTask(function(data) {
-      console.log("SETTASK: ");
-    }, 'Zadacha');
+      console.log("setTask: ", data);
+    }, 'New task');
 
     bufferService.getTasks(function(data) {
       $scope.tasks = data;
-      console.log("data456: ", data);
+      console.log("getTasks: ", data);
     });
 
     bufferService.getId(function(data) {
-      //$scope.tasks = data;
-      console.log("id: ", data);
+      $scope.id = data;
+      console.log("getId: ", data);
     });
 
 

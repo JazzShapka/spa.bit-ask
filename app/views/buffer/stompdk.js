@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
  * Created by WebStorm.
@@ -27,13 +27,15 @@ stompdk.config(
 
         });
 
-stompdk.controller('stompdkController', ['bufferService', '$auth',
-	function($scope, ngstomp, $auth) {
+stompdk.controller('stompdkController',
+	function($scope, ngstomp, bufferService, $auth) {
 
 	console.log("STOMP START: ");
+    //$scope.bufferService = bufferService;
 
 	var uid = $auth.getPayload().sub;
 	console.log("uid: ", uid);
+    //var uid = '123';
 
     //var items = [];
     var vm = this, headers = {
@@ -41,11 +43,17 @@ stompdk.controller('stompdkController', ['bufferService', '$auth',
         };
     vm.items = [];
 
-    $scope.bufferService = bufferService;
+    //$scope.bufferService = bufferService;
     bufferService.getId(function(data) {
       //$scope.tasks = data;
       console.log("id: ", data);
     });
+
+    /*$scope.bufferService = bufferService;
+    bufferService.getTasks(function(data) {
+      $scope.tasks = data;
+      console.log("data456: ", data);
+    });*/
 
     ngstomp
         //.subscribeTo('/queue/queue')
@@ -70,4 +78,4 @@ stompdk.controller('stompdkController', ['bufferService', '$auth',
     //console.log("items: ", vm.items);
     //console.log("STOMP message: ", vm.message);
     //console.log("STOMP message.body: ", vm.message.body);
-}]);
+});
