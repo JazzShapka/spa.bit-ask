@@ -44,7 +44,7 @@ stompdk.controller('stompdkController',
     vm.items = [];
 
     //$scope.bufferService = bufferService;
-    var id = 789;
+    //var id = 789;
     bufferService.getId(function(data) {
       id = data[0][2];
       console.log("id: ", data[0][2]);
