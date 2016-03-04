@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 /**
  * Created by WebStorm.
@@ -44,10 +44,14 @@ stompdk.controller('stompdkController',
     vm.items = [];
 
     //$scope.bufferService = bufferService;
+    var id = 789;
     bufferService.getId(function(data) {
-      //$scope.tasks = data;
-      console.log("id: ", data);
+      id = data[0][2];
+      console.log("id: ", data[0][2]);
+      initngStomp();
+      //console.log(ide);
     });
+    //console.log("ide: ", ide);
 
     /*$scope.bufferService = bufferService;
     bufferService.getTasks(function(data) {
@@ -55,15 +59,17 @@ stompdk.controller('stompdkController',
       console.log("data456: ", data);
     });*/
 
-    ngstomp
-        //.subscribeTo('/queue/queue')
-            //.callback(whatToDoWhenMessageComming)
-            //.withHeaders(headers)
-            //.and()
-        .subscribeTo('/queue/' + uid)
-            .callback(whatToDoWhenMessageComming)
-            .withHeaders(headers)
-        .connect();
+    function initngStomp() {
+	    ngstomp
+	        //.subscribeTo('/queue/queue')
+	            //.callback(whatToDoWhenMessageComming)
+	            //.withHeaders(headers)
+	            //.and()
+	        .subscribeTo('/queue/' + id)
+	            .callback(whatToDoWhenMessageComming)
+	            .withHeaders(headers)
+	        .connect();
+    }
 
     function whatToDoWhenMessageComming(message) {
 
