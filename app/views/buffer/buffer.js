@@ -22,7 +22,7 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService',
+buffer.controller('BufferCtrl', ['$scope', 'bufferService',
   function($scope, bufferService, stompService) {
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';

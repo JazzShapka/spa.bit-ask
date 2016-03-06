@@ -31,10 +31,11 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
                 data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-            }).success(function (data, status, header, config) {
-                callback(data);
+            }).then(function successCallback(response) {
+                callback(response.data);
             });
         };
+
         function setTask(callback, taskName) {
             var uuid = uuid4.generate();
             var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
@@ -47,6 +48,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
                 callback(data);
             });
         };
+
         function getId(callback) {
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -55,6 +57,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
             }).success(function (data, status, header, config) {
                 callback(data);
             });
+            
         };
 
 
