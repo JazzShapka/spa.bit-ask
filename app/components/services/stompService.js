@@ -31,7 +31,7 @@ stompService.config(
 stompService.service('stompService', ['ngstomp',
 	function(ngstomp) {
 
-	console.log("STOMP START from service: ");
+	console.log("Start stompService.");
     //$scope.bufferService = bufferService;
 
 	//var uid = $auth.getPayload().sub;

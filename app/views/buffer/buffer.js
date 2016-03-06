@@ -26,8 +26,10 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService',
   function($scope, bufferService, stompService) {
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';
+    
     $scope.bufferService = bufferService;
-    $scope.stompService = stompService;
+    //$scope.stompService = stompService;
+
     //stompService.stompSubscribe();
     
     //$scope.tasks = bufferService.getTasks();
@@ -54,7 +56,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService',
     bufferService.getId(function(data) {
       $scope.id = data;
       console.log("getId: ", data[0][2]);
-      stompService.stompSubscribe(data[0][2]);
+      //stompService.stompSubscribe(data[0][2]);
     });
 
 

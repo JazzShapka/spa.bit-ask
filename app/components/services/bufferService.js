@@ -13,7 +13,7 @@ var bufferService = angular.module('bufferService', ['ngResource', 'uuid4']);
 
 bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
     function($resource, $http, $auth, uuid4) {
-        console.log("bufferService.");
+        console.log("Start bufferService.");
 
         //debugger;
         //console.log ($auth.getToken());
