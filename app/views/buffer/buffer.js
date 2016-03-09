@@ -42,7 +42,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
     }, 'New task 123');
 
     bufferService.getTasks(function(data) {
-      $scope.tasks = data;
+      //$scope.tasks = data;
       console.log("getTasks: ", data);
     });
 
@@ -82,9 +82,11 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
     };
 
     $scope.makePOST = function () {
-      $http.post('/test.json', {}, {offline: true})
+      $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true})
       .then(function (response) {
         $log.info('POST RESULT', response);
+        $scope.tasks = response.data;
+        //console.log("scope.makePOST: ", $scope.makePOST);
       }, function (error) {
         $log.info('POST ERROR', error);
       });
