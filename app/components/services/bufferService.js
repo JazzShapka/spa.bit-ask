@@ -9,11 +9,21 @@
  * Time: 10:25
  */
 
-var bufferService = angular.module('bufferService', ['ngResource', 'uuid4']);
+var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule']);
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
-    function($resource, $http, $auth, uuid4) {
+bufferService.config(function (localStorageServiceProvider) {
+  localStorageServiceProvider
+    .setPrefix('bufferService')
+    .setStorageType('sessionStorage')
+    .setNotify(true, true)
+});
+
+bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService',
+    function($resource, $http, $auth, uuid4, localStorageService) {
         console.log("Start bufferService.");
+
+        var storageType = localStorageService.getStorageType();
+        console.log("getStorageType: ", storageType);
 
         //debugger;
         console.log ("getPayload: ", $auth.getPayload().sub);
@@ -24,7 +34,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
         this.setTask = setTask;
         this.getId = getId;
         
-        
+
         /* service */
         function getTasks(callback) {
             $http({
