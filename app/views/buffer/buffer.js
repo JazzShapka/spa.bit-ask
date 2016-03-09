@@ -3,10 +3,10 @@
 /* App Module */
 
 var buffer = angular.module('buffer', [
-  'ngRoute'
+  'ngRoute', 'LocalStorageModule'
 ]);
 
-buffer.config(['$routeProvider',
+buffer.config(['$routeProvider', 'localStorageServiceProvider',
   function($routeProvider) {
     $routeProvider.
       when('/buffer', {
@@ -22,8 +22,12 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService',
-  function($scope, bufferService, stompService) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'localStorageService',
+  function($scope, bufferService, stompService, localStorageService) {
+
+    var storageType = localStorageService.getStorageType();
+    console.log("getStorageType: ", storageType);
+
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';
     
