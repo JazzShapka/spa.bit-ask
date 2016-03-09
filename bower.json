@@ -27,7 +27,9 @@
     "angular-uuid4": "^0.3.1",
     "angular-nicescroll": "^0.0.9",
     "AngularStompDK": "^0.8.1",
-    "angular-local-storage": "^0.2.5"
+    "angular-local-storage": "^0.2.5",
+    "angular-cache": "^4.5.0",
+    "angular-offline": "^0.1.0"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",
