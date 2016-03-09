@@ -11,11 +11,21 @@
 
 var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline']);
 
-bufferService.config(function (localStorageServiceProvider) {
+bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide) {
   localStorageServiceProvider
     .setPrefix('bufferService')
     .setStorageType('sessionStorage')
-    .setNotify(true, true)
+    .setNotify(true, true);
+
+    /*$provide.decorator('connectionStatus', function ($delegate) {
+        $delegate.online = true;
+        $delegate.isOnline = function () {
+            return $delegate.online;
+        };
+        return $delegate;
+    });*/
+
+    //offlineProvider.debug(true);
 });
 
 bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log',
@@ -36,16 +46,16 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 recycleFreq: 60000
             });
         };
-        var bookCache = CacheFactory.get('bookCache');
-        console.log("bookCache: ", bookCache);
+        //var bookCache = CacheFactory.get('bookCache');
+        //console.log("bookCache: ", bookCache);
         
 
 
-        var storageType = localStorageService.getStorageType();
-        console.log("getStorageType: ", storageType);
+        //var storageType = localStorageService.getStorageType();
+        //console.log("getStorageType: ", storageType);
 
         //debugger;
-        console.log ("getPayload: ", $auth.getPayload().sub);
+        //console.log ("getPayload: ", $auth.getPayload().sub);
         var uid = $auth.getPayload().sub;
 
 
@@ -141,11 +151,11 @@ bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connect
 
 
   connectionStatus.$on('online', function () {
-    $log.info('We are now online');
+    $log.info('bufferService: We are now online');
   });
 
   connectionStatus.$on('offline', function () {
-    $log.info('We are now offline');
+    $log.info('bufferService: We are now offline');
   });
 
 

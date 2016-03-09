@@ -22,8 +22,8 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory',
-  function($scope, bufferService, stompService, offline, connectionStatus, $http, $log, CacheFactory) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory',
+  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory) {
 
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);
@@ -46,16 +46,18 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'off
       console.log("getTasks: ", data);
     });
 
+
+
     bufferService.getId(function(data) {
       $scope.id = data;
-      console.log("getId: ", data[0][2]);
-      stompService.stompSubscribe(data[0][2]);
+      //console.log("getId: ", data[0][2]);
+      //stompService.stompSubscribe(data[0][2]);
     });
 
-    console.log ("findBookById1: ", bufferService.findBookById(123));
+    //console.log ("findBookById1: ", bufferService.findBookById(123));
 
     bufferService.findBookById(123).then(function (response) {
-      console.log("findBookById2: ", response.data);
+      //console.log("findBookById2: ", response.data);
     });
 
 
@@ -92,19 +94,30 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'off
 
 
 
-    if (connectionStatus.isOnline())
-    $log.info('We have internet!');
+    //if (connectionStatus.isOnline())
+    //$log.info('We have internet!');
 
 
 
   }]);
 
 
-buffer.run(function ($http, $cacheFactory, CacheFactory, offline) {
+buffer.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
   $http.defaults.cache = $cacheFactory('custom');
   offline.stackCache = CacheFactory.createCache('my-cache', {
     storageMode: 'localStorage'
   });
 
   offline.start($http);
+
+  connectionStatus.$on('online', function () {
+    $log.info('buffer: We are now online');
+    //$scope.tasks = data;
+  });
+
+  connectionStatus.$on('offline', function () {
+    $log.info('buffer: We are now offline');
+  });
+
+
 });
