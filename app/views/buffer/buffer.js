@@ -27,20 +27,9 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'loc
 
     var storageType = localStorageService.getStorageType();
     console.log("getStorageType: ", storageType);
-
-    //$scope.phones = Phone.query();
-    //$scope.orderProp = 'age';
     
-    $scope.bufferService = bufferService;
+    //$scope.bufferService = bufferService;
     //$scope.stompService = stompService;
-
-    //stompService.stompSubscribe();
-    
-    //$scope.tasks = bufferService.getTasks();
-    //bufferService.getCard();
-    
-    //console.log("getTasks: ", bufferService.getTasks());
-    //$scope.tasks = bufferService.getTasks();
 
     /* factory */
     /*bufferService.getTasks().success(function(data) {
@@ -50,7 +39,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'loc
 
     bufferService.setTask(function(data) {
       console.log("setTask: ", data);
-    }, 'New task');
+    }, 'New task 123');
 
     bufferService.getTasks(function(data) {
       $scope.tasks = data;
@@ -60,7 +49,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'stompService', 'loc
     bufferService.getId(function(data) {
       $scope.id = data;
       console.log("getId: ", data[0][2]);
-      //stompService.stompSubscribe(data[0][2]);
+      stompService.stompSubscribe(data[0][2]);
     });
 
 
