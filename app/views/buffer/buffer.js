@@ -15,7 +15,7 @@ buffer.config(['$routeProvider',
       }).
       when('/buffer/:bufferId', {
         templateUrl: 'app/views/buffer/buffer-detail.html',
-        controller: 'bufferDetailCtrl'
+        controller: 'myController2'
       }).
       otherwise({
         redirectTo: '/buffer'
@@ -23,19 +23,40 @@ buffer.config(['$routeProvider',
   }]);
 
 buffer.controller('BufferCtrl', ['$scope', 'bufferService',
-  function($scope, bufferService) {
+  function($scope, bufferService, stompService) {
     //$scope.phones = Phone.query();
     //$scope.orderProp = 'age';
+    
     $scope.bufferService = bufferService;
+    //$scope.stompService = stompService;
+
+    //stompService.stompSubscribe();
+    
     //$scope.tasks = bufferService.getTasks();
     //bufferService.getCard();
     
     //console.log("getTasks: ", bufferService.getTasks());
     //$scope.tasks = bufferService.getTasks();
 
-    bufferService.getTasks().success(function(data) {
+    /* factory */
+    /*bufferService.getTasks().success(function(data) {
       $scope.tasks = data;
       console.log(data);
+    });*/
+
+    bufferService.setTask(function(data) {
+      console.log("setTask: ", data);
+    }, 'New task');
+
+    bufferService.getTasks(function(data) {
+      $scope.tasks = data;
+      console.log("getTasks: ", data);
+    });
+
+    bufferService.getId(function(data) {
+      $scope.id = data;
+      console.log("getId: ", data[0][2]);
+      //stompService.stompSubscribe(data[0][2]);
     });
 
 

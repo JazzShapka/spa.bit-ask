@@ -25,7 +25,8 @@
     "DateJS": "datejs#^1.0.0-rc3",
     "angular-resource": "^1.5.0",
     "angular-uuid4": "^0.3.1",
-    "angular-nicescroll": "^0.0.9"
+    "angular-nicescroll": "^0.0.9",
+    "AngularStompDK": "^0.8.1"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",
