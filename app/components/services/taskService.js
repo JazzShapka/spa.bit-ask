@@ -20,8 +20,7 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
 
             var locals = {
                 mode:mode
-            }
-
+            };
             $mdDialog.show({
                 controller: 'taskEditor',
                 templateUrl: 'app/views/editors/task/taskEditor.html',
@@ -30,10 +29,13 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
                         locals.onClose();
                 },
                 locals : locals,
-                clickOutsideToClose:true,
-            })
-        }
+                clickOutsideToClose:true
+            });
+        };
 
+        /**
+         * Обновить количество подзадач
+         */
         self.refreshChildren = function (){
             for(var i=0; i<self.tasks.length; i++)
             {

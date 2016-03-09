@@ -24,7 +24,8 @@
     "angular-draggable-bt": "*",
     "DateJS": "datejs#^1.0.0-rc3",
     "angular-resource": "^1.5.0",
-    "angular-uuid4": "^0.3.1"
+    "angular-uuid4": "^0.3.1",
+    "angular-nicescroll": "^0.0.9"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",

@@ -5,15 +5,34 @@ angular.module('bitaskApp.editors.taskEditor', [
         'bitaskApp.service.task',
         'bitaskApp.service.date'
     ])
-    .controller('taskEditor',['$scope', '$mdDialog', 'locals', function ($scope, $mdDialog, locals){
+    .controller('taskEditor',['$scope', 'taskService', '$mdDialog', 'locals', '$interval', function ($scope, taskService, $mdDialog, locals, $interval){
+
+        $scope.task = {
+            taskName:'',
+            performer:'',
+            taskDescription:''
+        };
 
         $scope.close = function (){
+
+
+
+
             $mdDialog.hide();
-        }
+        };
 
         locals.onClose = function (){
-            debugger;
+            $scope.close();
+        };
+
+        $scope.show_completebox = (locals.mode == "edit_task");
+        switch (locals.mode){
+            case 'sub_task':
+            case 'brother_task':
+                $scope.form_name = "Создать задачу";
+                break;
+            case 'edit_task':
+                $scope.form_name = "Редактировать задачу";
+                break;
         }
-
-
-    }])
+    }]);

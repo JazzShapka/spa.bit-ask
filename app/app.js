@@ -7,6 +7,8 @@ angular.module('bitaskApp', [
     'ngAnimate',
     'ngDraggable',
     'satellizer',
+    'angular-nicescroll',
+
     'bitaskApp.index',
     'bitaskApp.goals',
     'bitaskApp.schedule',

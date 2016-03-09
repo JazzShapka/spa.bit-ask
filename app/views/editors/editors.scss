@@ -1,3 +1,41 @@
-.editor-block md-toolbar{
+// Верхняя часть
+.editor md-toolbar{
     background-color: $main-color !important;
+}
+
+// Средняя часть
+.editor md-dialog-content{
+    width: 780px;
+}
+.editor md-dialog-content .task-name{
+    margin-right: 10px;
+}
+.editor md-dialog-content .task-name input{
+    width: 500px;
+}
+.editor md-dialog-content .task-name md-checkbox{
+    top: 5px;
+    margin-left: -31px;
+    position: relative;
+    float: left;
+}
+.editor md-dialog-content .task-date{
+
+}
+.editor md-dialog-content .task-performer{
+    margin-right: 10px;
+}
+.editor md-dialog-content .task-performer input{
+    width: 380px;
+}
+.editor md-dialog-content .task-parent input{
+    width: 333px;
+}
+.editor md-dialog-content .task-description textarea{
+    width: 725px;
+}
+
+// Кнопки внизу
+.editor md-dialog-actions{
+    padding-bottom: 25px;
 }
