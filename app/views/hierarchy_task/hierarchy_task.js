@@ -75,6 +75,26 @@ angular.module('bitaskApp.hierarchy_task', [
             else if(taskService.tasks_indexed[taskId].status == 'completed')
                 taskService.tasks_indexed[taskId].status = 'delivered';
 
+            taskService.setTask(taskId, {status:taskService.tasks_indexed[taskId].status});
+
+        };
+
+        /**
+         * Кнопка - развернуть задачу
+         * @param taskId
+         */
+        $scope.expandTask = function (taskId){
+            var task = taskService.tasks_indexed[taskId];
+
+            if(task.viewBranch == 'show')
+                task.viewBranch = 'hide';
+            else
+            {
+                task.viewBranch = 'show';
+                taskService.getChildren(taskId);
+            }
+
+            taskService.setTask(taskId, {viewBranch:task.viewBranch});
         };
 
 
@@ -232,7 +252,6 @@ angular.module('bitaskApp.hierarchy_task', [
                 return task.dateEndPerformer + (task.timeEndPerformer==null?0:task.timeEndPerformer);
 
         };
-
         /**
          * Является ли пользователь автором задачи.
          * @param taskId
@@ -244,7 +263,6 @@ angular.module('bitaskApp.hierarchy_task', [
             else
                 return false;
         };
-
         /**
          * Является ли пользователь исполнителем
          * @param taskId
@@ -256,7 +274,6 @@ angular.module('bitaskApp.hierarchy_task', [
             else
                 return false;
         };
-
         /**
          * Получить читаемую строку регулярности.
          * @param setting
@@ -348,20 +365,5 @@ angular.module('bitaskApp.hierarchy_task', [
             return "Не настроено";
         };
 
-        /**
-         * Кнопка - развернуть задачу
-         * @param taskId
-         */
-        $scope.expandTask = function (taskId){
-            var task = taskService.tasks_indexed[taskId];
 
-            if(task.viewBranch == 'show')
-                task.viewBranch = 'hide';
-            else
-            {
-                task.viewBranch = 'show';
-                taskService.getChildren(taskId);
-            }
-
-        }
     }]);

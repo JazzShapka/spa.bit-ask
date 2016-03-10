@@ -6,11 +6,9 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4
 
         var self = this;
 
-
+        self.new_task = {};             // Папка новые задачи
         self.tasks = [];                // Массив задач
-
         self.tasks_indexed = {};        // Проиндексированные задачи
-
 
 
         /**
@@ -35,6 +33,18 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4
         };
 
         /**
+         * Отправить запрос на изменение задачи
+         * @param taskId - id задачи
+         * @param params - новые параметры
+         */
+        self.setTask = function (taskId, params){
+
+            params.id = taskId;
+
+            bufferService.send([[uuid4.generate(), true, "task/settask", params]]);
+        };
+
+        /**
          * Обновить количество подзадач
          */
         self.refreshChildren = function (){
@@ -55,29 +65,75 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4
             }
         };
 
-        self.getChildren = function (taskId){
-            var task = self.tasks_indexed[taskId];
-            if(task.children > 0 && task.children != task.children_quantity)
+        /**
+         * Получить подзадачи.
+         * @param taskIds - массив id родителей || строка с id
+         */
+        self.getChildren = function (taskIds){
+            if(typeof taskIds == 'string')
+                taskIds = [taskIds];
+
+            var request = [];
+            for(var i=0; i<taskIds.length; i++)
             {
-                bufferService.send(function(data){
+                var task = self.tasks_indexed[taskIds[i]];
+                if(task.children > 0 && task.children != task.children_quantity)
+                {
+                    request.push([uuid4.generate(), false, "task/subtasks", {parentId:task.id}]);
+                }
+
+            }
+
+            if(request.length)
+            {
+                bufferService.send(request, function(data){
 
                     for(var i=0; i<data.length; i++)
                     {
                         var task = data[i];
                         self.tasks.push(task);
+                        console.log(task.id);
                     }
-                }, taskId);
+                });
             }
+        };
 
+        self.createTask = function (task){
+
+            self.tasks.push(task);
+
+            bufferService.send([[
+                uuid4.generate(),
+                true,
+                "task/addtask",
+                task
+            ]], function ( data){
+                debugger;
+            })
         };
 
         var __constructor = function (){
-            bufferService.send([uuid4.generate(), false, "task/openedtasks"], function (data){
+
+            // Получаем все задачи
+            bufferService.send([[uuid4.generate(), false, "task/openedtasks"]], function (data){
                 for(var i=0; i<data.length; i++)
                 {
                     self.tasks.push(data[i]);
+                    if(data[i].status == 'new_task')
+                        self.new_task = data[i];
                 }
+                self.refreshChildren();
 
+                // Получаем детей (Загрузка на перед)
+                var taskIds = [];
+                for(i=0; i<self.tasks.length; i++)
+                {
+                    if(self.tasks[i].children > 1 && self.tasks[i].viewBranch == 'hide')
+                    {
+                        taskIds.push(self.tasks[i].id);
+                    }
+                }
+                self.getChildren(taskIds);
             })
         };
         __constructor();

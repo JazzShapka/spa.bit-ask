@@ -123,7 +123,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: [data]
+                data: data
             }).then(function successCallback(response) {
                 if(typeof callback == 'function')
                 {

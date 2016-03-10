@@ -13,6 +13,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     float: left;
+    position: absolute;
     //border: 1px solid black;
 }
 
@@ -63,7 +64,7 @@
     min-width: 120px;
     max-width: 350px;
     max-height: 40px;
-    margin: 3px 0;
+    margin: 3px 0 3px 5px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -185,11 +186,11 @@
 .task_background .expand_block .arrow_middle{
     //display: none;
     opacity: 0;
-    -webkit-transition: opacity 200ms;
-    -moz-transition: opacity 200ms;
-    -ms-transition: opacity 200ms;
-    -o-transition: opacity 200ms;
-    transition: opacity 200ms;
+    -webkit-transition: opacity 200ms ease-out 300ms;
+    -moz-transition: opacity 200ms ease-out 300ms;
+    -ms-transition: opacity 200ms ease-out 300ms;
+    -o-transition: opacity 200ms ease-out 300ms;
+    transition: opacity 200ms ease-out 300ms;
 }
 .task_background .expand_block .arrow_middle:hover{
     display: block;
