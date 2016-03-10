@@ -1,16 +1,17 @@
 /**
  * Created by SNKraynov on 19.02.2016.
  */
-angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
-    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', function ($timeout, $mdDialog, bufferService){
+angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4'])
+    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4', function ($timeout, $mdDialog, bufferService, uuid4){
 
         var self = this;
 
-        // Массив задач
-        self.tasks = __tasks;
 
-        // Проиндексированные задачи
-        self.tasks_indexed = {};
+        self.tasks = [];                // Массив задач
+
+        self.tasks_indexed = {};        // Проиндексированные задачи
+
+
 
         /**
          * Открыть редактор задачи.
@@ -37,6 +38,7 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
          * Обновить количество подзадач
          */
         self.refreshChildren = function (){
+
             for(var i=0; i<self.tasks.length; i++)
             {
                 // индексируем задачи
@@ -52,12 +54,33 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
                 }
             }
         };
-        self.refreshChildren();
 
+        self.getChildren = function (taskId){
+            var task = self.tasks_indexed[taskId];
+            if(task.children > 0 && task.children != task.children_quantity)
+            {
+                bufferService.send(function(data){
 
-        $timeout(function (){
-            self.tasks_indexed["13cb2b00-c37c-f52a-1f2a-59b934a4c2b8"].regularSetting = '';
-        }, 3000);
+                    for(var i=0; i<data.length; i++)
+                    {
+                        var task = data[i];
+                        self.tasks.push(task);
+                    }
+                }, taskId);
+            }
+
+        };
+
+        var __constructor = function (){
+            bufferService.send([uuid4.generate(), false, "task/openedtasks"], function (data){
+                for(var i=0; i<data.length; i++)
+                {
+                    self.tasks.push(data[i]);
+                }
+
+            })
+        };
+        __constructor();
     }]);
 
 

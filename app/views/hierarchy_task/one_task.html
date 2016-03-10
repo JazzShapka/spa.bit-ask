@@ -8,7 +8,7 @@
 
     <!-- Блок задачи -->
     <div class="task" ng-draggable helper="clone" cursor="default">
-        <div>
+        <div class="">
             <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
             <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id)" aria-label="complete" class="completebox md-primary"></md-checkbox>
         </div>
@@ -59,13 +59,26 @@
             </div>
         </div>
 
+        <div class="expand_block" ng-class="getExpandBoxClass(task.id)" ng-show="task.children">
+
+            <svg class="arrow_main" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px" ng-click="expandTask(task.id)">
+                <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
+                <polyline class="arrow_right" fill="none" stroke="#CADFFC" stroke-width="1.5" points="7,4 12,9 7,14" />
+                <polyline class="arrow_left" fill="none" stroke="#CADFFC" stroke-width="1.5" points="12,4 7,9 12,14" />
+            </svg>
+            <svg class="arrow_middle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px">
+                <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
+                <polyline fill="none" stroke="#CADFFC" stroke-width="1.5" points="4,7 9,12 14,7" />
+            </svg>
+        </div>
+
     </div>
 
     <!-- Блок с подзадачами -->
-    <div class="children" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
+    <div class="children" ng-show="task.viewBranch != 'hide'" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
 
     <!-- Соеденительные линии -->
-    <div class="right_connect" ng-show="task.children_quantity">
+    <div class="right_connect" ng-show="task.children && task.viewBranch != 'hide'">
         <div class="canvas_block"></div>
         <div class="canvas_block"></div>
     </div>

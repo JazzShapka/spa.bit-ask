@@ -173,6 +173,49 @@
 .task_background .task .buttons .material-icons.gray.none{
     display: none;
 }
+.task_background .expand_block{
+    width: 18px;
+    height: 18px;
+    margin-left: -18px;
+    position: relative;
+}
+.task_background .expand_block svg{
+    outline: none;
+}
+.task_background .expand_block .arrow_middle{
+    //display: none;
+    opacity: 0;
+    -webkit-transition: opacity 200ms;
+    -moz-transition: opacity 200ms;
+    -ms-transition: opacity 200ms;
+    -o-transition: opacity 200ms;
+    transition: opacity 200ms;
+}
+.task_background .expand_block .arrow_middle:hover{
+    display: block;
+    opacity: 1;
+}
+.task_background .expand_block.right .arrow_main:hover + .arrow_middle{
+    display: block;
+    opacity: 1;
+}
+.task_background .expand_block.right{
+    left: 12px;
+}
+
+.task_background .expand_block.open .arrow_right{
+    display: none;
+}
+.task_background .expand_block.open .arrow_left{
+    display: block;
+}
+.task_background .expand_block.close .arrow_right{
+    display: block;
+}
+.task_background .expand_block.close .arrow_left{
+    display: none;
+}
+
 
 // Цвета иконок
 .task_background .material-icons.gray{
