@@ -32,32 +32,16 @@ stompService.service('stompService', ['ngstomp',
 	function(ngstomp) {
 
 	console.log("Start stompService.");
-    //$scope.bufferService = bufferService;
 
 	//var uid = $auth.getPayload().sub;
 	//console.log("uid: ", uid);
-    //var uid = '123';
-
-    //var items = [];
-    var vm = this, headers = {
-            foo : 'bar'            
-        };
-    vm.items = [];
 
     //$scope.bufferService = bufferService;
-    //var id = 789;
     /*bufferService.getId(function(data) {
       //var id = data[0][2];
       console.log("id: ", data[0][2]);
       stompSubscribe(data[0][2]);
       //console.log(ide);
-    });*/
-    //console.log("ide: ", ide);
-
-    /*$scope.bufferService = bufferService;
-    bufferService.getTasks(function(data) {
-      $scope.tasks = data;
-      console.log("data456: ", data);
     });*/
 
     this.stompSubscribe = stompSubscribe;
@@ -70,21 +54,16 @@ stompService.service('stompService', ['ngstomp',
 	            //.and()
 	        .subscribeTo('/queue/' + id)
 	            .callback(whatToDoWhenMessageComming)
-	            .withHeaders(headers)
+	            //.withHeaders(headers)
+                //.bindTo($scope)
 	        .connect();
     }
 
     function whatToDoWhenMessageComming(message) {
-
-        //items.push(JSON.parse(message.body));
-        //vm.items.push(JSON.parse(message.body));
         vm.items.push(message.body);
         $scope.items = vm.items;
         console.log("items: ", vm.items);
         console.log("STOMP message: ", message);
         console.log("STOMP message.body: ", message.body);
     }
-    //console.log("items: ", vm.items);
-    //console.log("STOMP message: ", vm.message);
-    //console.log("STOMP message.body: ", vm.message.body);
 }]);

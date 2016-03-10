@@ -9,17 +9,57 @@
  * Time: 10:25
  */
 
-var bufferService = angular.module('bufferService', ['ngResource', 'uuid4']);
+var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline']);
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
-    function($resource, $http, $auth, uuid4) {
+bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide) {
+  localStorageServiceProvider
+    .setPrefix('bufferService')
+    .setStorageType('sessionStorage')
+    .setNotify(true, true);
+
+    /*$provide.decorator('connectionStatus', function ($delegate) {
+        $delegate.online = true;
+        $delegate.isOnline = function () {
+            return $delegate.online;
+        };
+        return $delegate;
+    });*/
+
+    //offlineProvider.debug(true);
+});
+
+bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log) {
         console.log("Start bufferService.");
+
+        $http.defaults.cache = CacheFactory('defaultCache', {
+            maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
+            cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
+            deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+        });
+
+
+        if (!CacheFactory.get('bookCache')) {
+            // or CacheFactory('bookCache', { ... });
+            CacheFactory.createCache('bookCache', {
+                deleteOnExpire: 'aggressive',
+                recycleFreq: 60000
+            });
+        }
+        //var bookCache = CacheFactory.get('bookCache');
+        //console.log("bookCache: ", bookCache);
+        
+
+
+        //var storageType = localStorageService.getStorageType();
+        //console.log("getStorageType: ", storageType);
 
         //debugger;
         //console.log ($auth.getToken());
         console.log ("getPayload: ", $auth.getPayload().sub);
 
         var self = this;
+
         var uid = $auth.getPayload().sub;
 
 
@@ -27,14 +67,19 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
         this.getTasks = getTasks;
         this.setTask = setTask;
         this.getId = getId;
+        this.findBookById = findBookById;
         
+
         /* service */
         function getTasks(callback) {
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+                data: '[[1, false, "task/subtasks", {"parentId": 0}]]',
+                //cache: true,
+                offline: true
             }).then(function successCallback(response) {
+                $log.info('POST RESULT', response);
                 callback(response.data);
             });
         };
@@ -46,9 +91,12 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: data
-            }).success(function (data, status, header, config) {
-                callback(data);
+                data: data,
+                //cache: true,
+                offline: true
+            }).then(function (response) {
+                $log.info('POST RESULT', response);
+                callback(response.data);
             });
         };
 
@@ -56,9 +104,12 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: '[[1, false, "user/getid"]]'
-            }).success(function (data, status, header, config) {
-                callback(data);
+                data: '[[1, false, "user/getid"]]',
+                //cache: true,
+                offline: true
+            }).then(function (response) {
+                $log.info('POST RESULT', response);
+                callback(response.data);
             });
             
         };
@@ -87,6 +138,11 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
             });
         };
 
+        function findBookById(id) {
+            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]');
+        };
+        
+
 
         /* factory */
         /*return {
@@ -110,94 +166,25 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4',
         };*/
 
 
+}]);
+
+bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
+  $http.defaults.cache = $cacheFactory('custom2');
+  offline.stackCache = CacheFactory.createCache('my-cache2', {
+    storageMode: 'localStorage'
+  });
+
+  offline.start($http);
 
 
-        /*
-        var obj = {};
-        obj.getCard = function(par) {
-            
-            // http://api.dev2.bit-ask.com/index.php/event/all
-            var CreditCard = $resource('http://api.dev2.bit-ask.com/index.php/event/all/u/:userId/c/:cardId',
-            //var CreditCard = $resource('http://api.dev2.bit-ask.com/index.php/event/all',
-            {userId:par, cardId:'@id'}, {
-                charge: {method:'POST', params:{charge:true}}
-            });
+  connectionStatus.$on('online', function () {
+    $log.info('bufferService: We are now online');
+  });
 
-            var newCard = new CreditCard({number:par});
-            newCard.name = "Mike Smith";
-            newCard.$save();
+  connectionStatus.$on('offline', function () {
+    $log.info('bufferService: We are now offline');
+  });
 
-            console.log("newCard: ",  newCard);
-            return newCard;
-        }
 
-        // POST: /user/123/card {number:'0123', name:'Mike Smith'}
-        // server returns: {id:789, number:'0123', name: 'Mike Smith'};
-        obj.getBooks = function() {
-            console.log("getBooks: ");
-            serviceBase = 'http://api.dev2.bit-ask.com/index.php/event/';
-            return $http.get(serviceBase + 'all');
-        }
+});
 
-        obj.setTask = function (parentId) {
-            $uuid = uuid4.generate();
-            console.log ("uuid: ", uuid4.generate());
-            data = [[1, false, "task/addtask", {"id": $uuid, "authorId": $uid, "taskName": "tName"}]];
-            var req = {
-                method: 'POST',
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                headers: {
-                    //'Content-Type': undefined
-                    //'Access-Control-Allow-Origin': '*'
-                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                //data: '[[1, false, "task/addtask", {"id": $uid, "authorId": 3, "taskName": 4}]]'
-                data: data
-            }
-
-            $http(req).then(function(result){ console.log(result); }, function(){});
-        }
-        obj.getTasks = function (parentId) {
-            var tasks = [467, 123];
-            var req = {
-                method: 'POST',
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                headers: {
-                    //'Access-Control-Allow-Origin': '*'
-                    //'Content-Type': undefined
-                    //'Content-Type': 'application/json; charset=UTF-8'
-                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-            }
-
-            $http(req).then(function(result) {
-                console.log(result.data[0][2]);
-                //return result.data[0][2];
-                //return 123;
-                tasks = result.data[0][2];
-                //return 123456;
-            }, function(){});
-            console.log ("tasks1:", tasks);
-            return tasks;
-        }
-        obj.test = function (parentId) {
-            var req = {
-                method: 'POST',
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                headers: {
-                    //'Access-Control-Allow-Origin': '*'
-                    //'Content-Type': undefined
-                    //'Content-Type': 'application/json; charset=UTF-8'
-                    //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                //data: { message: 'task/subtasks', parentId: parentId, k: { keysid: '123' } }
-                data: '[[1,false,"task/subtasks",{"parentId":"123"}]]'
-            }
-
-            $http(req).then(function(result){ console.log(result); }, function(){});
-        }
-        return obj;*/
-}])

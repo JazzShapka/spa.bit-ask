@@ -81,7 +81,4 @@ stompdk.controller('stompdkController',
         console.log("STOMP message: ", message);
         console.log("STOMP message.body: ", message.body);
     }
-    //console.log("items: ", vm.items);
-    //console.log("STOMP message: ", vm.message);
-    //console.log("STOMP message.body: ", vm.message.body);
 });

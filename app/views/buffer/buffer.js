@@ -22,21 +22,14 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService',
-  function($scope, bufferService, stompService) {
-    //$scope.phones = Phone.query();
-    //$scope.orderProp = 'age';
-    
-    $scope.bufferService = bufferService;
-    //$scope.stompService = stompService;
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory',
+  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory) {
 
-    //stompService.stompSubscribe();
+    //var storageType = localStorageService.getStorageType();
+    //console.log("getStorageType: ", storageType);
     
-    //$scope.tasks = bufferService.getTasks();
-    //bufferService.getCard();
-    
-    //console.log("getTasks: ", bufferService.getTasks());
-    //$scope.tasks = bufferService.getTasks();
+    //$scope.bufferService = bufferService;
+    //$scope.stompService = stompService;
 
     /* factory */
     /*bufferService.getTasks().success(function(data) {
@@ -46,18 +39,87 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService',
 
     bufferService.setTask(function(data) {
       console.log("setTask: ", data);
-    }, 'New task');
+    }, 'New task 123');
 
     bufferService.getTasks(function(data) {
-      $scope.tasks = data;
+      //$scope.tasks = data;
       console.log("getTasks: ", data);
     });
 
+
+
     bufferService.getId(function(data) {
       $scope.id = data;
-      console.log("getId: ", data[0][2]);
+      //console.log("getId: ", data[0][2]);
       //stompService.stompSubscribe(data[0][2]);
     });
 
+    //console.log ("findBookById1: ", bufferService.findBookById(123));
+
+    bufferService.findBookById(123).then(function (response) {
+      //console.log("findBookById2: ", response.data);
+    });
+
+
+
+    //offline.stackCache = $cacheFactory('custom-cache');
+    $scope.toggleOnline = function () {
+      connectionStatus.online = !connectionStatus.online;
+      offline.processStack();
+    };
+
+    $scope.isOnline = function () {
+      return connectionStatus.isOnline();
+    };
+
+    $scope.makeGET = function () {
+      $http.get('/test.json', {offline: true})
+      .then(function (response) {
+        $log.info('GET RESULT', response.data);
+      }, function (error) {
+        $log.info('GET ERROR', error);
+      });
+    };
+
+    $scope.makePOST = function () {
+      $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true})
+      .then(function (response) {
+        $log.info('POST RESULT', response);
+        $scope.tasks = response.data;
+        //console.log("scope.makePOST: ", $scope.makePOST);
+      }, function (error) {
+        $log.info('POST ERROR', error);
+      });
+    };
+
+
+
+
+
+    //if (connectionStatus.isOnline())
+    //$log.info('We have internet!');
+
+
 
   }]);
+
+
+buffer.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
+  $http.defaults.cache = $cacheFactory('custom');
+  offline.stackCache = CacheFactory.createCache('my-cache', {
+    storageMode: 'localStorage'
+  });
+
+  offline.start($http);
+
+  connectionStatus.$on('online', function () {
+    $log.info('buffer: We are now online');
+    //$scope.tasks = data;
+  });
+
+  connectionStatus.$on('offline', function () {
+    $log.info('buffer: We are now offline');
+  });
+
+
+});
