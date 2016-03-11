@@ -121,7 +121,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 deleteOnExpire: 'aggressive',
                 recycleFreq: 60000
             });
-        };
+        }
         //var bookCache = CacheFactory.get('bookCache');
         //console.log("bookCache: ", bookCache);
         
@@ -131,8 +131,13 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         //console.log("getStorageType: ", storageType);
 
         //debugger;
-        //console.log ("getPayload: ", $auth.getPayload().sub);
+        //console.log ($auth.getToken());
+        console.log ("getPayload: ", $auth.getPayload().sub);
+
+        var self = this;
+
         var uid = $auth.getPayload().sub;
+
 
 
         this.getTasks = getTasks;
@@ -186,7 +191,29 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             
         };
 
-
+        /**
+         * Отправить запрос на сервер, ответ обрабатывает callback
+         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
+         * @param callback
+         */
+        self.send = function (data, callback){
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data
+            }).then(function successCallback(response) {
+                if(typeof callback == 'function')
+                {
+                    for (var i=0; i<response.data.length; i++)
+                    {
+                        if(response.data[i][1][0] == 200)
+                        {
+                            callback(response.data[i][2]);
+                        }
+                    }
+                }
+            });
+        };
 
         /*function findBookById(id) {
             return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true});

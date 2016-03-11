@@ -15,7 +15,8 @@ angular.module('bitaskApp.hierarchy_task', [
             controller: 'HierarchyTaskCtrl'
         });
     }])
-    .controller('HierarchyTaskCtrl', function($scope, $log, taskService, dateService, $document, $auth) {
+    .controller('HierarchyTaskCtrl', ['$scope', '$log', 'taskService', 'dateService', '$document',
+        function($scope, $log, taskService, dateService, $document) {
 
         $scope.tasks = taskService.tasks;
 
@@ -74,6 +75,26 @@ angular.module('bitaskApp.hierarchy_task', [
             else if(taskService.tasks_indexed[taskId].status == 'completed')
                 taskService.tasks_indexed[taskId].status = 'delivered';
 
+            taskService.setTask(taskId, {status:taskService.tasks_indexed[taskId].status});
+
+        };
+
+        /**
+         * Кнопка - развернуть задачу
+         * @param taskId
+         */
+        $scope.expandTask = function (taskId){
+            var task = taskService.tasks_indexed[taskId];
+
+            if(task.viewBranch == 'show')
+                task.viewBranch = 'hide';
+            else
+            {
+                task.viewBranch = 'show';
+                taskService.getChildren(taskId);
+            }
+
+            taskService.setTask(taskId, {viewBranch:task.viewBranch});
         };
 
 
@@ -196,6 +217,24 @@ angular.module('bitaskApp.hierarchy_task', [
                 return "Выполнено: " + new Date(taskService.tasks_indexed[taskId].completeTime * 1000).toString('dd.MM.yyyy');
 
         };
+        /**
+         * Возвращает класс для кнопки открытия
+         * @param taskId
+         */
+        $scope.getExpandBoxClass = function (taskId){
+            var task = taskService.tasks_indexed[taskId];
+            var string_class = '';
+
+            if(task.viewBranch == 'show')
+            {
+                string_class += 'open';
+            }
+            else
+                string_class += 'close';
+
+            string_class += ' ' + task.directionBranch;
+            return string_class;
+        };
 
 
         /**
@@ -213,7 +252,6 @@ angular.module('bitaskApp.hierarchy_task', [
                 return task.dateEndPerformer + (task.timeEndPerformer==null?0:task.timeEndPerformer);
 
         };
-
         /**
          * Является ли пользователь автором задачи.
          * @param taskId
@@ -225,7 +263,6 @@ angular.module('bitaskApp.hierarchy_task', [
             else
                 return false;
         };
-
         /**
          * Является ли пользователь исполнителем
          * @param taskId
@@ -237,7 +274,6 @@ angular.module('bitaskApp.hierarchy_task', [
             else
                 return false;
         };
-
         /**
          * Получить читаемую строку регулярности.
          * @param setting
@@ -327,5 +363,7 @@ angular.module('bitaskApp.hierarchy_task', [
                 }
             }
             return "Не настроено";
-        }
-    });
+        };
+
+
+    }]);

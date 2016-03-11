@@ -1,16 +1,15 @@
 /**
  * Created by SNKraynov on 19.02.2016.
  */
-angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
-    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', function ($timeout, $mdDialog, bufferService){
+angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4'])
+    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4', function ($timeout, $mdDialog, bufferService, uuid4){
 
         var self = this;
 
-        // Массив задач
-        self.tasks = __tasks;
+        self.new_task = {};             // Папка новые задачи
+        self.tasks = [];                // Массив задач
+        self.tasks_indexed = {};        // Проиндексированные задачи
 
-        // Проиндексированные задачи
-        self.tasks_indexed = {};
 
         /**
          * Открыть редактор задачи.
@@ -34,9 +33,22 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
         };
 
         /**
+         * Отправить запрос на изменение задачи
+         * @param taskId - id задачи
+         * @param params - новые параметры
+         */
+        self.setTask = function (taskId, params){
+
+            params.id = taskId;
+
+            bufferService.send([[uuid4.generate(), true, "task/settask", params]]);
+        };
+
+        /**
          * Обновить количество подзадач
          */
         self.refreshChildren = function (){
+
             for(var i=0; i<self.tasks.length; i++)
             {
                 // индексируем задачи
@@ -52,12 +64,79 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor'])
                 }
             }
         };
-        self.refreshChildren();
 
+        /**
+         * Получить подзадачи.
+         * @param taskIds - массив id родителей || строка с id
+         */
+        self.getChildren = function (taskIds){
+            if(typeof taskIds == 'string')
+                taskIds = [taskIds];
 
-        $timeout(function (){
-            self.tasks_indexed["13cb2b00-c37c-f52a-1f2a-59b934a4c2b8"].regularSetting = '';
-        }, 3000);
+            var request = [];
+            for(var i=0; i<taskIds.length; i++)
+            {
+                var task = self.tasks_indexed[taskIds[i]];
+                if(task.children > 0 && task.children != task.children_quantity)
+                {
+                    request.push([uuid4.generate(), false, "task/subtasks", {parentId:task.id}]);
+                }
+
+            }
+
+            if(request.length)
+            {
+                bufferService.send(request, function(data){
+
+                    for(var i=0; i<data.length; i++)
+                    {
+                        var task = data[i];
+                        self.tasks.push(task);
+                        console.log(task.id);
+                    }
+                });
+            }
+        };
+
+        self.createTask = function (task){
+
+            self.tasks.push(task);
+
+            bufferService.send([[
+                uuid4.generate(),
+                true,
+                "task/addtask",
+                task
+            ]], function ( data){
+                debugger;
+            })
+        };
+
+        var __constructor = function (){
+
+            // Получаем все задачи
+            bufferService.send([[uuid4.generate(), false, "task/openedtasks"]], function (data){
+                for(var i=0; i<data.length; i++)
+                {
+                    self.tasks.push(data[i]);
+                    if(data[i].status == 'new_task')
+                        self.new_task = data[i];
+                }
+                self.refreshChildren();
+
+                // Получаем детей (Загрузка на перед)
+                var taskIds = [];
+                for(i=0; i<self.tasks.length; i++)
+                {
+                    if(self.tasks[i].children > 1 && self.tasks[i].viewBranch == 'hide')
+                    {
+                        taskIds.push(self.tasks[i].id);
+                    }
+                }
+                self.getChildren(taskIds);
+            })
+        };
+        __constructor();
     }]);
 
 
