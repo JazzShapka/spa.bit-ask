@@ -259,7 +259,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             }
         };*/
 
-        return {
+        /*return {
             getDataById: function (id) {
               var deferred = $q.defer();
               var start = new Date().getTime();
@@ -274,7 +274,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
               });
               return deferred.promise;
             }
-        };
+        };*/
 
 
 }]);
