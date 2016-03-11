@@ -282,29 +282,29 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope) {
 
     $http.defaults.cache = CacheFactory('defaultCache', {
-            maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
-            cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-            deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+        maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
+        cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
+        deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
     });
 
 
-  $http.defaults.cache = $cacheFactory('custom2');
-  offline.stackCache = CacheFactory.createCache('my-cache2', {
-    storageMode: 'localStorage'
-  });
+    $http.defaults.cache = $cacheFactory('custom2');
+    offline.stackCache = CacheFactory.createCache('my-cache2', {
+        storageMode: 'localStorage'
+    });
 
-  offline.start($http);
+    offline.start($http);
 
 
-  connectionStatus.$on('online', function () {
-    $log.info('bufferService: We are now online');
-  });
+    connectionStatus.$on('online', function () {
+        $log.info('bufferService: We are now online');
+    });
 
-  connectionStatus.$on('offline', function () {
-    $log.info('bufferService: We are now offline');
-  });
+    connectionStatus.$on('offline', function () {
+        $log.info('bufferService: We are now offline');
+    });
 
-  $rootScope.test = 'It works! Using ' + (CacheFactory ? 'angular-cache' : 'undefined');
+    $rootScope.test = 'It works! Using ' + (CacheFactory ? 'angular-cache' : 'undefined');
 
 
 });

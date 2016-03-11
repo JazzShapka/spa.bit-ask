@@ -92,11 +92,11 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
       });
     };
 
-    bufferService.getDataById(8)
+    /*bufferService.getDataById(8)
     .then(function (response) {
       //$log.info('POST RESULT: ', response);
       //console.log("findBookById2: ", response.data);
-    });
+    });*/
 
 
 
