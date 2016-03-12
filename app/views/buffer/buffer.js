@@ -25,7 +25,7 @@ buffer.config(['$routeProvider',
 buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB',
   function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB) {
 
-    var db = pouchDB('dbname');
+    //var db = pouchDB('dbname');
 
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);

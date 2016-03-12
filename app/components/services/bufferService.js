@@ -74,16 +74,29 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
     function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
         console.log("Start bufferService.");
 
-        //var db = pouchDB('name');
+        var db = pouchDB('dbname');
+        /*db.put({
+          _id: 'dave@gmail.com',
+          name: 'David',
+          age: 69
+        });*/
+
+        db.changes().on('change', function() {
+          console.log('Ch-Ch-Changes');
+        });
+
+        db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+            console.log(doc.rows);
+        });
 
 
-        if (!CacheFactory.get('bookCache')) {
+        /*if (!CacheFactory.get('bookCache')) {
             // or CacheFactory('bookCache', { ... });
             CacheFactory.createCache('bookCache', {
                 deleteOnExpire: 'aggressive',
                 recycleFreq: 60000
             });
-        }
+        }*/
         //var bookCache = CacheFactory.get('bookCache');
         //console.log("bookCache: ", bookCache);
         
@@ -116,6 +129,11 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             console.log(JSON.stringify(callback));
             console.log ("LSget: ", localStorageService.get('key124'));
             console.log("Keys: ", localStorageService.keys());
+
+            db.put({
+                _id: 'id57',
+                f: 'koko'
+            });
 
 
             $http({
