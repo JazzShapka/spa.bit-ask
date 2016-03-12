@@ -9,7 +9,7 @@
  * Time: 10:25
  */
 
-var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline']);
+var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb']);
 
 bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider) {
   localStorageServiceProvider
@@ -17,102 +17,64 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
     .setStorageType('sessionStorage')
     .setNotify(true, true);
 
-
-
-
-/**
-     * Interceptor to queue HTTP requests.
-     */
-
-    $httpProvider.interceptors.push( [ '$q', function( $q ) {
-
-        var _queue = [];
-
-        /**
-         * Shifts and executes the top function on the queue (if any). Note this function executes asynchronously (with a timeout of 1). This
-         * gives 'response' and 'responseError' chance to return their values and have them processed by their calling 'success' or 'error'
-         * methods. This is important if 'success' involves updating some timestamp on some object which the next message in the queue relies
-         * upon.
-         */
-
-        function _shiftAndExecuteTop() {
-
-            setTimeout( function() {
-
-                _queue.shift();
-
-                if ( _queue.length > 0 ) {
-                    _queue[0]();
-                }
-            }, 1 );
-        }
-
-        return {
-
-            /**
-             * Blocks each request on the queue. If the first request, processes immediately.
-             */
-
-            request: function( config ) {
-
-                var deferred = $q.defer();
-                _queue.push( function() {
-
-                    deferred.resolve( config );
-                } );
-
-                if ( _queue.length === 1 ) {
-                    _queue[0]();
-                }
-
-                return deferred.promise;
-            },
-
-            /**
-             * After each response completes, unblocks the next request.
-             */
-
-            response: function( response ) {
-
-                _shiftAndExecuteTop();
-                return response;
-            },
-
-            /**
-             * After each response errors, unblocks the next request.
-             */
-
-            responseError: function( responseError ) {
-
-                _shiftAndExecuteTop();
-                return $q.reject( responseError );
-            },
-        };
-    } ] );
-
-
-
-
-
-
-
-
-    /*$provide.decorator('connectionStatus', function ($delegate) {
-        $delegate.online = true;
-        $delegate.isOnline = function () {
-            return $delegate.online;
-        };
-        return $delegate;
-    });*/
-
     //offlineProvider.debug(true);
+
+
+
+        //enable cors
+        //$httpProvider.defaults.useXDomain = true;
+
+        $httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
+            return {
+                'request': function (config) {
+                    console.log("INTERCEPTORS 1", config);
+                    //add headers
+                    return config;
+                },
+
+                // optional method
+               'requestError': function(rejection) {
+                  console.log("INTERCEPTORS 2", rejection);
+                  // do something on error
+                  return $q.reject(rejection);
+                },
+
+                // optional method
+                'response': function(response) {
+                  console.log("INTERCEPTORS 3", response);
+                  if (response.status === 500) {
+                    console.log("INTERCEPTORS 3 status: ", response.status);
+                  };
+                  // do something on success
+                  return response;
+                },
+
+                'responseError': function (rejection) {
+                    console.log("INTERCEPTORS 4", rejection);
+                    if (rejection.status === 500) {
+
+                        //injected manually to get around circular dependency problem.
+                        var AuthService = $injector.get('Auth');
+
+                        //if server returns 401 despite user being authenticated on app side, it means session timed out on server
+                        if (AuthService.isAuthenticated()) {
+                            AuthService.appLogOut();
+                        }
+                        $location.path('/login');
+                        return $q.reject(rejection);
+                    }
+                }
+            };
+        }]);
+
+
 });
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q) {
+bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
         console.log("Start bufferService.");
 
-        
+        //var db = pouchDB('name');
 
 
         if (!CacheFactory.get('bookCache')) {
@@ -149,6 +111,13 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 
         /* service */
         function getTasks(callback) {
+            console.log(callback);
+            localStorageService.set('key124', JSON.stringify(callback));
+            console.log(JSON.stringify(callback));
+            console.log ("LSget: ", localStorageService.get('key124'));
+            console.log("Keys: ", localStorageService.keys());
+
+
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
@@ -156,8 +125,10 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function successCallback(response) {
-                $log.info('POST RESULT', response);
+                $log.info('getTasks: ', response);
                 callback(response.data);
+            }, function(rejectReason) {
+                console.log('failure');
             });
         };
 
@@ -172,7 +143,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function (response) {
-                $log.info('POST RESULT', response);
+                $log.info('setTask: ', response);
                 callback(response.data);
             });
         };
@@ -185,7 +156,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function (response) {
-                $log.info('POST RESULT', response);
+                $log.info('getId: ', response);
                 callback(response.data);
             });
             

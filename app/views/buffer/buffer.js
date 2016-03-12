@@ -3,7 +3,7 @@
 /* App Module */
 
 var buffer = angular.module('buffer', [
-  'ngRoute'
+  'ngRoute', 'pouchdb'
 ]);
 
 buffer.config(['$routeProvider',
@@ -22,8 +22,10 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope',
-  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB',
+  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB) {
+
+    var db = pouchDB('dbname');
 
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);
@@ -39,14 +41,14 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
 
     /*bufferService.setTask(function(data) {
       console.log("setTask: ", data);
-    }, 'New task 123');
+    }, 'New task 123');*/
 
     bufferService.getTasks(function(data) {
       //$scope.tasks = data;
-      console.log("getTasks: ", data);
+      //console.log("getTasks in buffer.js: ", data);
     });
 
-    bufferService.getId(function(data) {
+    /*bufferService.getId(function(data) {
       $scope.id = data;
       //console.log("getId: ", data[0][2]);
       //stompService.stompSubscribe(data[0][2]);
