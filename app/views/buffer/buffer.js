@@ -3,7 +3,7 @@
 /* App Module */
 
 var buffer = angular.module('buffer', [
-  'ngRoute'
+  'ngRoute', 'pouchdb'
 ]);
 
 buffer.config(['$routeProvider',
@@ -22,8 +22,10 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory',
-  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB', 'stompService',
+  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB, stompService) {
+
+    //var db = pouchDB('dbname');
 
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);
@@ -37,28 +39,27 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
       console.log(data);
     });*/
 
-    bufferService.setTask(function(data) {
+    /*bufferService.setTask(function(data) {
       console.log("setTask: ", data);
-    }, 'New task 123');
+    }, 'New task 123');*/
 
     bufferService.getTasks(function(data) {
       //$scope.tasks = data;
-      console.log("getTasks: ", data);
+      //console.log("getTasks in buffer.js: ", data);
     });
 
-
-
-    bufferService.getId(function(data) {
+    /*bufferService.getId(function(data) {
       $scope.id = data;
       //console.log("getId: ", data[0][2]);
       //stompService.stompSubscribe(data[0][2]);
-    });
+    });*/
 
     //console.log ("findBookById1: ", bufferService.findBookById(123));
 
-    bufferService.findBookById(123).then(function (response) {
+    /*bufferService.findBookById(123).then(function (response) {
+      $log.info('POST RESULT', response);
       //console.log("findBookById2: ", response.data);
-    });
+    });*/
 
 
 
@@ -89,8 +90,15 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
         //console.log("scope.makePOST: ", $scope.makePOST);
       }, function (error) {
         $log.info('POST ERROR', error);
+        $scope.tasks = response.data;
       });
     };
+
+    /*bufferService.getDataById(8)
+    .then(function (response) {
+      //$log.info('POST RESULT: ', response);
+      //console.log("findBookById2: ", response.data);
+    });*/
 
 
 

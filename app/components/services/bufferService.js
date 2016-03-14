@@ -9,43 +9,94 @@
  * Time: 10:25
  */
 
-var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline']);
+var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb']);
 
-bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide) {
+bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider) {
   localStorageServiceProvider
     .setPrefix('bufferService')
     .setStorageType('sessionStorage')
     .setNotify(true, true);
 
-    /*$provide.decorator('connectionStatus', function ($delegate) {
-        $delegate.online = true;
-        $delegate.isOnline = function () {
-            return $delegate.online;
-        };
-        return $delegate;
-    });*/
-
     //offlineProvider.debug(true);
+
+
+
+        //enable cors
+        //$httpProvider.defaults.useXDomain = true;
+
+        $httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
+            return {
+                'request': function (config) {
+                    console.log("INTERCEPTORS 1", config);
+                    //add headers
+                    return config;
+                },
+
+                // optional method
+               'requestError': function(rejection) {
+                  console.log("INTERCEPTORS 2", rejection);
+                  // do something on error
+                  return $q.reject(rejection);
+                },
+
+                // optional method
+                'response': function(response) {
+                  console.log("INTERCEPTORS 3", response);
+                  if (response.status === 500) {
+                    console.log("INTERCEPTORS 3 status: ", response.status);
+                  };
+                  // do something on success
+                  return response;
+                },
+
+                'responseError': function (rejection) {
+                    console.log("INTERCEPTORS 4", rejection);
+                    if (rejection.status === 500) {
+
+                        //injected manually to get around circular dependency problem.
+                        var AuthService = $injector.get('Auth');
+
+                        //if server returns 401 despite user being authenticated on app side, it means session timed out on server
+                        if (AuthService.isAuthenticated()) {
+                            AuthService.appLogOut();
+                        }
+                        $location.path('/login');
+                        return $q.reject(rejection);
+                    }
+                }
+            };
+        }]);
+
+
 });
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log) {
+bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
         console.log("Start bufferService.");
 
-        $http.defaults.cache = CacheFactory('defaultCache', {
-            maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
-            cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-            deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+        var db = pouchDB('dbname');
+        /*db.put({
+          _id: 'dave@gmail.com',
+          name: 'David',
+          age: 69
+        });*/
+
+        db.changes().on('change', function() {
+          console.log('Ch-Ch-Changes');
+        });
+
+        db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+            console.log(doc.rows);
         });
 
 
-        if (!CacheFactory.get('bookCache')) {
+        /*if (!CacheFactory.get('bookCache')) {
             // or CacheFactory('bookCache', { ... });
             CacheFactory.createCache('bookCache', {
                 deleteOnExpire: 'aggressive',
                 recycleFreq: 60000
             });
-        }
+        }*/
         //var bookCache = CacheFactory.get('bookCache');
         //console.log("bookCache: ", bookCache);
         
@@ -67,11 +118,27 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         this.getTasks = getTasks;
         this.setTask = setTask;
         this.getId = getId;
-        this.findBookById = findBookById;
+        //this.findBookById = findBookById;
+        //this.getDataById = getDataById;
         
 
         /* service */
         function getTasks(callback) {
+
+            // push task to db
+
+            console.log(callback);
+            //localStorageService.set('key124', JSON.stringify(callback));
+            //console.log(JSON.stringify(callback));
+            //console.log ("LSget: ", localStorageService.get('key124'));
+            //console.log("Keys: ", localStorageService.keys());
+
+            db.put({
+                _id: uuid4.generate(),
+                cmd: 'getTasks'
+            });
+
+
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
@@ -79,8 +146,10 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function successCallback(response) {
-                $log.info('POST RESULT', response);
+                $log.info('getTasks: ', response);
                 callback(response.data);
+            }, function(rejectReason) {
+                console.log('failure');
             });
         };
 
@@ -95,7 +164,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function (response) {
-                $log.info('POST RESULT', response);
+                $log.info('setTask: ', response);
                 callback(response.data);
             });
         };
@@ -108,7 +177,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 //cache: true,
                 offline: true
             }).then(function (response) {
-                $log.info('POST RESULT', response);
+                $log.info('getId: ', response);
                 callback(response.data);
             });
             
@@ -138,9 +207,26 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             });
         };
 
-        function findBookById(id) {
-            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]');
-        };
+        /*function findBookById(id) {
+            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true});
+        };*/
+
+        
+        /*function getDataById(id) {
+              var deferred = $q.defer();
+              var start = new Date().getTime();
+
+              $http.get('api/data/' + id, {
+                cache: true
+              }).success(function (data) {
+                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
+                deferred.resolve(data);
+              });
+              return deferred.promise;
+        };*/
+        
+
+
         
 
 
@@ -165,25 +251,52 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             }
         };*/
 
+        /*return {
+            getDataById: function (id) {
+              var deferred = $q.defer();
+              var start = new Date().getTime();
+
+              $http.get('http://api.dev2.bit-ask.com/index.php/event/all', {
+                cache: true,
+                offline: true,
+                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+              }).success(function (data) {
+                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
+                deferred.resolve(data);
+              });
+              return deferred.promise;
+            }
+        };*/
+
 
 }]);
 
-bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
-  $http.defaults.cache = $cacheFactory('custom2');
-  offline.stackCache = CacheFactory.createCache('my-cache2', {
-    storageMode: 'localStorage'
-  });
+bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope) {
 
-  offline.start($http);
+    $http.defaults.cache = CacheFactory('defaultCache', {
+        maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
+        cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
+        deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+    });
 
 
-  connectionStatus.$on('online', function () {
-    $log.info('bufferService: We are now online');
-  });
+    $http.defaults.cache = $cacheFactory('custom2');
+    offline.stackCache = CacheFactory.createCache('my-cache2', {
+        storageMode: 'localStorage'
+    });
 
-  connectionStatus.$on('offline', function () {
-    $log.info('bufferService: We are now offline');
-  });
+    offline.start($http);
+
+
+    connectionStatus.$on('online', function () {
+        $log.info('bufferService: We are now online');
+    });
+
+    connectionStatus.$on('offline', function () {
+        $log.info('bufferService: We are now offline');
+    });
+
+    $rootScope.test = 'It works! Using ' + (CacheFactory ? 'angular-cache' : 'undefined');
 
 
 });
