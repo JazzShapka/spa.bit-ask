@@ -24,24 +24,24 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
         //enable cors
         //$httpProvider.defaults.useXDomain = true;
 
-        $httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
+        /*$httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
             return {
                 'request': function (config) {
-                    console.log("INTERCEPTORS 1", config);
+                    //console.log("INTERCEPTORS 1", config);
                     //add headers
                     return config;
                 },
 
                 // optional method
                'requestError': function(rejection) {
-                  console.log("INTERCEPTORS 2", rejection);
+                  //console.log("INTERCEPTORS 2", rejection);
                   // do something on error
                   return $q.reject(rejection);
                 },
 
                 // optional method
                 'response': function(response) {
-                  console.log("INTERCEPTORS 3", response);
+                  //console.log("INTERCEPTORS 3", response);
                   if (response.status === 500) {
                     console.log("INTERCEPTORS 3 status: ", response.status);
                   };
@@ -50,7 +50,7 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
                 },
 
                 'responseError': function (rejection) {
-                    console.log("INTERCEPTORS 4", rejection);
+                    //console.log("INTERCEPTORS 4", rejection);
                     if (rejection.status === 500) {
 
                         //injected manually to get around circular dependency problem.
@@ -65,7 +65,7 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
                     }
                 }
             };
-        }]);
+        }]);*/
 
 
 });
@@ -86,7 +86,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         });
 
         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-            console.log(doc.rows);
+            console.log("ALL DB: ", doc.rows);
         });
 
 
@@ -127,7 +127,7 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 
             // push task to db
 
-            console.log(callback);
+            //console.log(callback);
             //localStorageService.set('key124', JSON.stringify(callback));
             //console.log(JSON.stringify(callback));
             //console.log ("LSget: ", localStorageService.get('key124'));
@@ -142,11 +142,27 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]',
+                data: '[[1,false,"task/subtasks",{"parentId":"0"}]]',
                 //cache: true,
                 offline: true
             }).then(function successCallback(response) {
                 $log.info('getTasks: ', response);
+
+
+                console.log(response.data[0][2][0]['id']);
+                
+                
+                // LOOP: put response to db
+                db.put({
+                    _id: response.data[0][2][0]['id'],
+                    taskName: response.data[0][2][0]['taskName']
+                }).then(function (response) {
+                    // handle response
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+
                 callback(response.data);
             }, function(rejectReason) {
                 console.log('failure');
