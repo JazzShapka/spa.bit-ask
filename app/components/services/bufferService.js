@@ -124,15 +124,18 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 
         /* service */
         function getTasks(callback) {
+
+            // push task to db
+
             console.log(callback);
-            localStorageService.set('key124', JSON.stringify(callback));
-            console.log(JSON.stringify(callback));
-            console.log ("LSget: ", localStorageService.get('key124'));
-            console.log("Keys: ", localStorageService.keys());
+            //localStorageService.set('key124', JSON.stringify(callback));
+            //console.log(JSON.stringify(callback));
+            //console.log ("LSget: ", localStorageService.get('key124'));
+            //console.log("Keys: ", localStorageService.keys());
 
             db.put({
-                _id: 'id57',
-                f: 'koko'
+                _id: uuid4.generate(),
+                cmd: 'getTasks'
             });
 
 
