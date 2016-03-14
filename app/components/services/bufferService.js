@@ -107,11 +107,11 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 
         //debugger;
         //console.log ($auth.getToken());
-        console.log ("getPayload: ", $auth.getPayload().sub);
+        //console.log ("getPayload: ", $auth.getPayload().sub);
 
         var self = this;
 
-        var uid = $auth.getPayload().sub;
+        //var uid = $auth.getPayload().sub;
 
 
 
