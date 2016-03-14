@@ -98,6 +98,7 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
             // send message body to Service
             //taskService.showTaskEditor(message.body);
             //console.log("cmd: ", event.event + 'Service.showTaskEditor(' + message.body + ');');
+            //db.destroy();
             eval(event.event + 'Service.showTaskEditor(' + message.body + ');');
 
         }).catch(function (err) {

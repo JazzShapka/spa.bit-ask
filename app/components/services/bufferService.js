@@ -133,10 +133,10 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
             //console.log ("LSget: ", localStorageService.get('key124'));
             //console.log("Keys: ", localStorageService.keys());
 
-            db.put({
+            /*db.put({
                 _id: uuid4.generate(),
                 cmd: 'getTasks'
-            });
+            });*/
 
 
             $http({
