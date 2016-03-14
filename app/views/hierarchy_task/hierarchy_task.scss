@@ -43,7 +43,7 @@
 // Задача
 .task_background .task{
     min-height: 32px;
-    margin: 5px 0 5px 15px;
+    margin: 7px 0 7px 15px;
     border: 1px solid $task-color;
     border-radius: 3px;
     color: $text-color;
@@ -186,22 +186,27 @@
 .task_background .expand_block .arrow_middle{
     //display: none;
     opacity: 0;
-    -webkit-transition: opacity 200ms ease-out 300ms;
-    -moz-transition: opacity 200ms ease-out 300ms;
-    -ms-transition: opacity 200ms ease-out 300ms;
-    -o-transition: opacity 200ms ease-out 300ms;
-    transition: opacity 200ms ease-out 300ms;
+    -webkit-transition: opacity 200ms ease-out 400ms;
+    -moz-transition: opacity 200ms ease-out 400ms;
+    -ms-transition: opacity 200ms ease-out 400ms;
+    -o-transition: opacity 200ms ease-out 400ms;
+    transition: opacity 200ms ease-out 400ms;
+    position: relative;
+
 }
 .task_background .expand_block .arrow_middle:hover{
     display: block;
     opacity: 1;
 }
-.task_background .expand_block.right .arrow_main:hover + .arrow_middle{
+.task_background .expand_block .arrow_main:hover + .arrow_middle{
     display: block;
     opacity: 1;
 }
 .task_background .expand_block.right{
     left: 12px;
+}
+.task_background .expand_block.right .arrow_middle{
+    top: -2px;
 }
 
 .task_background .expand_block.open .arrow_right{
@@ -216,6 +221,8 @@
 .task_background .expand_block.close .arrow_left{
     display: none;
 }
+
+
 
 
 // Цвета иконок

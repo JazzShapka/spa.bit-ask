@@ -5,8 +5,8 @@ angular.module('bitaskApp.editors.taskEditor', [
         'bitaskApp.service.task',
         'bitaskApp.service.date'
     ])
-    .controller('taskEditor',['$scope', 'taskService', '$mdDialog', 'locals', '$interval', '$auth', 'uuid4',
-        function ($scope, taskService, $mdDialog, locals, $interval, $auth, uuid4){
+    .controller('taskEditor',['$scope', 'taskService', '$mdDialog', 'locals', '$interval', '$auth', 'uuid4', 'keyboardService',
+        function ($scope, taskService, $mdDialog, locals, $interval, $auth, uuid4, keyboardService){
 
             $scope.task = {
                 taskName:'',
@@ -15,10 +15,9 @@ angular.module('bitaskApp.editors.taskEditor', [
                 parentId: ''
             };
             locals.onClose = function (){
+                keyboardService.off();
                 $scope.save();
             };
-
-            //26475bdd-1426-892e-7033-bb3a1bf6ffc6
             $scope.save = function (){
 
                 if($scope.task.parentId == '')
@@ -32,6 +31,7 @@ angular.module('bitaskApp.editors.taskEditor', [
                 }
 
                 var task = {
+
                     "id":uuid4.generate(),
                     "taskName": $scope.task.taskName,
                     "taskDescription": $scope.task.taskDescription,
@@ -70,13 +70,9 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 $scope.close();
             };
-
             $scope.close = function (){
                 $mdDialog.hide();
             };
-
-
-
 
             var __constructor = function (){
                 $scope.show_completebox = (locals.mode == "edit_task");
@@ -89,6 +85,10 @@ angular.module('bitaskApp.editors.taskEditor', [
                         $scope.form_name = "Редактировать задачу";
                         break;
                 }
+
+                keyboardService.on(function (){
+                    console.log('taskEditor - keypress');
+                });
             };
             __constructor();
         }

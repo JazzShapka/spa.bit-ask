@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <div class="expand_block" ng-class="getExpandBoxClass(task.id)" ng-show="task.children">
+        <div class="expand_block" ng-class="getExpandBoxClass(task.id)" ng-show="task.children_quantity">
 
             <svg class="arrow_main" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px" ng-click="expandTask(task.id)">
                 <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
@@ -78,7 +78,7 @@
     <div class="children" ng-show="task.viewBranch != 'hide'" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
 
     <!-- Соеденительные линии -->
-    <div class="right_connect" ng-show="task.children && task.viewBranch != 'hide'">
+    <div class="right_connect" ng-show="task.children_quantity && task.viewBranch != 'hide'">
         <div class="canvas_block"></div>
         <div class="canvas_block"></div>
     </div>
