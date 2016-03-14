@@ -94,8 +94,12 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
           db.allDocs({include_docs: true, descending: true}, function(err, doc) {
             console.log(doc.rows);
           });
-          // send message body to service
-          taskService.send(message.body);
+
+          // send message body to Service
+          //taskService.showTaskEditor(message.body);
+          //console.log("cmd: ", event.event + 'Service.showTaskEditor(' + message.body + ');');
+          eval(event.event + 'Service.showTaskEditor(' + message.body + ');');
+
         }).catch(function (err) {
           console.log(err);
         });
