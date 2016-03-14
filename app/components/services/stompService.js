@@ -84,24 +84,24 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
 
         // update data in db
         db.get(event.id).then(function(doc) {
-          return db.put({
-            _id: event.id,
-            _rev: doc._rev,
-            title: event.taskName
-          });
+            return db.put({
+                _id: event.id,
+                _rev: doc._rev,
+                title: event.taskName
+            });
         }).then(function(response) {
-          // handle response
-          db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-            console.log(doc.rows);
-          });
+            // handle response
+            db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+                console.log(doc.rows);
+            });
 
-          // send message body to Service
-          //taskService.showTaskEditor(message.body);
-          //console.log("cmd: ", event.event + 'Service.showTaskEditor(' + message.body + ');');
-          eval(event.event + 'Service.showTaskEditor(' + message.body + ');');
+            // send message body to Service
+            //taskService.showTaskEditor(message.body);
+            //console.log("cmd: ", event.event + 'Service.showTaskEditor(' + message.body + ');');
+            eval(event.event + 'Service.showTaskEditor(' + message.body + ');');
 
         }).catch(function (err) {
-          console.log(err);
+            console.log(err);
         });
 
         
