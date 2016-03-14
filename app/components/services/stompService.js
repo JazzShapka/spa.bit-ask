@@ -28,10 +28,12 @@ stompService.config(
         });
 
 
-stompService.service('stompService', ['ngstomp', '$auth', '$rootScope',
-	function(ngstomp, $auth, $rootScope) {
+stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB', 'uuid4', 'taskService',
+	function(ngstomp, $auth, $rootScope, pouchDB, uuid4, taskService) {
 
 	console.log("Start stompService.");
+
+    var db = pouchDB('dbname');
 
 	var uid = $auth.getPayload().sub;
 	//console.log("uid: ", uid);
@@ -69,5 +71,37 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope',
         console.log("STOMP items: ", items);
         console.log("STOMP message: ", message);
         console.log("STOMP message.body: ", message.body);
+
+        // parse
+        var event = JSON.parse(message.body);
+        console.log("event: ", event);
+        //console.log(event.id);
+        
+        /*db.put({
+            _id: event.id,
+            title: 'Taskname'
+        });*/
+
+        // update data in db
+        db.get(event.id).then(function(doc) {
+          return db.put({
+            _id: event.id,
+            _rev: doc._rev,
+            title: event.taskName
+          });
+        }).then(function(response) {
+          // handle response
+          db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+            console.log(doc.rows);
+          });
+          // send message body to service
+          taskService.send(message.body);
+        }).catch(function (err) {
+          console.log(err);
+        });
+
+        
+
+
     }
 }]);
