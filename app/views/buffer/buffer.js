@@ -22,8 +22,8 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB', 'stompService',
-  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB, stompService) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB',
+  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB) {
 
 
 
