@@ -412,7 +412,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         /* STOMP SERVICE */
 
 
-            console.log("Start stompService.");
+        console.log("Start stompService from buffer.");
 
     //var db = pouchDB('dbname');
 
