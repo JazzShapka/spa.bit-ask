@@ -29,6 +29,10 @@ Test
 
 <pre>{{ test }}</pre>
 
+<div ng-repeat="doc in docs">
+    <pre><code ng-bind="doc | json"></code></pre>
+</div>
+
 
 <!-- pre> {{ tasks[0][2] | json }} </pre !-->
 <pre> {{ items }} </pre>
