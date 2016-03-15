@@ -133,7 +133,15 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 console.log(err);
             });*/
 
-            var db = pouchDB('dbname');
+            //var db = pouchDB('dbname');
+            var db = new pouchDB('dbname');
+
+            var resetdb = function() {
+              db.destroy().then(function() {
+                db = new pouchDB('dbname');
+              });
+            };
+            resetdb();
 
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
                 console.log("ALL DB: ", doc.rows);
@@ -182,7 +190,36 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
 
                     db.put({
                         _id: response.data[0][2][i]['id'],
-                        taskName: response.data[0][2][i]['taskName']
+                        //taskName: response.data[0][2][i]['taskName']
+
+                        actions: response.data[0][2][i]['actions'],
+                        author: response.data[0][2][i]['author'],
+                        changed: response.data[0][2][i]['changed'],
+                        children: response.data[0][2][i]['children'],
+                        completeTime: response.data[0][2][i]['completeTime'],
+                        createTime: response.data[0][2][i]['createTime'],
+                        dateBeginAuthor: response.data[0][2][i]['dateBeginAuthor'],
+                        dateBeginPerformer: response.data[0][2][i]['dateBeginPerformer'],
+                        dateEndAuthor: response.data[0][2][i]['dateEndAuthor'],
+                        dateEndPerformer: response.data[0][2][i]['dateEndPerformer'],
+                        directionBranch: response.data[0][2][i]['directionBranch'],
+                        id: response.data[0][2][i]['id'],
+                        mapIndex: response.data[0][2][i]['mapIndex'],
+                        parentId: response.data[0][2][i]['parentId'],
+                        performer: response.data[0][2][i]['performer'],
+                        regularSetting: response.data[0][2][i]['regularSetting'],
+                        reminder: response.data[0][2][i]['reminder'],
+                        role: response.data[0][2][i]['role'],
+                        shared: response.data[0][2][i]['shared'],
+                        status: response.data[0][2][i]['status'],
+                        taskDescription: response.data[0][2][i]['taskDescription'],
+                        taskName: response.data[0][2][i]['taskName'],
+                        timeBeginAuthor: response.data[0][2][i]['timeBeginAuthor'],
+                        timeBeginPerformer: response.data[0][2][i]['timeBeginPerformer'],
+                        timeEndAuthor: response.data[0][2][i]['timeEndAuthor'],
+                        timeEndPerformer: response.data[0][2][i]['timeEndPerformer'],
+                        viewBranch: response.data[0][2][i]['viewBranch']
+
                     }).then(function (response) {
                         // handle response
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
