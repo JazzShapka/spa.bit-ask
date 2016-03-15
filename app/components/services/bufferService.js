@@ -70,25 +70,23 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
 
 });
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
+bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout) {
         //console.log("Start bufferService.");
 
-        var db = pouchDB('dbname');
+        //var db = pouchDB('dbname');
         /*db.put({
           _id: 'dave@gmail.com',
           name: 'David',
           age: 69
         });*/
 
-        db.changes().on('change', function() {
+        //db.changes().on('change', function() {
           //console.log('Ch-Ch-Changes');
-        });
+        //});
 
-        db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-
-            //console.log("ALL DB: ", doc.rows);
-        });
+        //db.destroy();
+        
 
 
         /*if (!CacheFactory.get('bookCache')) {
@@ -119,12 +117,30 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         this.getTasks = getTasks;
         this.setTask = setTask;
         this.getId = getId;
+        this.deleteTask = deleteTask;
         //this.findBookById = findBookById;
         //this.getDataById = getDataById;
         
 
         /* service */
         function getTasks(callback) {
+
+            //var db = pouchDB('dbname');
+            /*db.destroy().then(function (response) {
+                // success
+                //var db = pouchDB('dbname');
+            }).catch(function (err) {
+                console.log(err);
+            });*/
+
+            var db = pouchDB('dbname');
+
+            db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+                console.log("ALL DB: ", doc.rows);
+            });
+
+            
+            
 
             // push task to db
 
@@ -150,18 +166,36 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 $log.info('getTasks: ', response);
 
 
-                console.log(response.data[0][2][0]['id']);
+                //console.log(response.data[0][2][0]['id']);
                 
                 
                 // LOOP: put response to db
-                db.put({
-                    _id: response.data[0][2][0]['id'],
-                    taskName: response.data[0][2][0]['taskName']
-                }).then(function (response) {
-                    // handle response
-                }).catch(function (err) {
-                    console.log(err);
-                });
+                //console.log("length: " , response.data[0][2].length);
+                for (var i = 0; i < response.data[0][2].length; i++) {
+                    //delay(deleteTask(response.data[0][2][i]['id']), 2000);
+
+                    //$timeout(deleteTask(response.data[0][2][i]['id']), 1000);
+
+                    //deleteTask(response.data[0][2][i]['id']);
+                    console.log("id: ", response.data[0][2][i]['id']);
+                    console.log("taskName", response.data[0][2][i]['taskName']);
+
+                    db.put({
+                        _id: response.data[0][2][i]['id'],
+                        taskName: response.data[0][2][i]['taskName']
+                    }).then(function (response) {
+                        // handle response
+                        db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+                            console.log("ALL DB OK: ", doc.rows);
+                        });
+                    }).catch(function (err) {
+                        console.log(err);
+                        db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+                            console.log("ALL DB ERR: ", doc.rows);
+                        });
+                    });
+
+                };
 
 
                 callback(response.data);
@@ -185,6 +219,22 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                 callback(response.data);
             });
         };
+
+        function deleteTask(id) {
+            var data = [[1, false, "task/deletetask", {"id": id}]];
+            //console.log ("data: ", data);
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data,
+                //cache: true,
+                offline: true
+            }).then(function (response) {
+                $log.info('deleteTask: ', response);
+                //callback(response.data);
+            });
+        };
+
 
         function getId(callback) {
             $http({
