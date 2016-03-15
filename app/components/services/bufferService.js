@@ -9,9 +9,9 @@
  * Time: 10:25
  */
 
-var bufferService = angular.module('bufferService', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb']);
+angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb'])
 
-bufferService.config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider) {
+.config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider) {
   localStorageServiceProvider
     .setPrefix('bufferService')
     .setStorageType('sessionStorage')
@@ -68,9 +68,9 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
         }]);*/
 
 
-});
+})
 
-bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
+.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
     function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
         //console.log("Start bufferService.");
 
@@ -219,6 +219,10 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
                         {
                             callback(response.data[i][2]);
                         }
+                        else
+                        {
+                            $log.$warn(response.data[i][1][1]);
+                        }
                     }
                 }
             });
@@ -286,9 +290,9 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         };*/
 
 
-}]);
+}])
 
-bufferService.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope) {
+.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope) {
 
     $http.defaults.cache = CacheFactory('defaultCache', {
         maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes

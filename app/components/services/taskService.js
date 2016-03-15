@@ -1,7 +1,11 @@
 /**
  * Created by SNKraynov on 19.02.2016.
  */
-angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4'])
+angular.module('bitaskApp.service.task', [
+    'bitaskApp.editors.taskEditor',
+    'bitaskApp.service.buffer',
+    'uuid4'
+])
     .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4',
         function ($timeout, $mdDialog, bufferService, uuid4)
         {

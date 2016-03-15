@@ -7,7 +7,8 @@ angular.module('bitaskApp.hierarchy_task', [
     'ngRoute',
     'bitaskApp.service.task',
     'bitaskApp.service.date',
-    'bitaskApp.service.keyboard'
+    'bitaskApp.service.keyboard',
+    'bitaskApp.service.user'
 ])
 
     .config(['$routeProvider', function($routeProvider) {
@@ -17,7 +18,8 @@ angular.module('bitaskApp.hierarchy_task', [
         });
     }])
     .controller('HierarchyTaskCtrl', ['$scope', '$log', 'taskService', 'dateService', '$document', 'keyboardService',
-        function($scope, $log, taskService, dateService, $document, keyboardService) {
+        'userService', '$timeout',
+        function($scope, $log, taskService, dateService, $document, keyboardService, userService, $timeout) {
 
             var selected_element = false,   // Выбранный элемент (с классом task_background)
                 selected_id = false;        // id выбранного элемента
@@ -73,34 +75,86 @@ angular.module('bitaskApp.hierarchy_task', [
              * Галочка - выполнить задачу.
              * @param taskId
              */
-            $scope.comleteTask = function (taskId){
+            $scope.comleteTask = function (taskId, $event){
+                $event.stopPropagation();
+
                 if(taskService.tasks_indexed[taskId].status == 'delivered')
                     taskService.tasks_indexed[taskId].status = 'completed';
+
                 else if(taskService.tasks_indexed[taskId].status == 'completed')
                     taskService.tasks_indexed[taskId].status = 'delivered';
 
                 taskService.setTask(taskId, {status:taskService.tasks_indexed[taskId].status});
-
             };
 
             /**
              * Кнопка - развернуть задачу
-             * @param taskId
+             * @param taskId - id задачи
+             * @param action - Открыть или закрыть ('hide' || 'show'), если
+             * не передать то изменится на противоположное
              */
-            $scope.expandTask = function (taskId){
+            $scope.expandTask = function (taskId, action){
                 var task = taskService.tasks_indexed[taskId];
 
-                if(task.viewBranch == 'show')
-                    task.viewBranch = 'hide';
+                // Если задано, открыть или закрыть
+                if(action)
+                {
+                    if(action == 'hide')
+                        task.viewBranch = 'hide';
+                    else
+
+                    {
+                        task.viewBranch = 'show';
+                        // Загружаем наперед
+                        taskService.loadingAdvance();
+                    }
+                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
+                }
+                // Если не задано то просто меняем на противоположное
                 else
                 {
-                    task.viewBranch = 'show';
-                    // Загружаем наперед
-                    taskService.loadingAdvance();
+                    if(task.viewBranch == 'show')
+                        task.viewBranch = 'hide';
+                    else
+                    {
+                        task.viewBranch = 'show';
+                        // Загружаем наперед
+                        taskService.loadingAdvance();
+                    }
+
+                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
                 }
 
-                taskService.setTask(taskId, {viewBranch:task.viewBranch});
+
             };
+
+            $scope.selectTask = function (taskId){
+                var task_elem = angular.element('.hierarchy_task_background').find('[data-id = "'+ taskId +'"]');
+                if(task_elem.length)
+                {
+                    if(selected_element)
+                        selected_element.removeClass('selected');
+
+                    selected_element = task_elem.parent().addClass('selected');
+                    selected_id = taskId;
+
+                    userService.setValue('selected_task', selected_id);
+                }
+            };
+
+            $scope.onRenderTask = function (){
+                userService.getValue('selected_task', function (response){
+                    if(response.value)
+                    {
+                        var task_elem = angular.element('.hierarchy_task_background').find('[data-id = "'+ response.value +'"]');
+                        if(task_elem.length)
+                        {
+                            selected_element = task_elem.parent().addClass('selected');
+                            selected_id = response.value;
+                        }
+                    }
+                })
+            }
 
 
             /**
@@ -370,49 +424,101 @@ angular.module('bitaskApp.hierarchy_task', [
                 return "Не настроено";
             };
 
+            /**
+             * Обработка нажатий клавиш
+             */
             keyboardService.on(null, function (event){
 
-                var task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+                var task_elem, self_task, old_selected_id = selected_id;
 
+                // Если нажаты клавиши стрелок, а элемент еще не выбран
                 if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
                 {
+                    task_elem = angular.element('.hierarchy_task_background').find('.task:first');
                     selected_id = task_elem.data('id');
                     selected_element = task_elem.parent().addClass('selected');
-                    console.log(selected_id);
+
                     return;
                 }
 
 
                 switch (event.keyCode)
                 {
-                    case 37:    // left
-
-                        break;
                     case 38:    // up
-                        var prev_element = selected_element.prev();
-                        if(prev_element.length)
+                    {
+                        var prev_element = selected_element.prev ();
+                        if (prev_element.length)
                         {
-                            selected_element.removeClass('selected');
+                            selected_element.removeClass ('selected');
                             selected_element = prev_element;
-                            selected_element.addClass('selected');
-                            selected_id = selected_element.find('.task:first').data('id');
+                            selected_element.addClass ('selected');
+                            selected_id = selected_element.find ('.task:first').data ('id');
                         }
 
-                        break
-                    case 39:    // right
-
                         break;
+                    }
                     case 40:    // down
-                        var next_element = selected_element.next();
-                        if(next_element.length)
+                    {
+                        var next_element = selected_element.next ();
+                        if (next_element.length)
                         {
-                            selected_element.removeClass('selected');
+                            selected_element.removeClass ('selected');
                             selected_element = next_element;
-                            selected_element.addClass('selected');
-                            selected_id = selected_element.find('.task:first').data('id');
+                            selected_element.addClass ('selected');
+                            selected_id = selected_element.find ('.task:first').data ('id');
+                        }
+                        break;
+                    }
+                    case 37:    // left
+                    {
+                        self_task = taskService.tasks_indexed[selected_id];
+
+                        if(self_task.children && self_task.viewBranch == 'show')
+                        {
+                            $scope.expandTask(self_task.id, 'hide');
+                            $scope.$apply();
+                        }
+                        else
+                        {
+                            var new_selected_element = selected_element.parent().parent();
+                            if(new_selected_element.hasClass('task_background'))
+                            {
+                                selected_element.removeClass('selected');
+                                task_elem = new_selected_element.find('.task');
+
+                                selected_id = task_elem.data('id');
+                                selected_element = new_selected_element.addClass('selected');
+                            }
                         }
 
                         break;
+                    }
+                    case 39:    // right
+                    {
+                        self_task = taskService.tasks_indexed[selected_id];
+                        if(self_task.children)
+                        {
+                            if(self_task.viewBranch == 'hide')
+                            {
+                                $scope.expandTask(self_task.id, 'show');
+                                $scope.$apply();
+                            }
+                            else
+                            {
+                                // Ищем первый дочерний элемент
+                                task_elem = selected_element.find('.children:first').find('.task:first');
+                                if(task_elem.length > 0)
+                                {
+                                    // Снимаем старое выделение
+                                    selected_element.removeClass ('selected');
+
+                                    selected_id = task_elem.data('id');
+                                    selected_element = task_elem.parent().addClass('selected');
+                                }
+                            }
+                        }
+                        break;
+                    }
                     case 13:    // enter
 
                         break;
@@ -423,11 +529,16 @@ angular.module('bitaskApp.hierarchy_task', [
 
                         break;
                 }
-                //console.log(selected_id);
+
+                // Если изменится id выбранной задачи, то зохраняем на сервере
+                if(old_selected_id != selected_id)
+                {
+                    userService.setValue('selected_task', selected_id);
+                }
+
             });
 
             var __construct = function (){
-
 
             }
             __construct();

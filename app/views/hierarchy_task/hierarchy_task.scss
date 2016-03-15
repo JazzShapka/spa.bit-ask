@@ -44,6 +44,7 @@
 .task_background .task{
     min-height: 32px;
     margin: 7px 0 7px 15px;
+    outline: none;
     border: 1px solid $task-color;
     border-radius: 3px;
     color: $text-color;
@@ -57,6 +58,7 @@
 }
 .task_background.selected > .task{
     border: 2px solid $red-icon-color;
+    margin: 7px -1px 7px 14px;
 }
 .task_background .task .completebox{
     width: 20px;
