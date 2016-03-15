@@ -25,23 +25,7 @@ buffer.config(['$routeProvider',
 buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB', 'stompService',
   function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB, stompService) {
 
-    var db = pouchDB('dbname');
 
-    $scope.docs = [];
-
-    function onChange(change) {
-      $scope.docs.push(change);
-    }
-
-    var options = {
-      /*eslint-disable camelcase */
-      include_docs: true,
-      /*eslint-enable camelcase */
-      live: true
-    };
-
-    db.changes(options).$promise
-      .then(null, null, onChange);
 
     //var db = pouchDB('dbname');
 

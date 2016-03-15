@@ -71,15 +71,33 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 })
 
 
-.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout) {
+.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope) {
 
-        //console.log("Start bufferService.");
+        console.log("Start bufferService.");
 
-        function initdb() {
+        var db = new pouchDB('dbname');
+
+        $rootScope.docs = [];
+
+        function onChange(change) {
+          $rootScope.docs.push(change);
+        }
+
+        var options = {
+          /*eslint-disable camelcase */
+          include_docs: true,
+          /*eslint-enable camelcase */
+          live: true
+        };
+
+        db.changes(options).$promise
+          .then(null, null, onChange);
+
+        /*function initdb() {
             getTasks(function() {console.log("initdb ok")});
         };
-        initdb();
+        initdb();*/
 
         //var db = pouchDB('dbname');
         /*db.put({
@@ -141,14 +159,14 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             });*/
 
             //var db = pouchDB('dbname');
-            var db = new pouchDB('dbname');
+            //var db = new pouchDB('dbname');
 
-            var resetdb = function() {
+            /*var resetdb = function() {
               db.destroy().then(function() {
                 db = new pouchDB('dbname');
               });
             };
-            resetdb();
+            resetdb();*/
 
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
                 console.log("ALL DB: ", doc.rows);
