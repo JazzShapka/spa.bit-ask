@@ -22,6 +22,8 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 if($scope.task.parentId == '')
                     $scope.task.parentId = taskService.new_task.id;
+                else if($scope.task.parentId == 'null')
+                    $scope.task.parentId = null;
 
 
                 if($scope.task.taskName == '')

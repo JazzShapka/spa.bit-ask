@@ -130,9 +130,9 @@ angular.module('bitaskApp.service.task', ['bitaskApp.editors.taskEditor', 'uuid4
                     self.tasks.push(task);
 
                     // Логирование
-                    console.groupCollapsed(task.taskName);
-                    console.log(task.taskName + ' ' + task.id);
-                    console.groupEnd();
+                    //console.groupCollapsed(task.taskName);
+                    //console.log(task.taskName + ' ' + task.id);
+                    //console.groupEnd();
                 }
 
             };

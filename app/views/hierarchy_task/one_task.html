@@ -7,7 +7,7 @@
     </div>
 
     <!-- Блок задачи -->
-    <div class="task" ng-draggable helper="clone" cursor="default">
+    <div class="task" data-id="{{task.id}}" ng-draggable helper="clone" cursor="default">
         <div ng-show="task.status!='new_task'">
             <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
             <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id)" aria-label="complete" class="completebox md-primary"></md-checkbox>

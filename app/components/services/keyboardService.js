@@ -41,15 +41,15 @@ angular.module('bitaskApp.service.keyboard', [])
         };
 
         $document.on('keypress', function (event){
-            if(typeof stack[stack.length-1][0] == 'function')
+            if(stack[stack.length-1] && typeof stack[stack.length-1][0] == 'function')
                 stack[stack.length-1][0](event);
         });
         $document.on('keydown', function (event){
-            if(typeof stack[stack.length-1][1] == 'function')
+            if(stack[stack.length-1] && typeof stack[stack.length-1][1] == 'function')
                 stack[stack.length-1][1](event);
         });
         $document.on('keyup', function (event){
-            if(typeof stack[stack.length-1][2] == 'function')
+            if(stack[stack.length-1] && typeof stack[stack.length-1][2] == 'function')
                 stack[stack.length-1][2](event);
         });
 

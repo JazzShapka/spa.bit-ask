@@ -27,30 +27,30 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
         $httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
             return {
                 'request': function (config) {
-                    console.log("INTERCEPTORS 1", config);
+                    //console.log("INTERCEPTORS 1", config);
                     //add headers
                     return config;
                 },
 
                 // optional method
                'requestError': function(rejection) {
-                  console.log("INTERCEPTORS 2", rejection);
+                  //console.log("INTERCEPTORS 2", rejection);
                   // do something on error
                   return $q.reject(rejection);
                 },
 
                 // optional method
                 'response': function(response) {
-                  console.log("INTERCEPTORS 3", response);
+                  //console.log("INTERCEPTORS 3", response);
                   if (response.status === 500) {
-                    console.log("INTERCEPTORS 3 status: ", response.status);
+                    //console.log("INTERCEPTORS 3 status: ", response.status);
                   };
                   // do something on success
                   return response;
                 },
 
                 'responseError': function (rejection) {
-                    console.log("INTERCEPTORS 4", rejection);
+                    //console.log("INTERCEPTORS 4", rejection);
                     if (rejection.status === 500) {
 
                         //injected manually to get around circular dependency problem.
@@ -72,7 +72,7 @@ bufferService.config(function (localStorageServiceProvider, offlineProvider, $pr
 
 bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB',
     function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB) {
-        console.log("Start bufferService.");
+        //console.log("Start bufferService.");
 
         var db = pouchDB('dbname');
         /*db.put({
@@ -82,11 +82,11 @@ bufferService.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 
         });*/
 
         db.changes().on('change', function() {
-          console.log('Ch-Ch-Changes');
+          //console.log('Ch-Ch-Changes');
         });
 
         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-            console.log(doc.rows);
+            //console.log(doc.rows);
         });
 
 

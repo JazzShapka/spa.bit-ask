@@ -55,6 +55,9 @@
     justify-content: flex-start;
     flex-flow: row nowrap;
 }
+.task_background.selected > .task{
+    border: 2px solid $red-icon-color;
+}
 .task_background .task .completebox{
     width: 20px;
     margin: 0 8px 0 7px;

@@ -19,6 +19,9 @@ angular.module('bitaskApp.hierarchy_task', [
     .controller('HierarchyTaskCtrl', ['$scope', '$log', 'taskService', 'dateService', '$document', 'keyboardService',
         function($scope, $log, taskService, dateService, $document, keyboardService) {
 
+            var selected_element = false,   // Выбранный элемент (с классом task_background)
+                selected_id = false;        // id выбранного элемента
+
             $scope.tasks = taskService.tasks;
 
             /**
@@ -367,8 +370,65 @@ angular.module('bitaskApp.hierarchy_task', [
                 return "Не настроено";
             };
 
+            keyboardService.on(null, function (event){
 
-            keyboardService.on(function (){
-                console.log('hierarchy_task - keypress');
+                var task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+
+                if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
+                {
+                    selected_id = task_elem.data('id');
+                    selected_element = task_elem.parent().addClass('selected');
+                    console.log(selected_id);
+                    return;
+                }
+
+
+                switch (event.keyCode)
+                {
+                    case 37:    // left
+
+                        break;
+                    case 38:    // up
+                        var prev_element = selected_element.prev();
+                        if(prev_element.length)
+                        {
+                            selected_element.removeClass('selected');
+                            selected_element = prev_element;
+                            selected_element.addClass('selected');
+                            selected_id = selected_element.find('.task:first').data('id');
+                        }
+
+                        break
+                    case 39:    // right
+
+                        break;
+                    case 40:    // down
+                        var next_element = selected_element.next();
+                        if(next_element.length)
+                        {
+                            selected_element.removeClass('selected');
+                            selected_element = next_element;
+                            selected_element.addClass('selected');
+                            selected_id = selected_element.find('.task:first').data('id');
+                        }
+
+                        break;
+                    case 13:    // enter
+
+                        break;
+                    case 32:    // space
+
+                        break;
+                    case 9:     // tab
+
+                        break;
+                }
+                //console.log(selected_id);
             });
+
+            var __construct = function (){
+
+
+            }
+            __construct();
     }]);
