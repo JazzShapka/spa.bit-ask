@@ -76,6 +76,11 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
         //console.log("Start bufferService.");
 
+        function initdb() {
+            getTasks(function() {console.log("initdb ok")});
+        };
+        initdb();
+
         //var db = pouchDB('dbname');
         /*db.put({
           _id: 'dave@gmail.com',

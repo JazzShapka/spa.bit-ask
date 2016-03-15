@@ -61,10 +61,10 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
       console.log("setTask: ", data);
     }, 'New task 123');*/
 
-    bufferService.getTasks(function(data) {
+    //bufferService.getTasks(function(data) {
       //$scope.tasks = data;
       //console.log("getTasks in buffer.js: ", data);
-    });
+    //});
 
     /*bufferService.getId(function(data) {
       $scope.id = data;
