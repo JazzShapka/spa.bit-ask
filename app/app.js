@@ -19,7 +19,8 @@ angular.module('bitaskApp', [
     'bitaskApp.hierarchy_task',
     'bitaskApp.service.task',
     'bitaskApp.service.buffer',
-    //'stompService',
+    'bitaskApp.service.db',
+    'stompService',
     'buffer'
     //'stompdk'
 ])

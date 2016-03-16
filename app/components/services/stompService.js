@@ -28,8 +28,8 @@ stompService.config(
         });
 
 
-stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB', 'uuid4', 'taskService',
-	function(ngstomp, $auth, $rootScope, pouchDB, uuid4, taskService) {
+stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB', 'uuid4', 'taskService', 'dbService',
+	function(ngstomp, $auth, $rootScope, pouchDB, uuid4, taskService, dbService) {
 
 	console.log("Start stompService.");
 
@@ -92,7 +92,8 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
         });*/
 
         // update data in db
-        var db = pouchDB('dbname');
+        //var db = pouchDB('dbname');
+        var db = dbService.getDb();
         db.get(event[2]['id']).then(function(doc) {
             return db.put({
                 _id: event[2]['id'],
