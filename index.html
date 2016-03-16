@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,39 +11,79 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <link rel="stylesheet" href="app/app.css">
 
-    <script src="app/config.js"></script>
-
 </head>
-
 <body ng-app="bitaskApp">
+
+    <!-- Показываем шапку, если вход выполнен -->
+    <div ng-show="show_menu" ng-include="'app/views/header/header.html'"></div>
 
     <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
 
+    <!-- Круглая кнопка меню -->
+    <div ng-show="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
+
+
+    <!-- Конфиги -->
+    <script src="app/config.js"></script>
+    <script src="app/const.js"></script>
+
+    <!-- Загруженные компоненты -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-aria/angular-aria.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-material/angular-material.js"></script>
+    <script src="bower_components/angular-draggable-bt/draggable.js"></script>
 
     <script src="bower_components/satellizer/satellizer.js"></script>
 
+    <script src="bower_components/sockjs-client/dist/sockjs-1.0.3.js"></script>
+    <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
+    <script src="bower_components/AngularStompDK/dist/angular-stomp.js"></script>
 
-
-    <!-- use minify in prod-->
-    <!--<script src="app/app.min.js"></script>-->
+    <script src="bower_components/DateJS/build/date.js"></script>
+    <script src="bower_components/angular-draggable-bt/draggable.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-uuid4/angular-uuid4.js"></script>
+    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
+    <script src="bower_components/angular-offline/angular-offline.js"></script>
+    <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
+    <script src="bower_components/angular-pouchdb/angular-pouchdb.js"></script>
+    <script src="bower_components/angular-nicescroll/angular-nicescroll.js"></script>
+    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
 
     <!-- Основной модуль приложения -->
     <script src="app/app.js"></script>
 
     <!-- Контроллеры представлений -->
+    <script src="app/views/header/header.js"></script>
+    <script src="app/views/config/config.js"></script>
+    <script src="app/views/floating_button/floating_button.js"></script>
     <script src="app/views/index/index.js"></script>
-    <script src="app/views/view1/view1.js"></script>
-    <script src="app/views/view2/view2.js"></script>
+    <script src="app/views/goals/goals.js"></script>
+    <script src="app/views/schedule/schedule.js"></script>
     <script src="app/views/login/login.js"></script>
+    <script src="app/views/hierarchy_task/hierarchy_task.js"></script>
+    <script src="app/views/buffer/buffer.js"></script>
+    <script src="app/views/editors/task/taskEditor.js"></script>
+    <script src="app/views/buffer/stompdk.js"></script>
 
     <!-- Фактори -->
     <script src="app/components/factory/localStorage.js"></script>
 
+    <!-- Сервисы -->
+    <script src="app/components/services/taskService.js"></script>
+    <script src="app/components/services/dateService.js"></script>
+    <script src="app/components/services/bufferService.js"></script>
+    <script src="app/components/services/stompService.js"></script>
+    <script src="app/components/services/dbService.js"></script>
+    <script src="app/components/services/keyboardService.js"></script>
+    <script src="app/components/services/userService.js"></script>
+
+    <!-- Директивы -->
+    <script src="app/components/directive/onFinishRender.js"></script>
 </body>
 </html>

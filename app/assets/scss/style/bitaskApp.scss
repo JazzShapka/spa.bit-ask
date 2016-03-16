@@ -1,29 +1,23 @@
-.social_network_btn{
-    width: 36px;
-    height: 36px;
-    margin: 0 3px;
-    background: url("assets/images/logo.png") no-repeat;
-    background-size: round(535px*0.39) round(210px*0.39);
-    border: none;
+/* Icons */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons'), local('MaterialIcons-Regular'), url(https://fonts.gstatic.com/s/materialicons/v12/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
 }
-.social_network_btn.google_btn{
-    background-position: -1px -2px;
-}
-.social_network_btn.twitter_btn{
-    background-position: -45px -2px;
-}
-.social_network_btn.facebook_btn{
-    background-position: -129px -2px;
-}
-.social_network_btn.vk_btn{
-    background-position: -1px -45px;
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
 }
 
-.login_form .submit{
-    float: right;
-    margin-bottom: 7px;
-}
-.login_form{
-    width: 500px;
-    margin:100px auto;
-}

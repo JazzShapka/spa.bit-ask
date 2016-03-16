@@ -1,4 +1,26 @@
+/* variables */
+$main-color: #BB418C;
+$task-color: #CADFFC;
+
+$text-color: #4D4D4F;
+
+
+$blue-icon-color: rgba(63,81,181,0.87);
+$red-icon-color: #bc418c;
+$normal-icon-color: #B5B7B8;
+$hover-icon-color: #636466;
+
+
 
 @import "../../../bower_components/angular-material/angular-material.scss";
 
 @import "style/bitaskApp";
+@import "../../views/header/header";
+@import "../../views/config/config";
+@import "../../views/login/login";
+@import "../../views/goals/goals";
+@import "../../views/schedule/schedule";
+@import "../../views/floating_button/floating_button";
+@import "../../views/hierarchy_task/hierarchy_task";
+@import "../../views/index/index";
+@import "../../views/editors/editors";

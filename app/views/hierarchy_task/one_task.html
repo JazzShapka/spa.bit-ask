@@ -1,0 +1,86 @@
+<div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true"
+     on-finish-render="onRenderTask">
+
+    <!-- Соеденительные линии -->
+    <div class="left_connect">
+        <div class="canvas_block"></div>
+        <div class="canvas_block"></div>
+    </div>
+
+    <!-- Блок задачи -->
+    <div class="task" data-id="{{task.id}}" ng-click="selectTask(task.id)" ng-draggable helper="clone" cursor="default">
+        <div ng-show="task.status!='new_task'">
+            <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
+            <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id, $event)" aria-label="complete" class="completebox md-primary"></md-checkbox>
+        </div>
+
+        <div class="name">
+            <md-tooltip md-direction="top">{{task.taskName}}</md-tooltip>
+            <span>{{task.taskName}}</span>
+        </div>
+
+        <div class="buttons">
+            <div>
+                <md-icon ng-show="!!task.shared" class="material-icons blue">share</md-icon>
+            </div>
+            <div>
+                <md-icon class="material-icons" ng-class="getUserClass(task.id)">account_box</md-icon>
+            </div>
+            <div ng-switch on="isRegular(task.id)">
+                <md-icon ng-switch-when="false" ng-show="isShowedDate(task.id)" class="material-icons" ng-class="getDateClass(task.id)">date_range</md-icon>
+                <md-icon ng-switch-when="true" class="material-icons gray">cached</md-icon>
+            </div>
+            <div>
+                <md-icon class="material-icons gray">more_vert</md-icon>
+            </div>
+        </div>
+
+        <div class="sub_buttons">
+            <div>
+                <md-tooltip md-direction="bottom">Поделиться…</md-tooltip>
+                <md-icon class="material-icons" ng-class="getShareClass(task.id)">share</md-icon>
+            </div>
+            <div>
+                <md-tooltip md-direction="top">{{getUserName(task.id)}}</md-tooltip>
+                <md-icon class="material-icons" ng-class="getUserClass(task.id)">account_box</md-icon>
+            </div>
+            <div ng-switch on="isRegular(task.id)" >
+                <div ng-switch-when="false">
+                    <md-tooltip md-direction="bottom">{{getDateString(task.id)}}</md-tooltip>
+                    <md-icon class="material-icons" ng-class="getDateClass(task.id)">date_range</md-icon>
+                </div>
+                <div ng-switch-when="true">
+                    <md-tooltip md-direction="bottom">{{getRegularityString(task.regularSetting)}}</md-tooltip>
+                    <md-icon class="material-icons gray">cached</md-icon>
+                </div>
+            </div>
+            <div>
+                <md-tooltip md-direction="top">Контекстное меню</md-tooltip>
+                <md-icon class="material-icons gray">more_vert</md-icon>
+            </div>
+        </div>
+
+        <div class="expand_block" ng-class="getExpandBoxClass(task.id)" ng-show="task.children_quantity">
+
+            <svg class="arrow_main" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px" ng-click="expandTask(task.id)">
+                <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
+                <polyline class="arrow_right" fill="none" stroke="#CADFFC" stroke-width="1.5" points="7,4 12,9 7,14" />
+                <polyline class="arrow_left" fill="none" stroke="#CADFFC" stroke-width="1.5" points="12,4 7,9 12,14" />
+            </svg>
+            <svg class="arrow_middle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px">
+                <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
+                <polyline fill="none" stroke="#CADFFC" stroke-width="1.5" points="4,7 9,12 14,7" />
+            </svg>
+        </div>
+
+    </div>
+
+    <!-- Блок с подзадачами -->
+    <div class="children" ng-show="task.viewBranch != 'hide'" ng-include="'app/views/hierarchy_task/one_task.html'"></div>
+
+    <!-- Соеденительные линии -->
+    <div class="right_connect" ng-show="task.children_quantity && task.viewBranch != 'hide'">
+        <div class="canvas_block"></div>
+        <div class="canvas_block"></div>
+    </div>
+</div>

@@ -1,0 +1,251 @@
+.hierarchy_task_window{
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.hierarchy_task_background{
+    min-width: 101%; //21205px;
+    min-height: 101%; //8590px;
+    padding: 200px 35% 40px 35%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    float: left;
+    position: absolute;
+    //border: 1px solid black;
+}
+
+// Блок задачи
+.task_background{
+    margin: 0;
+    position: relative;
+    float: left;
+    clear: left;
+
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+
+    align-items: center;
+    align-content: center;
+    max-width: 100%;
+
+    justify-content: center;
+
+    //outline: 1px solid black;
+}
+
+// Задача
+.task_background .task{
+    min-height: 32px;
+    margin: 7px 0 7px 15px;
+    outline: none;
+    border: 1px solid $task-color;
+    border-radius: 3px;
+    color: $text-color;
+    box-sizing: border-box;
+    order: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+}
+.task_background.selected > .task{
+    border: 2px solid $red-icon-color;
+    margin: 7px -1px 7px 14px;
+}
+.task_background .task .completebox{
+    width: 20px;
+    margin: 0 8px 0 7px;
+
+}
+.task_background .task .name{
+    min-width: 120px;
+    max-width: 350px;
+    max-height: 40px;
+    margin: 3px 0 3px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.task_background .task .name > span{
+    white-space: nowrap;
+}
+
+// Левый соеденитель
+.task_background .left_connect{
+    width: 15px;
+    height: 100%;
+    position: absolute;
+    box-sizing: border-box;
+    order: 1;
+}
+.task_background .left_connect .canvas_block{
+    width: 15px;
+    height: 50%;
+}
+
+.task_background > .children > .task_background > .left_connect > .canvas_block:first-child{
+    border: none;
+    border-left: 1px solid $task-color;
+    border-bottom: 1px solid $task-color;
+}
+.task_background > .children > .task_background > .left_connect > .canvas_block:last-child{
+    border: none;
+    border-left: 1px solid $task-color;
+}
+
+.task_background > .children > .task_background:first-child > .left_connect > .canvas_block:first-child{
+    border: none;
+
+}
+.task_background > .children > .task_background:first-child > .left_connect > .canvas_block:last-child{
+    border: none;
+    border-left: 1px solid $task-color;
+    border-top: 1px solid $task-color;
+}
+
+.task_background > .children > .task_background:last-child > .left_connect > .canvas_block:first-child{
+    border: none;
+    border-left: 1px solid $task-color;
+    border-bottom: 1px solid $task-color;
+
+}
+.task_background > .children > .task_background:last-child > .left_connect > .canvas_block:last-child{
+    border: none;
+}
+
+.task_background > .children > .task_background:only-child > .left_connect > .canvas_block:first-child{
+    border: none;
+    border-bottom: 1px solid $task-color;
+}
+.task_background > .children > .task_background:only-child > .left_connect > .canvas_block:last-child{
+    border: none;
+}
+
+// Правый соеденитель
+.task_background .right_connect{
+    float: left;
+    width: 15px;
+    height: 32px;
+
+    box-sizing: border-box;
+    order: 3;
+}
+.task_background .right_connect .canvas_block{
+    width: 15px;
+    height: 16px;
+}
+.task_background .right_connect .canvas_block:first-child{
+    border-bottom: 1px solid $task-color;
+
+}
+
+// Блок подзадач
+.task_background .children{
+    float: left;
+    height: 100%;
+    order: 4;
+}
+
+// Кнопки задачи
+.task_background .task .buttons{
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+}
+.task_background .task .sub_buttons{
+    width: 96px;
+    margin-left: -96px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+    background-color: white;
+    display: none;
+}
+.task_background .task .sub_buttons:hover{
+    display: flex;
+}
+.task_background .task .buttons:hover + .sub_buttons{
+    display: flex;
+}
+.task_background .task .buttons .material-icons.gray.none{
+    display: none;
+}
+.task_background .expand_block{
+    width: 18px;
+    height: 18px;
+    margin-left: -18px;
+    position: relative;
+}
+.task_background .expand_block svg{
+    outline: none;
+}
+.task_background .expand_block .arrow_middle{
+    //display: none;
+    opacity: 0;
+    -webkit-transition: opacity 200ms ease-out 400ms;
+    -moz-transition: opacity 200ms ease-out 400ms;
+    -ms-transition: opacity 200ms ease-out 400ms;
+    -o-transition: opacity 200ms ease-out 400ms;
+    transition: opacity 200ms ease-out 400ms;
+    position: relative;
+
+}
+.task_background .expand_block .arrow_middle:hover{
+    display: block;
+    opacity: 1;
+}
+.task_background .expand_block .arrow_main:hover + .arrow_middle{
+    display: block;
+    opacity: 1;
+}
+.task_background .expand_block.right{
+    left: 12px;
+}
+.task_background .expand_block.right .arrow_middle{
+    top: -2px;
+}
+
+.task_background .expand_block.open .arrow_right{
+    display: none;
+}
+.task_background .expand_block.open .arrow_left{
+    display: block;
+}
+.task_background .expand_block.close .arrow_right{
+    display: block;
+}
+.task_background .expand_block.close .arrow_left{
+    display: none;
+}
+
+
+
+
+// Цвета иконок
+.task_background .material-icons.gray{
+    color: $normal-icon-color;
+}
+.task_background .material-icons:hover{
+    color: $hover-icon-color;
+}
+.task_background .material-icons.red{
+    color: $red-icon-color;
+}
+.task_background .material-icons.red:hover{
+    color: $red-icon-color;
+}
+.task_background .material-icons.blue{
+    color: $blue-icon-color;
+}
+.task_background .material-icons.blue:hover{
+    color: $blue-icon-color;
+}

@@ -1,0 +1,24 @@
+/* Toolbar */
+md-toolbar.header{
+    background-color: $main-color;
+    position: fixed;
+}
+
+/* Left toolbar */
+.md-sidenav-left{
+
+}
+.md-sidenav-left .md-theme-indigo{
+    background: $main-color;
+}
+.md-sidenav-left md-content{
+    position: static;
+}
+.md-sidenav-left .top-menu{
+    outline: none;
+}
+.md-sidenav-left .bottom-menu{
+    bottom: 0;
+    position: absolute;
+    outline: none;
+}

@@ -1,0 +1,47 @@
+<!-- Окно конфигурации -->
+<div class="config-form">
+
+    <md-card ng-controller="ConfigCtrl">
+        <md-card-header>
+            <md-icon class="material-icons">settings</md-icon>
+            <md-card-header-text>
+                <span class="md-title">Сonfig</span>
+            </md-card-header-text>
+        </md-card-header>
+        <md-card-content>
+            <div class="config-addres-field">
+                <md-tabs md-dynamic-height md-border-bottom>
+
+                    <!-- Сервера api и авторизации -->
+                    <md-tab label="servers">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>API - server</label>
+                            <input type="text" ng-model="setting.api_url">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Auth - server</label>
+                            <input type="text" ng-model="setting.auth_url">
+                        </md-input-container>
+                    </md-tab>
+
+                    <!-- id приложений авторизации -->
+                    <md-tab label="auth">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>google.com - app id</label>
+                            <input type="text" ng-model="setting.google_id">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>facebook.com - app id</label>
+                            <input type="text" ng-model="setting.facebook_id">
+                        </md-input-container>
+                    </md-tab>
+                </md-tabs>
+            </div>
+            <div class="config-buttons">
+                <md-button class="submit md-raised" ng-click="save()">SAVE</md-button>
+                <md-button class="md-accent" ng-click="setDefault()">SET DEFAULT</md-button>
+            </div>
+        </md-card-content>
+    </md-card>
+
+</div>
