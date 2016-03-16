@@ -80,8 +80,14 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
         //var db = pouchDB('dbname');
         var db = dbService.getDb();
+        db.destroy().then(function (response) {
+            // success
+        }).catch(function (err) {
+            console.log(err);
+        });
 
         $rootScope.docs = [];
+        $rootScope.queues = [];
 
         function onChange(change) {
           $rootScope.docs.push(change);
@@ -274,6 +280,11 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
         var dbqueue = pouchDB('queue');
+        /*dbqueue.destroy().then(function (response) {
+            // success
+        }).catch(function (err) {
+            console.log(err);
+        });*/
 
         dbqueue.allDocs({
             include_docs: true,
@@ -291,7 +302,8 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
         function setTask(taskName) {
             console.log("setTask");
-            var uuid = uuid4.generate();
+            //var uuid = uuid4.generate();
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d702';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             // put data to db queue | пишем в бд запрос
@@ -332,24 +344,25 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
         // queue changed
         function onChangeQueue(change) {
-            $rootScope.docs.push(change);
+            $rootScope.queues.push(change);
 
             // execute cmd from queue
             console.log("onChangeQueue change: ", change);
             console.log("onChangeQueue change.change.id: ", change.change.id);
 
-            /*$http({
+            $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
                 data: change.change.doc.data,
                 //cache: true,
                 //offline: true
             }).then(function (response) {
+
                 $log.info('onChangeQueue http response: ', response);
                 console.log('onChangeQueue http response.status: ', response.status);
                 //callback(response.data);
-                // delete task from queue
 
+                // all docs list
                 dbqueue.allDocs({
                     include_docs: true,
                     attachments: true
@@ -360,6 +373,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                     console.log(err);
                 });
 
+                // delete task from queue
                 console.log("onChangeQueue change.change.id: ", change.change.id);
                 console.log("onChangeQueue change: ", change);
 
@@ -371,7 +385,8 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                 }).catch(function (err) {
                     console.log("onChangeQueue remove err: ", err);
                 });
-            });*/
+                
+            });
         }
 
         var options = {
@@ -379,9 +394,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             include_docs: true,
             /*eslint-enable camelcase */
             live: true,
-            filter: function (doc) {
+            /*filter: function (doc) {
                 return doc._deleted ===! true;
-            }
+            }*/
         };
 
         dbqueue.changes(options).$promise
