@@ -21,3 +21,25 @@
     -webkit-font-smoothing: antialiased;
 }
 
+/* Context Menu */
+.open-menu-container{
+    position: fixed;
+    z-index: 100;
+    opacity: 0;
+    border-radius: 2px;
+    transition: all .4s cubic-bezier(.25,.8,.25,1);
+    transition-duration: 200ms;
+}
+.open-menu-container.active{
+    opacity: 1;
+}
+.menu-divider{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    height: 1px;
+    min-height: 1px;
+    max-height: 1px;
+    width: 100%;
+    background-color: rgba(0,0,0,0.11);
+}
+
