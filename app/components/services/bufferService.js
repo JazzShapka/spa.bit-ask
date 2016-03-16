@@ -138,7 +138,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
         var self = this;
 
-        //var uid = $auth.getPayload().sub;
+        var uid = $auth.getPayload().sub;
 
 
 
@@ -269,11 +269,53 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             });
         };
 
-        function setTask(callback, taskName) {
+
+
+
+
+        var dbqueue = pouchDB('queue');
+
+        dbqueue.allDocs({
+            include_docs: true,
+            attachments: true,
+            //deleted:true,
+            //key: ['deleted:true'],
+        }).then(function (result) {
+            // handle result
+            console.log("START app allDocs result: ", result);
+        }).catch(function (err) {
+            console.log(err);
+        });
+
+
+
+        function setTask(taskName) {
+            console.log("setTask");
             var uuid = uuid4.generate();
-            var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
+
+            // put data to db queue | пишем в бд запрос
+            dbqueue.post({
+                data: data
+            }).then(function (response) {
+                // handle response
+
+                dbqueue.allDocs({
+                    include_docs: true,
+                    attachments: true
+                }).then(function (result) {
+                    // handle result
+                    console.log("setTask result: ", result);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            }).catch(function (err) {
+                console.log(err);
+            });
+
             //console.log ("data: ", data);
-            $http({
+            /*$http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
                 data: data,
@@ -282,10 +324,78 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             }).then(function (response) {
                 $log.info('setTask: ', response);
                 callback(response.data);
-            });
+            });*/
         };
 
+
+
+
+        // queue changed
+        function onChangeQueue(change) {
+            $rootScope.docs.push(change);
+
+            // execute cmd from queue
+            console.log("onChangeQueue change: ", change);
+            console.log("onChangeQueue change.change.id: ", change.change.id);
+
+            /*$http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: change.change.doc.data,
+                //cache: true,
+                //offline: true
+            }).then(function (response) {
+                $log.info('onChangeQueue http response: ', response);
+                console.log('onChangeQueue http response.status: ', response.status);
+                //callback(response.data);
+                // delete task from queue
+
+                dbqueue.allDocs({
+                    include_docs: true,
+                    attachments: true
+                }).then(function (result) {
+                    // handle result
+                    console.log("onChangeQueue result: ", result);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+                console.log("onChangeQueue change.change.id: ", change.change.id);
+                console.log("onChangeQueue change: ", change);
+
+                dbqueue.get(change.change.id).then(function(doc) {
+                    return dbqueue.remove(doc);
+                }).then(function (result) {
+                    // handle result
+                    console.log("onChangeQueue remove result: ", result);
+                }).catch(function (err) {
+                    console.log("onChangeQueue remove err: ", err);
+                });
+            });*/
+        }
+
+        var options = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true,
+            filter: function (doc) {
+                return doc._deleted ===! true;
+            }
+        };
+
+        dbqueue.changes(options).$promise
+            .then(null, null, onChangeQueue);
+
+
+
+
+
+
+
+
         function deleteTask(id) {
+            console.log("deleteTask id: ", id);
             var data = [[1, false, "task/deletetask", {"id": id}]];
             //console.log ("data: ", data);
             $http({

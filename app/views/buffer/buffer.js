@@ -32,7 +32,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);
     
-    //$scope.bufferService = bufferService;
+    $scope.bufferService = bufferService;
     //$scope.stompService = stompService;
 
     /* factory */
