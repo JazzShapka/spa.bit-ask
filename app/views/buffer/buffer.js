@@ -25,30 +25,14 @@ buffer.config(['$routeProvider',
 buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB', 'stompService',
   function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB, stompService) {
 
-    var db = pouchDB('dbname');
 
-    $scope.docs = [];
-
-    function onChange(change) {
-      $scope.docs.push(change);
-    }
-
-    var options = {
-      /*eslint-disable camelcase */
-      include_docs: true,
-      /*eslint-enable camelcase */
-      live: true
-    };
-
-    db.changes(options).$promise
-      .then(null, null, onChange);
 
     //var db = pouchDB('dbname');
 
     //var storageType = localStorageService.getStorageType();
     //console.log("getStorageType: ", storageType);
     
-    //$scope.bufferService = bufferService;
+    $scope.bufferService = bufferService;
     //$scope.stompService = stompService;
 
     /* factory */
@@ -61,10 +45,10 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
       console.log("setTask: ", data);
     }, 'New task 123');*/
 
-    bufferService.getTasks(function(data) {
+    //bufferService.getTasks(function(data) {
       //$scope.tasks = data;
       //console.log("getTasks in buffer.js: ", data);
-    });
+    //});
 
     /*bufferService.getId(function(data) {
       $scope.id = data;
