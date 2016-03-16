@@ -256,6 +256,19 @@ angular.module('bitaskApp.hierarchy_task', [
 
             });
 
+            $scope.contextmenu = function (taskId, event){
+
+                var task_element = angular.element(event.currentTarget).parent().parent().parent();
+                event.type = 'contextmenu';
+                task_element.trigger(event);
+
+                //debugger
+            }
+
+            /**
+             * Обьект контекстного меню
+             * @type {*[]}
+             */
             $scope.ngContextMenu = [
                 function(attrs){
                     return {name: "Редактировать задачу", hotkey:"F2", handler: function (){
@@ -263,7 +276,16 @@ angular.module('bitaskApp.hierarchy_task', [
                     }}
                 },
                 function(attrs){
-                    return {name: "Выполнить задачу", hotkey:"Space"}
+                    var task = taskService.tasks_indexed[attrs.id];
+                    var name = '';
+                    if(task.status == 'delivered')
+                        name = "Выполнить задачу";
+                    else if(task.status == 'completed')
+                        name = "Отменить выполнение";
+
+                    return {name: name, hotkey:"Space", handler: function (){
+                        $scope.comleteTask(task.id);
+                    }}
                 },
                 function(attrs){
                     return {name: "Добавить задачу", hotkey:"Enter"}
