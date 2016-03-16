@@ -307,8 +307,10 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             // put data to db queue | пишем в бд запрос
-            dbqueue.post({
-                data: data
+            dbqueue.put({
+                _id: uuid,
+                data: data,
+                deleted: false
             }).then(function (response) {
                 // handle response
 
@@ -377,15 +379,31 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                 console.log("onChangeQueue change.change.id: ", change.change.id);
                 console.log("onChangeQueue change: ", change);
 
-                dbqueue.get(change.change.id).then(function(doc) {
+                // change flag delete
+                dbqueue.get('change.change.id').then(function(doc) {
+                    console.log("dbqueue.get doc: ", doc);
+                    return dbqueue.put({
+                        _id: doc._id,
+                        _rev: doc._rev,
+                        deleted: true
+                    });
+                }).then(function(response) {
+                    // handle response
+                    console.log("onChangeQueue response", response);
+                }).catch(function (err) {
+                    console.log("onChangeQueue err", err);
+                });
+
+                // remove
+                /*dbqueue.get(change.change.id).then(function(doc) {
                     return dbqueue.remove(doc);
                 }).then(function (result) {
                     // handle result
                     console.log("onChangeQueue remove result: ", result);
                 }).catch(function (err) {
                     console.log("onChangeQueue remove err: ", err);
-                });
-                
+                });*/
+
             });
         }
 
@@ -394,9 +412,10 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             include_docs: true,
             /*eslint-enable camelcase */
             live: true,
-            /*filter: function (doc) {
-                return doc._deleted ===! true;
-            }*/
+            filter: function (doc) {
+                // "_deleted":true
+                return doc.deleted === false;
+            }
         };
 
         dbqueue.changes(options).$promise
