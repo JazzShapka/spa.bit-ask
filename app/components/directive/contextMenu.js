@@ -102,6 +102,8 @@ angular.module('bitaskApp').directive('ngContextMenu', function($compile, $log, 
                     menu.on('click', destroyMenu);
                     body.append(backdrop, menu);
 
+                    angular.element($window).on('keydown', destroyMenu);
+
                     var menu_height = menu.height();
                     var menu_width = menu.width();
                     var menu_offset = menu.offset();

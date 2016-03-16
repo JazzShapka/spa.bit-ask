@@ -258,16 +258,22 @@ angular.module('bitaskApp.hierarchy_task', [
 
             $scope.ngContextMenu = [
                 function(attrs){
-                    return {name: "Edit", hotkey:"F2", handler: function (){
+                    return {name: "Редактировать задачу", hotkey:"F2", handler: function (){
                         $log.debug("Edit - press");
                     }}
                 },
                 function(attrs){
-                    return {name: "Create", hotkey:"Space"}
+                    return {name: "Выполнить задачу", hotkey:"Space"}
+                },
+                function(attrs){
+                    return {name: "Добавить задачу", hotkey:"Enter"}
+                },
+                function(attrs){
+                    return {name: "Добавить подзадачу", hotkey:"Tab"}
                 },
                 'divider',
                 function(attrs){
-                    return {name: "Delete", hotkey:"Delete", disabled:"disabled"}
+                    return {name: "Удалить", hotkey:"Del"}
                 }
             ];
 
