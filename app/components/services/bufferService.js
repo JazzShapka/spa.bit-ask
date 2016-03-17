@@ -370,7 +370,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                     attachments: true
                 }).then(function (result) {
                     // handle result
-                    console.log("onChangeQueue result: ", result);
+                    console.log("onChangeQueue dbqueue.allDocs result: ", result);
                 }).catch(function (err) {
                     console.log(err);
                 });
@@ -380,18 +380,18 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                 console.log("onChangeQueue change: ", change);
 
                 // change flag delete
-                dbqueue.get('change.change.id').then(function(doc) {
-                    console.log("dbqueue.get doc: ", doc);
+                dbqueue.get(change.change.id).then(function(doc) {
+                    //console.log("dbqueue.get doc: ", doc);
                     return dbqueue.put({
-                        _id: doc._id,
+                        _id: change.change.id,
                         _rev: doc._rev,
-                        deleted: true
+                        //deleted: true
                     });
                 }).then(function(response) {
                     // handle response
-                    console.log("onChangeQueue response", response);
+                    console.log("onChangeQueue dbqueue.get response", response);
                 }).catch(function (err) {
-                    console.log("onChangeQueue err", err);
+                    console.log("onChangeQueue dbqueue.get err", err);
                 });
 
                 // remove
