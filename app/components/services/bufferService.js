@@ -327,43 +327,47 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d713';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d716';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
+            if (online === false) {
             // put data to db queue | пишем в бд запрос
-            dbqueue.put({
-                _id: uuid,
-                data: data,
-                deleted: false
-            }).then(function (response) {
-                // handle response
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
 
-                // list all docs in db
-                dbqueue.allDocs({
-                    include_docs: true,
-                    attachments: true
-                }).then(function (result) {
-                    // handle result
-                    console.log("setTask dbqueue.allDocs result: ", result);
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("setTask dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
                 }).catch(function (err) {
                     console.log(err);
                 });
+            
+            } else {
 
-            }).catch(function (err) {
-                console.log(err);
-            });
-
-            //console.log ("data: ", data);
-            /*$http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data,
-                //cache: true,
-                offline: true
-            }).then(function (response) {
-                $log.info('setTask: ', response);
-                callback(response.data);
-            });*/
+                //console.log ("data: ", data);
+                $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data,
+                    //cache: true,
+                    //offline: true
+                }).then(function (response) {
+                    $log.info('setTask: ', response);
+                    //callback(response.data);
+                });
+            }
         };
 
 
@@ -604,7 +608,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
                     angular.forEach(result.docs, function(value, key) {
                         console.log(key + ': ' + value['data']);
-                    //for (var i = 0; i < result.docs.length; i++) {
+                        //for (var i = 0; i < result.docs.length; i++) {
                         //
                         //data = result.docs[i]['data'];
                         //initExecuteQueue(data);
@@ -681,11 +685,17 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         }
 
 
-
+        var online = true;
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
+            online = true;
             $timeout(executeCmdFromQueue, 30000);
             //initExecuteQueue();
+        });
+
+        connectionStatus.$on('offline', function () {
+            $log.info('bufferService: We are now offline');
+            online = false;
         });
 
         
@@ -729,9 +739,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         //bufferService.initExecuteQueue();
     });*/
 
-    connectionStatus.$on('offline', function () {
-        $log.info('bufferService: We are now offline');
-    });
+    
 
     $rootScope.test = 'It works! Using ' + (CacheFactory ? 'angular-cache' : 'undefined');
 
