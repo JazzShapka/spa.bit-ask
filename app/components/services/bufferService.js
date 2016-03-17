@@ -304,7 +304,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d704';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d712';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             // put data to db queue | пишем в бд запрос
@@ -345,13 +345,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
 
+        var httpStatus = -1;
 
-        // queue changed
-        function onChangeQueue(change) {
-            $rootScope.queues.push(change);
-
-            console.log("onChangeQueue change: ", change);
-            console.log("onChangeQueue change.change.id: ", change.change.id);
+        function initExecuteQueue(change) {
 
             // execute cmd from queue
             $http({
@@ -364,6 +360,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
                 $log.info('onChangeQueue http response: ', response);
                 console.log('onChangeQueue http response.status: ', response.status);
+                httpStatus = response.status;
                 //callback(response.data);
 
                 // lis all docs in db
@@ -377,23 +374,27 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                     console.log(err);
                 });
 
+
                 console.log("onChangeQueue change.change.id: ", change.change.id);
                 console.log("onChangeQueue change: ", change);
 
-                // delete task from queue
-                dbqueue.get(change.change.id).then(function(doc) {
-                    //console.log("dbqueue.get doc: ", doc);
-                    return dbqueue.put({
-                        _id: change.change.id,
-                        _rev: doc._rev,
-                        //deleted: true
+                console.log("onChangeQueue httpStatus: ", httpStatus);
+                if (httpStatus == 200) {
+                    // delete task from queue
+                    dbqueue.get(change.change.id).then(function(doc) {
+                        //console.log("dbqueue.get doc: ", doc);
+                        return dbqueue.put({
+                            _id: change.change.id,
+                            _rev: doc._rev,
+                            //deleted: true
+                        });
+                    }).then(function(response) {
+                        // handle response
+                        console.log("onChangeQueue dbqueue.get response", response);
+                    }).catch(function (err) {
+                        console.log("onChangeQueue dbqueue.get err", err);
                     });
-                }).then(function(response) {
-                    // handle response
-                    console.log("onChangeQueue dbqueue.get response", response);
-                }).catch(function (err) {
-                    console.log("onChangeQueue dbqueue.get err", err);
-                });
+                };
 
                 // remove
                 /*dbqueue.get(change.change.id).then(function(doc) {
@@ -406,6 +407,18 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                 });*/
 
             });
+        }
+
+
+        // queue changed
+        function onChangeQueue(change) {
+            $rootScope.queues.push(change);
+
+            console.log("onChangeQueue change: ", change);
+            console.log("onChangeQueue change.change.id: ", change.change.id);
+
+            initExecuteQueue(change);
+            
         }
 
         var options = {
@@ -549,6 +562,14 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             }
         };*/
 
+
+
+    connectionStatus.$on('online', function () {
+        $log.info('bufferService: We are now online');
+
+        initExecuteQueue();
+    });
+
         
 
         
@@ -568,7 +589,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 }])
 
-.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope) {
+.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope, bufferService) {
 
     $http.defaults.cache = CacheFactory('defaultCache', {
         maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
@@ -584,10 +605,11 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
     offline.start($http);
 
-
-    connectionStatus.$on('online', function () {
+    /*connectionStatus.$on('online', function () {
         $log.info('bufferService: We are now online');
-    });
+
+        //bufferService.initExecuteQueue();
+    });*/
 
     connectionStatus.$on('offline', function () {
         $log.info('bufferService: We are now offline');
