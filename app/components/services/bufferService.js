@@ -303,14 +303,14 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d703';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d704';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             // put data to db queue | пишем в бд запрос
             dbqueue.put({
                 _id: uuid,
                 data: data,
-                //deleted: false
+                deleted: false
             }).then(function (response) {
                 // handle response
 
