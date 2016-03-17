@@ -26,8 +26,6 @@ angular.module('bitaskApp.hierarchy_task', [
 
             $scope.tasks = taskService.tasks;
 
-
-
             /**
              * Отслеживать изменение в задачах.
              * Обновляет счетчик детей задачи
@@ -88,7 +86,7 @@ angular.module('bitaskApp.hierarchy_task', [
                 else if(taskService.tasks_indexed[taskId].status == 'completed')
                     taskService.tasks_indexed[taskId].status = 'delivered';
 
-                taskService.setTask(taskId, {status:taskService.tasks_indexed[taskId].status});
+                taskService.editTask(taskId, {status:taskService.tasks_indexed[taskId].status});
             };
             /**
              * Кнопка - развернуть задачу
@@ -111,7 +109,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         // Загружаем наперед
                         taskService.loadingAdvance();
                     }
-                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
+                    taskService.editTaskeditTask(taskId, {viewBranch:task.viewBranch});
                 }
                 // Если не задано то просто меняем на противоположное
                 else
@@ -125,7 +123,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         taskService.loadingAdvance();
                     }
 
-                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
+                    taskService.editTask(taskId, {viewBranch:task.viewBranch});
                 }
 
 
@@ -148,7 +146,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         distinguishTask(response.value);
                     }
                 })
-            }
+            };
             /**
              * Обработка нажатий клавиш
              */
@@ -165,7 +163,6 @@ angular.module('bitaskApp.hierarchy_task', [
 
                     return;
                 }
-
 
                 switch (event.keyCode)
                 {
@@ -238,14 +235,36 @@ angular.module('bitaskApp.hierarchy_task', [
                         break;
                     }
                     case 13:    // enter
-
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('brother_task', selected_id)
                         break;
+                    }
                     case 32:    // space
+                    {
                         $scope.comleteTask(selected_id);
                         break;
+                    }
                     case 9:     // tab
-
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('sub_task', selected_id)
                         break;
+                    }
+                    case 113:   // f2
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('edit_task', selected_id)
+                        break;
+                    }
+                    case 46:    // Del
+                    {
+                        break
+                    }
+                    default:
+                    {
+                        return true;
+                    }
                 }
 
                 // Если изменится id выбранной задачи, то зохраняем на сервере
@@ -255,14 +274,21 @@ angular.module('bitaskApp.hierarchy_task', [
                 }
 
             });
-
+            /**
+             * Кнопка контекстного меню
+             * @param taskId
+             * @param event
+             */
             $scope.contextmenu = function (taskId, event){
 
+                // Вызываем щелчек правой кнопки мыши
                 var task_element = angular.element(event.currentTarget).parent().parent().parent();
                 event.type = 'contextmenu';
                 task_element.trigger(event);
+            };
 
-                //debugger
+            $scope.taskDbclick = function (taskId){
+                taskService.showTaskEditor('edit_task', selected_id)
             }
 
             /**
@@ -270,12 +296,14 @@ angular.module('bitaskApp.hierarchy_task', [
              * @type {*[]}
              */
             $scope.ngContextMenu = [
-                function(attrs){
+                function(attrs)         // Редактировать задачу
+                {
                     return {name: "Редактировать задачу", hotkey:"F2", handler: function (){
-                        $log.debug("Edit - press");
+                        taskService.showTaskEditor('edit_task', attrs.id);
                     }}
                 },
-                function(attrs){
+                function(attrs)         // Выполнить
+                {
                     var task = taskService.tasks_indexed[attrs.id];
                     var name = '';
                     if(task.status == 'delivered')
@@ -287,14 +315,21 @@ angular.module('bitaskApp.hierarchy_task', [
                         $scope.comleteTask(task.id);
                     }}
                 },
-                function(attrs){
-                    return {name: "Добавить задачу", hotkey:"Enter"}
+                function(attrs)         // Добавить задачу
+                {
+                    return {name: "Добавить задачу", hotkey:"Enter", handler: function (){
+                        taskService.showTaskEditor('brother_task', attrs.id);
+                    }}
                 },
-                function(attrs){
-                    return {name: "Добавить подзадачу", hotkey:"Tab"}
+                function(attrs)         // Добавить подзадачу
+                {
+                    return {name: "Добавить подзадачу", hotkey:"Tab", handler: function (){
+                        taskService.showTaskEditor('sub_task', attrs.id);
+                    }}
                 },
                 'divider',
-                function(attrs){
+                function(attrs)         // Удалить
+                {
                     return {name: "Удалить", hotkey:"Del"}
                 }
             ];

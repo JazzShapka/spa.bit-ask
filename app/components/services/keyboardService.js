@@ -40,17 +40,20 @@ angular.module('bitaskApp.service.keyboard', [])
             stack.pop();
         };
 
-        $document.on('keypress', function (event){
+        angular.element($document).on('keypress', function (event){
             if(stack[stack.length-1] && typeof stack[stack.length-1][0] == 'function')
                 stack[stack.length-1][0](event);
+            return true;
         });
-        $document.on('keydown', function (event){
+        angular.element($document).on('keydown', function (event){
             if(stack[stack.length-1] && typeof stack[stack.length-1][1] == 'function')
                 stack[stack.length-1][1](event);
+            return true;
         });
-        $document.on('keyup', function (event){
+        angular.element($document).on('keyup', function (event){
             if(stack[stack.length-1] && typeof stack[stack.length-1][2] == 'function')
                 stack[stack.length-1][2](event);
+            return true;
         });
 
     }]);

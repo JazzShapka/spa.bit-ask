@@ -85,6 +85,7 @@ angular.module('bitaskApp').directive('ngContextMenu', function($compile, $log, 
                     backdrop.remove();
                     backdrop = false;
                 }
+                angular.element($window).off('keydown', destroyMenu);
                 return false;
             };
 

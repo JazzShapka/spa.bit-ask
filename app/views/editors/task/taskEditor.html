@@ -17,7 +17,7 @@
 
             <div layout-gt-sm="row">
                 <md-input-container class="md-block task-name md-icon-left" md-no-float>
-                    <md-checkbox ng-if="show_completebox" class="md-primary"></md-checkbox>
+                    <md-checkbox ng-click="setStatus()" ng-checked="task.status=='completed'" ng-if="show_completebox" class="md-primary" aria-label="complete"></md-checkbox>
                     <md-icon ng-if="!show_completebox" class="material-icons">assignment_turned_in</md-icon>
                     <input placeholder="Добавить задачу" ng-model="task.taskName" />
                 </md-input-container>
@@ -34,7 +34,7 @@
                 </md-input-container>
 
                 <md-input-container class="md-block task-parent" md-no-float>
-                    <input placeholder="Создать в папке" ng-model="task.parentId" />
+                    <input disabled placeholder="Создать в папке" ng-model="task.parentId" />
                 </md-input-container>
             </div>
 
@@ -60,5 +60,6 @@
             <md-tooltip md-direction="bottom">Удалить</md-tooltip>
             <md-icon class="material-icons">delete_forever</md-icon>
         </md-button>
+        <md-button class="md-raised submit-button" ng-click="save()">OK</md-button>
     </md-dialog-actions>
 </md-dialog>
