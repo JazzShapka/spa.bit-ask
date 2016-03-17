@@ -505,7 +505,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d717';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d720';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
             this.send(data, console.log("ok"));
         }
