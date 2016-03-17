@@ -286,6 +286,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             console.log(err);
         });*/
 
+        // list all docs in db | список всех документов в бд
         dbqueue.allDocs({
             include_docs: true,
             attachments: true,
@@ -299,7 +300,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         });
 
 
-
+        // create task | создание задачи
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
@@ -314,6 +315,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             }).then(function (response) {
                 // handle response
 
+                // list all docs in db
                 dbqueue.allDocs({
                     include_docs: true,
                     attachments: true
@@ -348,10 +350,10 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         function onChangeQueue(change) {
             $rootScope.queues.push(change);
 
-            // execute cmd from queue
             console.log("onChangeQueue change: ", change);
             console.log("onChangeQueue change.change.id: ", change.change.id);
 
+            // execute cmd from queue
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
@@ -364,7 +366,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                 console.log('onChangeQueue http response.status: ', response.status);
                 //callback(response.data);
 
-                // all docs list
+                // lis all docs in db
                 dbqueue.allDocs({
                     include_docs: true,
                     attachments: true
@@ -375,11 +377,10 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                     console.log(err);
                 });
 
-                // delete task from queue
                 console.log("onChangeQueue change.change.id: ", change.change.id);
                 console.log("onChangeQueue change: ", change);
 
-                // change flag delete
+                // delete task from queue
                 dbqueue.get(change.change.id).then(function(doc) {
                     //console.log("dbqueue.get doc: ", doc);
                     return dbqueue.put({
