@@ -14,6 +14,7 @@ angular.module('bitaskApp.service.db', ['ngResource', 'uuid4', 'LocalStorageModu
 .service('dbService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp',
     function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp) {
 
+        console.log = function() {};
         console.log("Start dbService.");
         //var db = pouchDB('dbname');
 
