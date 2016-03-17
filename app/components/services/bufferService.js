@@ -76,7 +76,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 .service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp', 'dbService',
     function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp, dbService) {
 
-        console.log = function() {};
+        //console.log = function() {};
         console.log("Start bufferService.");
 
         //var db = pouchDB('dbname');
@@ -153,6 +153,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         this.setTask = setTask;
         this.getId = getId;
         this.deleteTask = deleteTask;
+        this.sendData = sendData;
         //this.findBookById = findBookById;
         //this.getDataById = getDataById;
         
@@ -332,7 +333,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             if (online === false) {
-            // put data to db queue | пишем в бд запрос
+                // put data to db queue | пишем в бд запрос
                 dbqueue.put({
                     _id: uuid,
                     data: data,
@@ -444,8 +445,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
             console.log("onChangeQueue change: ", change);
             console.log("onChangeQueue change.change.id: ", change.change.id);
-
-            initExecuteQueue(change);
+            if (online === true) {
+                //initExecuteQueue(change);
+            };
             
         }
 
@@ -501,32 +503,70 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             
         };
 
+
+        function sendData() {
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d717';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
+            this.send(data, console.log("ok"));
+        }
         /**
          * Отправить запрос на сервер, ответ обрабатывает callback
          * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
          * @param callback
          */
         self.send = function (data, callback){
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data
-            }).then(function successCallback(response) {
-                if(typeof callback == 'function')
-                {
-                    for (var i=0; i<response.data.length; i++)
+
+            if (online === true) {
+                $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data
+                }).then(function successCallback(response) {
+                    if(typeof callback == 'function')
                     {
-                        if(response.data[i][1][0] == 200)
+                        for (var i=0; i<response.data.length; i++)
                         {
-                            callback(response.data[i][2]);
-                        }
-                        else
-                        {
-                            $log.$warn(response.data[i][1][1]);
+                            if(response.data[i][1][0] == 200)
+                            {
+                                callback(response.data[i][2]);
+                            }
+                            else
+                            {
+                                $log.$warn(response.data[i][1][1]);
+                            }
                         }
                     }
-                }
-            });
+                });
+
+            } else {
+
+                console.log("data: ", data[0][3]);
+                var uuid = data[0][3]['id'];
+                console.log("uuid: ", uuid);
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
+
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("setTask dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            }
+
         };
 
         /*function findBookById(id) {
