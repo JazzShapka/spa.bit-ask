@@ -25,6 +25,7 @@ angular.module('bitaskApp.hierarchy_task', [
                 selected_id = false;        // id выбранного элемента
 
             $scope.tasks = taskService.tasks;
+            $scope.show_completed = true;
 
             /**
              * Отслеживать изменение в задачах.
@@ -71,6 +72,13 @@ angular.module('bitaskApp.hierarchy_task', [
                 else if(canvas_pos.left < 0 && canvas_pos.top > 0 && canvas_pos.right > 0 && canvas_pos.bottom < 0)
                     canvas.animate({left:-(canvas_width-window_width), top: 0}, 200);
             };
+
+            $scope.changeCompletedSwitch = function (){
+                if($scope.show_completed)
+                    userService.setValue('show_completed', 'true');
+                else
+                    userService.setValue('show_completed', 'false');
+            }
             /**
              * Галочка - выполнить задачу.
              * @param taskId
@@ -109,7 +117,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         // Загружаем наперед
                         taskService.loadingAdvance();
                     }
-                    taskService.editTaskeditTask(taskId, {viewBranch:task.viewBranch});
+                    taskService.editTask(taskId, {viewBranch:task.viewBranch});
                 }
                 // Если не задано то просто меняем на противоположное
                 else
@@ -286,9 +294,24 @@ angular.module('bitaskApp.hierarchy_task', [
                 event.type = 'contextmenu';
                 task_element.trigger(event);
             };
-
+            /**
+             * Двойой клик по задаче
+             * @param taskId
+             */
             $scope.taskDbclick = function (taskId){
                 taskService.showTaskEditor('edit_task', selected_id)
+            };
+            /**
+             * Филтр для отображаемых задач
+             * @param task
+             * @returns {*}
+             */
+            $scope.taskFilter = function (task){
+
+                if($scope.show_completed)
+                    return {parentId:(task?task.id:null)};
+                else
+                    return {parentId:(task?task.id:null), status:'!completed'};
             }
 
             /**
@@ -734,7 +757,12 @@ angular.module('bitaskApp.hierarchy_task', [
             };
 
             var __construct = function (){
-
+                userService.getValue('show_completed', function (data){
+                    if(data.value == 'false')
+                        $scope.show_completed = false;
+                    else
+                        $scope.show_completed = true;
+                });
             }
             __construct();
     }]);

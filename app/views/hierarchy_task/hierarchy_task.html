@@ -1,4 +1,19 @@
 <div class="hierarchy_task_window">
+    <div class="button_panel">
+        <md-button class="md-icon-button">
+            <md-tooltip md-direction="bottom">Свернуть все задачи</md-tooltip>
+            <md-icon class="material-icons">home</md-icon>
+        </md-button>
+        <span flex></span>
+        <div class="switch">
+            <md-tooltip md-direction="bottom">Скрыть/Показать выполненные</md-tooltip>
+            <md-switch ng-model="show_completed" ng-change="changeCompletedSwitch()" class="md-primary" aria-label="Show completed"></md-switch>
+        </div>
+        <md-button class="md-icon-button">
+            <md-tooltip md-direction="bottom">Вернуться назад</md-tooltip>
+            <md-icon class="material-icons">arrow_back</md-icon>
+        </md-button>
+    </div>
     <div class="hierarchy_task_background" ng-draggable on-stop="dropCanvas" cursor="default" ng-include="'app/views/hierarchy_task/one_task.html'">
 
     </div>

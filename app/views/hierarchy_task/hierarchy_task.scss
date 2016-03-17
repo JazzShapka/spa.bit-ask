@@ -17,6 +17,25 @@
     //border: 1px solid black;
 }
 
+// Кнопки управления
+.hierarchy_task_window .button_panel{
+    left: 0;
+
+    width: 100%;
+    height: 40px;
+    position: fixed;
+    display: flex;
+    z-index: 2;
+}
+.hierarchy_task_window .button_panel .md-icon-button{
+    top: 64px;
+    position: relative;
+}
+.hierarchy_task_window .button_panel .switch{
+    top: 54px;
+    position: relative;
+}
+
 // Блок задачи
 .task_background{
     margin: 0;
