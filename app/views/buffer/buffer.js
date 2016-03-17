@@ -122,14 +122,14 @@ buffer.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStat
 
   offline.start($http);
 
-  connectionStatus.$on('online', function () {
+  /*connectionStatus.$on('online', function () {
     $log.info('buffer: We are now online');
     //$scope.tasks = data;
-  });
+  });*/
 
-  connectionStatus.$on('offline', function () {
+  /*connectionStatus.$on('offline', function () {
     $log.info('buffer: We are now offline');
-  });
+  });*/
 
 
 });
