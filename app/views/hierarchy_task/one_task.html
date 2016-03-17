@@ -8,7 +8,7 @@
     </div>
 
     <!-- Блок задачи -->
-    <div class="task" ng-context-menu  data-id="{{task.id}}" ng-click="selectTask(task.id)" ng-draggable helper="clone" cursor="default">
+    <div class="task" ng-context-menu  data-id="{{task.id}}" ng-dblclick="taskDbclick(task.id)" ng-click="selectTask(task.id)" ng-draggable helper="clone" cursor="default">
         <div ng-show="task.status!='new_task'">
             <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
             <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id, $event)" aria-label="complete" class="completebox md-primary"></md-checkbox>
