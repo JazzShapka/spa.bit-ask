@@ -293,7 +293,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             //key: ['deleted:true'],
         }).then(function (result) {
             // handle result
-            console.log("START app allDocs result: ", result);
+            console.log("START dbqueue.allDocs result: ", result);
         }).catch(function (err) {
             console.log(err);
         });
