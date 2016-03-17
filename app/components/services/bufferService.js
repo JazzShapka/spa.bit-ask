@@ -299,12 +299,35 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             console.log(err);
         });
 
+            dbqueue.createIndex({
+                index: {
+                    fields: ['deleted']
+                }
+            }).then(function (result) {
+                // yo, a result
+                console.log("dbqueue.createIndex result: ", result);
+            }).catch(function (err) {
+                // ouch, an error
+                console.log("dbqueue.createIndex err: ", err);
+            });
+
+            dbqueue.find({
+                selector: {deleted: false},
+                fields: ['_id', 'data']
+            }).then(function (result) {
+                // yo, a result
+                console.log("dbqueue.find result: ", result);
+            }).catch(function (err) {
+                // ouch, an error
+                console.log("dbqueue.find err: ", err);
+            });
+
 
         // create task | создание задачи
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d712';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d713';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             // put data to db queue | пишем в бд запрос
@@ -564,11 +587,106 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
 
-    connectionStatus.$on('online', function () {
-        $log.info('bufferService: We are now online');
 
-        initExecuteQueue();
-    });
+
+        function executeCmdFromQueue() {
+
+                dbqueue.find({
+                    selector: {deleted: false},
+                    fields: ['_id', 'data']
+                }).then(function (result) {
+                    // yo, a result
+                    console.log("dbqueue.find result: ", result);
+                    // execute cmd from queue
+                    console.log("result.docs: ", result.docs[0]['data']);
+
+                    console.log("result.docs.length: ", result.docs.length);
+
+                    angular.forEach(result.docs, function(value, key) {
+                        console.log(key + ': ' + value['data']);
+                    //for (var i = 0; i < result.docs.length; i++) {
+                        //
+                        //data = result.docs[i]['data'];
+                        //initExecuteQueue(data);
+                        console.log("START LOOP");
+
+
+                        $http({
+                            url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                            method: 'POST',
+                            data: value['data'],
+                            //cache: true,
+                            //offline: true
+                        }).then(function (response) {
+
+                            $log.info('connectionStatus http response: ', response);
+                            console.log('connectionStatus http response.status: ', response.status);
+                            httpStatus = response.status;
+                            //callback(response.data);
+
+                            // lis all docs in db
+                            dbqueue.allDocs({
+                                include_docs: true,
+                                attachments: true
+                            }).then(function (result) {
+                                // handle result
+                                console.log("connectionStatus dbqueue.allDocs result: ", result);
+                            }).catch(function (err) {
+                                console.log(err);
+                            });
+
+
+                            console.log("connectionStatus value: ", value);
+                            console.log("connectionStatus value['data']: ", value['data']);
+                            console.log("connectionStatus value['_id']: ", value['_id']);
+                            //console.log("result.docs[i]['data']: ", result.docs[i]['data']);
+                            //console.log("result.docs[0]: ", result.docs[0]);
+                            //console.log("i: ", i);
+                            //console.log("result.docs[i]: ", result.docs[i]);
+
+                            console.log("connectionStatus httpStatus: ", httpStatus);
+                            if (httpStatus == 200) {
+                                // delete task from queue
+                                dbqueue.get(value['_id']).then(function(doc) {
+                                    //console.log("dbqueue.get doc: ", doc);
+                                    return dbqueue.put({
+                                        _id: value['_id'],
+                                        _rev: doc._rev,
+                                        //deleted: true
+                                    });
+                                }).then(function(response) {
+                                    // handle response
+                                    console.log("connectionStatus dbqueue.get response", response);
+                                }).catch(function (err) {
+                                    console.log("connectionStatus dbqueue.get err", err);
+                                });
+                            };
+
+                            // remove
+                            /*dbqueue.get(change.change.id).then(function(doc) {
+                                return dbqueue.remove(doc);
+                            }).then(function (result) {
+                                // handle result
+                                console.log("onChangeQueue remove result: ", result);
+                            }).catch(function (err) {
+                                console.log("onChangeQueue remove err: ", err);
+                            });*/
+                        }); 
+                        console.log("END LOOP");
+                    });
+                }).catch(function (err) {
+                    // ouch, an error
+                    console.log("dbqueue.find err: ", err);
+                });
+        }
+
+
+
+        connectionStatus.$on('online', function () {
+            $log.info('bufferService: We are now online');
+            $timeout(executeCmdFromQueue, 30000);
+            //initExecuteQueue();
+        });
 
         
 
