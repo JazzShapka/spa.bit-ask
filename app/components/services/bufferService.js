@@ -67,9 +67,7 @@ angular.module('bitaskApp.service.buffer', [
             };
         }]);*/
 
-
 })
-
 
 .service('bufferService', [
         '$http',
@@ -110,7 +108,7 @@ angular.module('bitaskApp.service.buffer', [
 
         this.getTasks = getTasks;
         this.setTask = setTask;
-        this.getId = getId;
+        //this.getId = getId;
         this.deleteTask = deleteTask;
         this.sendData = sendData;
 
@@ -120,14 +118,14 @@ angular.module('bitaskApp.service.buffer', [
         }).catch(function (err) {
             console.log(err);
         });*/
-        /*var resetdb = function() {
+
+        // clear all data in db
+        var resetdb = function() {
             db.destroy().then(function() {
                 db = dbService.getDb();
             });
         };
-        resetdb();*/
-
-
+        //resetdb();
 
         /**
          * function for event listener db.changes
@@ -150,15 +148,20 @@ angular.module('bitaskApp.service.buffer', [
         db.changes(options).$promise
             .then(null, null, onChange);
 
+        /**
+         * Load data from server to db
+         */
+        getTasks();
 
 
         /**
-         * Test get all task from server over http post
+         * Get all task from server over http post and put all to db
          */
-        function getTasks(callback) {
+        function getTasks() {
 
+            resetdb();
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                console.log("ALL DB: ", doc.rows);
+                console.log("getTasks doc.rows: ", doc.rows);
             });
 
             //localStorageService.set('key124', JSON.stringify(callback));
@@ -171,9 +174,9 @@ angular.module('bitaskApp.service.buffer', [
                 method: 'POST',
                 data: '[[1,false,"task/subtasks",{"parentId":"0"}]]',
                 //cache: true,
-                offline: true
+                //offline: true
             }).then(function successCallback(response) {
-                $log.info('getTasks: ', response);
+                $log.info('getTasks response: ', response);
 
 
                 //console.log(response.data[0][2][0]['id']);
@@ -187,8 +190,8 @@ angular.module('bitaskApp.service.buffer', [
                     //$timeout(deleteTask(response.data[0][2][i]['id']), 1000);
 
                     //deleteTask(response.data[0][2][i]['id']);
-                    console.log("id: ", response.data[0][2][i]['id']);
-                    console.log("taskName", response.data[0][2][i]['taskName']);
+                    console.log("getTasks id: ", response.data[0][2][i]['id']);
+                    console.log("getTasks taskName", response.data[0][2][i]['taskName']);
 
                     db.put({
                         _id: response.data[0][2][i]['id'],
@@ -224,31 +227,22 @@ angular.module('bitaskApp.service.buffer', [
 
                     }).then(function (response) {
                         // handle response
+                        console.log("getTasks response: ", response);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("ALL DB OK: ", doc.rows);
+                            console.log("getTasks OK doc.rows: ", doc.rows);
                         });
                     }).catch(function (err) {
-                        console.log(err);
+                        console.log("getTasks err: ", err);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("ALL DB ERR: ", doc.rows);
+                            console.log("getTasks ERR doc.rows: ", doc.rows);
                         });
                     });
-
                 };
-
-
-                callback(response.data);
+                //callback(response.data);
             }, function(rejectReason) {
                 console.log('failure');
             });
         };
-
-
-
-
-
-
-
 
         /**
          * Test create task | создание задачи
@@ -256,7 +250,7 @@ angular.module('bitaskApp.service.buffer', [
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d716';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             if (online === false) {
@@ -298,7 +292,6 @@ angular.module('bitaskApp.service.buffer', [
             }
         };
 
-
         /**
          * Test delete task.
          */
@@ -321,7 +314,7 @@ angular.module('bitaskApp.service.buffer', [
         /**
          * Test get userd id from server db
          */
-        function getId(callback) {
+        /*function getId(callback) {
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
@@ -331,16 +324,15 @@ angular.module('bitaskApp.service.buffer', [
             }).then(function (response) {
                 $log.info('getId: ', response);
                 callback(response.data);
-            });
-            
-        };
+            });  
+        };*/
 
         /**
          * Test send
          */
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d721';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d723';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 23'}]];
             this.send(data, console.log("ok"));
         }
 
@@ -410,63 +402,13 @@ angular.module('bitaskApp.service.buffer', [
 
         };
 
-        /*function findTask() {
-            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true});
-        };*/
-
-
-
-
-
-        /* factory */
-        /*return {
-            getTasks : function() {
-                return $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-                })
-            },
-            setTask : function(taskName) {
-                var uuid = uuid4.generate();
-                var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
-                //console.log ("data: ", data);
-                return $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data
-                })
-            }
-        };*/
-
-        /*return {
-            getDataById: function (id) {
-              var deferred = $q.defer();
-              var start = new Date().getTime();
-
-              $http.get('http://api.dev2.bit-ask.com/index.php/event/all', {
-                cache: true,
-                offline: true,
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-              }).success(function (data) {
-                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
-                deferred.resolve(data);
-              });
-              return deferred.promise;
-            }
-        };*/
-
-
-
-
-
-
 
 
         /*   QUEUE SERVICE   */
 
         var httpStatus = -1;
         var dbqueue = pouchDB('queue');
+        var online = true;
 
         /*dbqueue.destroy().then(function (response) {
             // success
@@ -511,11 +453,10 @@ angular.module('bitaskApp.service.buffer', [
             console.log("dbqueue.find err: ", err);
         });*/
 
-
         /**
          *  Execute commands from queue if on event listener
          */
-        function initExecuteQueue(change) {
+        /*function initExecuteQueue(change) {
 
             // execute cmd from queue
             $http({
@@ -565,18 +506,17 @@ angular.module('bitaskApp.service.buffer', [
                 };
 
                 // remove
-                /*dbqueue.get(change.change.id).then(function(doc) {
+                dbqueue.get(change.change.id).then(function(doc) {
                     return dbqueue.remove(doc);
                 }).then(function (result) {
                     // handle result
                     console.log("onChangeQueue remove result: ", result);
                 }).catch(function (err) {
                     console.log("onChangeQueue remove err: ", err);
-                });*/
+                });
 
             });
-        }
-
+        }*/
 
         /**
          * Event: queue changed
@@ -588,8 +528,7 @@ angular.module('bitaskApp.service.buffer', [
             console.log("onChangeQueue change.change.id: ", change.change.id);
             if (online === true) {
                 //initExecuteQueue(change);
-            };
-            
+            };  
         }
 
         /**
@@ -612,12 +551,6 @@ angular.module('bitaskApp.service.buffer', [
         dbqueue.changes(options).$promise
             .then(null, null, onChangeQueue);
 
-
-
-
-
-
-
         /*
          * Execute commands from db
          */
@@ -634,9 +567,8 @@ angular.module('bitaskApp.service.buffer', [
 
                     console.log("result.docs.length: ", result.docs.length);
 
-                    angular.forEach(result.docs, function(value, key) {
-                        console.log(key + ': ' + value['data']);
-                        //for (var i = 0; i < result.docs.length; i++) {
+                    angular.forEach(result.docs, function(value, key) {          console.log(key + ': ' + value['data']);
+                        //for (var i = 0; i < result.docs.length; i++){
                         //
                         //data = result.docs[i]['data'];
                         //initExecuteQueue(data);
@@ -715,11 +647,9 @@ angular.module('bitaskApp.service.buffer', [
                 });
         }
 
-
         /*
          * Event online
-         */
-        var online = true;
+         */ 
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
             online = true;
@@ -735,7 +665,6 @@ angular.module('bitaskApp.service.buffer', [
             online = false;
         });
         
-
 
 }])
 
