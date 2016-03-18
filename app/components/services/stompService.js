@@ -14,7 +14,7 @@ stompService.config(
             ngstompProvider
                 .url('http://bitask-dev5.app.kras.1cbit.ru:15674/stomp')
                 .credential('guest', 'guest')
-                .debug(true)
+                //.debug(true)
                 .vhost('/')
                 .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
