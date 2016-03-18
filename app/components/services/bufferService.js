@@ -301,28 +301,28 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             console.log(err);
         });
 
-            dbqueue.createIndex({
-                index: {
-                    fields: ['deleted']
-                }
-            }).then(function (result) {
-                // yo, a result
-                console.log("dbqueue.createIndex result: ", result);
-            }).catch(function (err) {
-                // ouch, an error
-                console.log("dbqueue.createIndex err: ", err);
-            });
+        /*dbqueue.createIndex({
+            index: {
+                fields: ['deleted']
+            }
+        }).then(function (result) {
+            // yo, a result
+            console.log("dbqueue.createIndex result: ", result);
+        }).catch(function (err) {
+            // ouch, an error
+            console.log("dbqueue.createIndex err: ", err);
+        });*/
 
-            dbqueue.find({
-                selector: {deleted: false},
-                fields: ['_id', 'data']
-            }).then(function (result) {
-                // yo, a result
-                console.log("dbqueue.find result: ", result);
-            }).catch(function (err) {
-                // ouch, an error
-                console.log("dbqueue.find err: ", err);
-            });
+        /*dbqueue.find({
+            selector: {deleted: false},
+            fields: ['_id', 'data']
+        }).then(function (result) {
+            // yo, a result
+            console.log("dbqueue.find result: ", result);
+        }).catch(function (err) {
+            // ouch, an error
+            console.log("dbqueue.find err: ", err);
+        });*/
 
 
         // create task | создание задачи
