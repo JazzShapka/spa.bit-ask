@@ -24,33 +24,35 @@ angular.module('bitaskApp.service.buffer', [
     //offlineProvider.debug(true);
 
         // Interceptors
-        /*$httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
+        $httpProvider.interceptors.push(['$location', '$injector', '$q', '$rootScope', function ($location, $injector, $q, $rootScope) {
             return {
                 'request': function (config) {
-                    //console.log("INTERCEPTORS 1", config);
+                    console.log("INTERCEPTORS request 1", config);
                     //add headers
                     return config;
                 },
 
                 // optional method
                'requestError': function(rejection) {
-                  //console.log("INTERCEPTORS 2", rejection);
-                  // do something on error
-                  return $q.reject(rejection);
+                    console.log("INTERCEPTORS requestError 2", rejection);
+                    // do something on error
+                    return $q.reject(rejection);
                 },
 
                 // optional method
                 'response': function(response) {
-                  //console.log("INTERCEPTORS 3", response);
-                  if (response.status === 500) {
-                    //console.log("INTERCEPTORS 3 status: ", response.status);
-                  };
-                  // do something on success
-                  return response;
+                    console.log("INTERCEPTORS response 3", response);
+                    if (response.status === 500) {
+                      //console.log("INTERCEPTORS 3 status: ", response.status);
+                    };
+                    // do something on success
+                    $rootScope.online = true;
+                    return response;
                 },
 
                 'responseError': function (rejection) {
-                    //console.log("INTERCEPTORS 4", rejection);
+                    console.log("INTERCEPTORS responseError 4", rejection);
+                    $rootScope.online = false;
                     if (rejection.status === 500) {
 
                         //injected manually to get around circular dependency problem.
@@ -65,8 +67,7 @@ angular.module('bitaskApp.service.buffer', [
                     }
                 }
             };
-        }]);*/
-
+        }]);
 })
 
 .service('bufferService', [
