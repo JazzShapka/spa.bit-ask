@@ -174,7 +174,7 @@ angular.module('bitaskApp.service.buffer', [
                 method: 'POST',
                 data: '[[1,false,"task/subtasks",{"parentId":"0"}]]',
                 //cache: true,
-                offline: true
+                //offline: true
             }).then(function successCallback(response) {
                 $log.info('getTasks response: ', response);
 
