@@ -11,12 +11,12 @@
 
 angular.module('bitaskApp.service.buffer', [
     'uuid4',
-    //'offline',
+    'offline',
     'pouchdb',
     'AngularStompDK'])
 
 .config(function (
-        //offlineProvider,
+        offlineProvider,
         //$provide,
         $httpProvider
     ) {
@@ -337,7 +337,7 @@ angular.module('bitaskApp.service.buffer', [
          * Test send
          */
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d720';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d721';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
             this.send(data, console.log("ok"));
         }

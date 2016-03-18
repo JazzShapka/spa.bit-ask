@@ -9,16 +9,19 @@
  * Time: 09:55
  */
 
-angular.module('bitaskApp.service.db', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb', 'AngularStompDK'])
+angular.module('bitaskApp.service.db', ['pouchdb'])
 
-.service('dbService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp) {
+.service('dbService', ['$log', 'pouchDB', '$rootScope',
+    function($log, pouchDB, $rootScope) {
 
         //console.log = function() {};
         console.log("Start dbService.");
-        //var db = pouchDB('dbname');
 
         this.getDb = getDb;
+
+        /**
+         * Connect to db
+         */
         function getDb() {
         	var db = pouchDB('dbname');
 

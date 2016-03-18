@@ -22,8 +22,8 @@ buffer.config(['$routeProvider',
       });
   }]);
 
-buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connectionStatus', '$http', '$log', 'CacheFactory', '$rootScope', 'pouchDB', 'stompService',
-  function($scope, bufferService, offline, connectionStatus, $http, $log, CacheFactory, $rootScope, pouchDB, stompService) {
+buffer.controller('BufferCtrl', ['$scope', 'bufferService', '$http', '$log', '$rootScope', 'pouchDB', 'stompService',
+  function($scope, bufferService, $http, $log, $rootScope, pouchDB, stompService) {
 
 
 
@@ -114,7 +114,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
   }]);
 
 
-buffer.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
+buffer.run(function ($log) {
   /*$http.defaults.cache = $cacheFactory('custom');
   offline.stackCache = CacheFactory.createCache('my-cache', {
     storageMode: 'localStorage'
