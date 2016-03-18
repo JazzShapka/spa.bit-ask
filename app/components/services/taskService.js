@@ -6,8 +6,8 @@ angular.module('bitaskApp.service.task', [
     'bitaskApp.service.buffer',
     'uuid4'
 ])
-    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4',
-        function ($timeout, $mdDialog, bufferService, uuid4)
+    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4', 'keyboardService',
+        function ($timeout, $mdDialog, bufferService, uuid4, keyboardService)
         {
 
             var self = this;
@@ -45,17 +45,47 @@ angular.module('bitaskApp.service.task', [
              */
             self.showTaskEditor = function (mode, taskId){
 
+                var locals = {
+                    mode:mode,
+                    taskId:taskId
+                }
+
                 $mdDialog.show({
                     controller: 'taskEditor',
                     templateUrl: 'app/views/editors/task/taskEditor.html',
-                    locals : {
-                        mode:mode,
-                        taskId:taskId
+                    onRemoving: function (){
+                        locals.onClose();
                     },
+                    locals : locals,
                     escapeToClose: false,
                     clickOutsideToClose:false
                 });
             };
+            /**
+             * Открыть диалог удаления задачи
+             */
+            self.showDeleteTaskDialog = function (taskId){
+                keyboardService.on();
+
+                var task = self.tasks_indexed[taskId];
+
+                var confirm = $mdDialog.confirm()
+                    .title('Удаление задачи')
+                    .textContent(empty(task.regularSetting)?'Вы собираетесь удалить задачу':'Удалить все будущие повторения?')
+                    .ariaLabel('Delete task')
+                    .ok('Удалить')
+                    .cancel('Отмена');
+                $mdDialog.show(confirm).then(function() {
+
+                    self.deleteTask(task.id)
+
+                    bufferService.send([[ uuid4.generate(), true, "task/deletetask", {id: task.id} ]]);
+
+                    keyboardService.off();
+                }, function() {
+                    keyboardService.off();
+                });
+            }
 
 
             /**
@@ -117,6 +147,19 @@ angular.module('bitaskApp.service.task', [
                     self.tasks_indexed[taskId][param] = params[param];
                 }
             }
+            /**
+             * Удалить задачу из хранилища
+             * @param taskId
+             */
+            self.deleteTask = function (taskId){
+                for(var i=0; i<self.tasks.length; i++)
+                {
+                    if(self.tasks[i].id == taskId)
+                        self.tasks.splice(i, 1);
+                }
+
+                delete self.tasks_indexed[taskId];
+            };
 
 
             /**

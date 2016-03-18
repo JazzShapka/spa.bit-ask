@@ -21,6 +21,10 @@ angular.module('bitaskApp.editors.taskEditor', [
             // Показать чекбокс завершения только при редактировании
             $scope.show_completebox = (locals.mode == "edit_task");
 
+            locals.onClose = function (){
+                keyboardService.off();
+            }
+
             /**
              * Кнопка сохранить (ОК)
              */
@@ -72,8 +76,15 @@ angular.module('bitaskApp.editors.taskEditor', [
              */
             $scope.close = function (){
 
-                keyboardService.off();
+
                 $mdDialog.hide();
+            };
+
+            /**
+             * Кнопка - удалить задачу
+             */
+            $scope.delete = function (){
+                taskService.showDeleteTaskDialog(task.id);
             };
 
             /**

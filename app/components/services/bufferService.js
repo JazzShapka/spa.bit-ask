@@ -83,6 +83,7 @@ angular.module('bitaskApp.service.buffer', [
         '$rootScope',
         'ngstomp',
         'dbService',
+        '$mdToast',
     function(
         $http,
         $auth,
@@ -94,7 +95,8 @@ angular.module('bitaskApp.service.buffer', [
         $timeout,
         $rootScope,
         ngstomp,
-        dbService) {
+        dbService,
+        $mdToast) {
 
         //console.log = function() {};
         console.log("Start bufferService.");
@@ -359,18 +361,24 @@ angular.module('bitaskApp.service.buffer', [
                     method: 'POST',
                     data: data
                 }).then(function successCallback(response) {
-                    if(typeof callback == 'function')
+
+                    for (var i=0; i<response.data.length; i++)
                     {
-                        for (var i=0; i<response.data.length; i++)
+                        if(response.data[i][1][0] == 200)
                         {
-                            if(response.data[i][1][0] == 200)
+                            if(typeof callback == 'function')
                             {
-                                callback(response.data[i][2]);
+                                callback (response.data[i][2]);
                             }
-                            else
-                            {
-                                $log.warn(response.data[i][1][1]);
-                            }
+                        }
+                        else
+                        {
+                            $log.warn(response.data[i][1][1]);
+                            $mdToast.show({
+                                template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
+                                hideDelay: 10000,
+                                position: 'right bottom'
+                            });
                         }
                     }
                 });

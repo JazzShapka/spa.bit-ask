@@ -190,12 +190,15 @@ angular.module('bitaskApp.hierarchy_task', [
 
                 var task_elem, self_task, old_selected_id = selected_id;
 
+                var focusToFirstElement = function (){
+                    task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+                    distinguishTask(task_elem);
+                }
+
                 // Если нажаты клавиши стрелок, а элемент еще не выбран
                 if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
                 {
-                    task_elem = angular.element('.hierarchy_task_background').find('.task:first');
-                    distinguishTask(task_elem);
-
+                    focusToFirstElement();
                     return;
                 }
 
@@ -205,23 +208,25 @@ angular.module('bitaskApp.hierarchy_task', [
                     {
                         var prev_element = selected_element.prev ();
                         if (prev_element.length)
-                        {
                             distinguishTask(prev_element.find ('.task:first'));
-                        }
+                        else
+                            focusToFirstElement();
                         break;
                     }
                     case 40:    // down
                     {
                         var next_element = selected_element.next ();
                         if (next_element.length)
-                        {
                             distinguishTask(next_element.find ('.task:first'));
-                        }
+                        else
+                            focusToFirstElement();
                         break;
                     }
                     case 37:    // left
                     {
                         self_task = taskService.tasks_indexed[selected_id];
+                        if(self_task == undefined)
+                            focusToFirstElement();
 
                         if(self_task.children && self_task.viewBranch == 'show')
                         {
@@ -246,6 +251,9 @@ angular.module('bitaskApp.hierarchy_task', [
                     case 39:    // right
                     {
                         self_task = taskService.tasks_indexed[selected_id];
+                        if(self_task == undefined)
+                            focusToFirstElement();
+
                         if(self_task.children)
                         {
                             if(self_task.viewBranch == 'hide')
@@ -294,6 +302,8 @@ angular.module('bitaskApp.hierarchy_task', [
                     }
                     case 46:    // Del
                     {
+                        if(selected_id)
+                            taskService.showDeleteTaskDialog(selected_id);
                         break
                     }
                     default:
@@ -380,7 +390,9 @@ angular.module('bitaskApp.hierarchy_task', [
                 'divider',
                 function(attrs)         // Удалить
                 {
-                    return {name: "Удалить", hotkey:"Del"}
+                    return {name: "Удалить", hotkey:"Del", handler:function (){
+                        taskService.showDeleteTaskDialog(attrs.id);
+                    }}
                 }
             ];
 
