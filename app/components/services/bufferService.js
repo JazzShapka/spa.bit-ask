@@ -471,6 +471,7 @@ angular.module('bitaskApp.service.buffer', [
 
         var httpStatus = -1;
         var dbqueue = pouchDB('queue');
+        var online = true;
 
         /*dbqueue.destroy().then(function (response) {
             // success
@@ -722,8 +723,7 @@ angular.module('bitaskApp.service.buffer', [
 
         /*
          * Event online
-         */
-        var online = true;
+         */ 
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
             online = true;
