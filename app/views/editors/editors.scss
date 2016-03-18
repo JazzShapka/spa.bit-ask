@@ -1,6 +1,9 @@
 // Верхняя часть
-.editor md-toolbar{
-    background-color: $main-color !important;
+.editor .close_button{
+    top: 0;
+    left: 4px;
+    align-self: flex-end;
+    position: relative;
 }
 
 // Средняя часть

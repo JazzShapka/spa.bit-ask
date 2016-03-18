@@ -1,15 +1,10 @@
 <md-dialog aria-label="task editor"  ng-cloak class="task editor">
     <!-- Шапка -->
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>{{form_name}}</h2>
-            <span flex></span>
-            <md-button class="md-icon-button" ng-click="close()">
-                <md-tooltip md-direction="top">Закрыть</md-tooltip>
-                <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
-            </md-button>
-        </div>
-    </md-toolbar>
+    <md-button class="close_button md-icon-button" ng-click="close()">
+        <md-tooltip md-direction="top">Закрыть</md-tooltip>
+        <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
+    </md-button>
+
 
     <!-- Контент -->
     <md-dialog-content ng-nicescroll nice-option="{cursorcolor: '#424242', zindex:81}">
@@ -19,27 +14,27 @@
                 <md-input-container class="md-block task-name md-icon-left" md-no-float>
                     <md-checkbox ng-click="setStatus()" ng-checked="task.status=='completed'" ng-if="show_completebox" class="md-primary" aria-label="complete"></md-checkbox>
                     <md-icon ng-if="!show_completebox" class="material-icons">assignment_turned_in</md-icon>
-                    <input placeholder="Добавить задачу" ng-model="task.taskName" />
+                    <input maxlength="800" placeholder="Добавить задачу" ng-model="task.taskName" />
                 </md-input-container>
 
                 <md-input-container class="md-block task-date" md-no-float>
-                    <input placeholder="Срок" ng-model="date"/>
+                    <input disabled placeholder="Срок" ng-model="date"/>
                 </md-input-container>
             </div>
 
 
             <div layout-gt-sm="row">
                 <md-input-container class="md-block task-performer" md-no-float>
-                    <input placeholder="Исполнитель" ng-model="task.performer" />
+                    <input disabled placeholder="Исполнитель"  value="Я" />
                 </md-input-container>
 
                 <md-input-container class="md-block task-parent" md-no-float>
-                    <input disabled placeholder="Создать в папке" ng-model="task.parentId" />
+                    <input disabled placeholder="Создать в папке" value=""/>
                 </md-input-container>
             </div>
 
             <md-input-container class="md-block task-description" md-no-float>
-                <textarea placeholder="Описание задачи" ng-model="task.taskDescription"></textarea>
+                <textarea maxlength="3000" placeholder="Описание задачи" ng-model="task.taskDescription"></textarea>
             </md-input-container>
 
         </div>

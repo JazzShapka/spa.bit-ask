@@ -165,6 +165,20 @@ angular.module('bitaskApp.hierarchy_task', [
 
             };
             /**
+             * Изменить направление раскрытия задачи
+             * @param taskId - id задачи
+             */
+            $scope.setDirection = function (taskId){
+
+                var task = taskService.tasks_indexed[taskId];
+
+                if(task.directionBranch == 'right')
+                    task.directionBranch = 'bottom';
+                else
+                    task.directionBranch = 'right';
+
+            }
+            /**
              * Выделение задачи мышью
              * @param taskId - id Задачи
              */
@@ -209,8 +223,6 @@ angular.module('bitaskApp.hierarchy_task', [
                         var prev_element = selected_element.prev ();
                         if (prev_element.length)
                             distinguishTask(prev_element.find ('.task:first'));
-                        else
-                            focusToFirstElement();
                         break;
                     }
                     case 40:    // down
@@ -218,8 +230,6 @@ angular.module('bitaskApp.hierarchy_task', [
                         var next_element = selected_element.next ();
                         if (next_element.length)
                             distinguishTask(next_element.find ('.task:first'));
-                        else
-                            focusToFirstElement();
                         break;
                     }
                     case 37:    // left
@@ -285,7 +295,8 @@ angular.module('bitaskApp.hierarchy_task', [
                     }
                     case 32:    // space
                     {
-                        $scope.comleteTask(selected_id);
+                        if(selected_id)
+                            $scope.comleteTask(selected_id);
                         break;
                     }
                     case 9:     // tab

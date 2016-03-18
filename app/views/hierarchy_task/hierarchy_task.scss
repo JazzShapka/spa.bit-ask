@@ -205,6 +205,8 @@ body *{
 .task_background .task md-icon{
     outline: none;
 }
+
+// Кнопки разворачивания
 .task_background .expand_block{
     width: 18px;
     height: 18px;
@@ -214,6 +216,9 @@ body *{
 .task_background .expand_block svg{
     outline: none;
 }
+.task_background .expand_block .arrow_main{
+    position: relative;
+}
 .task_background .expand_block .arrow_middle{
     //display: none;
     opacity: 0;
@@ -222,6 +227,7 @@ body *{
     -ms-transition: opacity 200ms ease-out 400ms;
     -o-transition: opacity 200ms ease-out 400ms;
     transition: opacity 200ms ease-out 400ms;
+
     position: relative;
 
 }
@@ -233,11 +239,23 @@ body *{
     display: block;
     opacity: 1;
 }
-.task_background .expand_block.right{
+
+.task_background .expand_block.right .arrow_main{
     left: 12px;
 }
 .task_background .expand_block.right .arrow_middle{
+    left: 12px;
     top: -2px;
+}
+.task_background .expand_block.bottom .arrow_main{
+    left: -210px;
+    top: 17px;
+    transform: rotate(90deg);
+}
+.task_background .expand_block.bottom .arrow_middle{
+    left: -187px;
+    top: -5px;
+    transform: rotate(-90deg);
 }
 
 .task_background .expand_block.open .arrow_right{

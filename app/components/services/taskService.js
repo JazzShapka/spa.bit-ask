@@ -75,22 +75,36 @@ angular.module('bitaskApp.service.task', [
 
                 var task = self.tasks_indexed[taskId];
 
-                var confirm = $mdDialog.confirm()
-                    .title('Удаление задачи')
-                    .textContent(empty(task.regularSetting)?'Вы собираетесь удалить задачу':'Удалить все будущие повторения?')
-                    .ariaLabel('Delete task')
-                    .ok('Удалить')
-                    .cancel('Отмена');
-                $mdDialog.show(confirm).then(function() {
+                if(empty(task))
+                {
+                    var alert = $mdDialog.confirm()
+                        .title('Удаление задачи')
+                        .textContent("Задача еще не создана")
+                        .ariaLabel('Delete task')
+                        .ok('Ок')
+                        //.cancel('Отмена');
+                    $mdDialog.show(alert).then(function (){
+                        keyboardService.off();
+                    });
+                }
+                else {
+                    var confirm = $mdDialog.confirm()
+                        .title('Удаление задачи')
+                        .textContent(empty(task.regularSetting)?'Вы собираетесь удалить задачу':'Удалить все будущие повторения?')
+                        .ariaLabel('Delete task')
+                        .ok('Удалить')
+                        .cancel('Отмена');
+                    $mdDialog.show(confirm).then(function() {
 
-                    self.deleteTask(task.id)
+                        self.deleteTask(task.id)
 
-                    bufferService.send([[ uuid4.generate(), true, "task/deletetask", {id: task.id} ]]);
+                        bufferService.send([[ uuid4.generate(), true, "task/deletetask", {id: task.id} ]]);
 
-                    keyboardService.off();
-                }, function() {
-                    keyboardService.off();
-                });
+                        keyboardService.off();
+                    }, function() {
+                        keyboardService.off();
+                    });
+                }
             }
 
 
