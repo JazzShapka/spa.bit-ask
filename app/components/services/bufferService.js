@@ -16,7 +16,7 @@ angular.module('bitaskApp.service.buffer', [
     'AngularStompDK'])
 
 .config(function (
-        offlineProvider,
+        //offlineProvider,
         //$provide,
         $httpProvider
     ) {
@@ -682,7 +682,7 @@ angular.module('bitaskApp.service.buffer', [
 
 }])
 
-.run(function (offline, $log, $rootScope) {
+.run(function ($log, $rootScope) {
 
     //offline.start($http);
 });
