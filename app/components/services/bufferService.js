@@ -42,17 +42,23 @@ angular.module('bitaskApp.service.buffer', [
                 // optional method
                 'response': function(response) {
                     console.log("INTERCEPTORS response 3", response);
-                    if (response.status === 500) {
-                      //console.log("INTERCEPTORS 3 status: ", response.status);
+                    if (response.status === -1) {
+                        //console.log("INTERCEPTORS 3 status: ", response.status);
+                        $rootScope.online = false;
+                        console.log("$rootScope.online f: ", $rootScope.online);
+                    } else {
+                        $rootScope.online = true;
+                        console.log("$rootScope.online t: ", $rootScope.online);    
                     };
                     // do something on success
-                    $rootScope.online = true;
+                    // $rootScope.online = true;
                     return response;
                 },
 
                 'responseError': function (rejection) {
                     console.log("INTERCEPTORS responseError 4", rejection);
                     $rootScope.online = false;
+                    console.log("$rootScope.online: f", $rootScope.online);
                     if (rejection.status === 500) {
 
                         //injected manually to get around circular dependency problem.
@@ -331,7 +337,7 @@ angular.module('bitaskApp.service.buffer', [
          * Test send | Тест отправда данных на сервер
          */
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d723';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 23'}]];
             this.send(data, console.log("ok"));
         }
@@ -343,62 +349,65 @@ angular.module('bitaskApp.service.buffer', [
          */
         self.send = function (data, callback){
 
-            if (online === true) {
                 $http({
                     url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                     method: 'POST',
                     data: data
                 }).then(function successCallback(response) {
 
-                    for (var i=0; i<response.data.length; i++)
-                    {
-                        if(response.data[i][1][0] == 200)
+                    console.log("send $rootScope.online: ", $rootScope.online);
+
+                    if ( $rootScope.online ) {
+
+                        for (var i=0; i<response.data.length; i++)
                         {
-                            if(typeof callback == 'function')
+                            if(response.data[i][1][0] == 200)
                             {
-                                callback (response.data[i][2]);
+                                if(typeof callback == 'function')
+                                {
+                                    callback (response.data[i][2]);
+                                }
+                            }
+                            else
+                            {
+                                $log.warn(response.data[i][1][1]);
+                                $mdToast.show({
+                                    template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
+                                    hideDelay: 10000,
+                                    position: 'right bottom'
+                                });
                             }
                         }
-                        else
-                        {
-                            $log.warn(response.data[i][1][1]);
-                            $mdToast.show({
-                                template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
-                                hideDelay: 10000,
-                                position: 'right bottom'
+
+                    } else {
+
+                        // put query to db
+                        console.log("data: ", data[0][3]);
+                        var uuid = data[0][3]['id'];
+                        console.log("uuid: ", uuid);
+                        dbqueue.put({
+                            _id: uuid,
+                            data: data,
+                            deleted: false
+                        }).then(function (response) {
+                            // handle response
+                            // list all docs in db
+                            dbqueue.allDocs({
+                                include_docs: true,
+                                attachments: true
+                            }).then(function (result) {
+                                // handle result
+                                console.log("send dbqueue.allDocs result: ", result);
+                            }).catch(function (err) {
+                                console.log(err);
                             });
-                        }
+
+                        }).catch(function (err) {
+                            console.log(err);
+                        });
+
                     }
                 });
-
-            } else {
-
-                // put query to db
-                console.log("data: ", data[0][3]);
-                var uuid = data[0][3]['id'];
-                console.log("uuid: ", uuid);
-                dbqueue.put({
-                    _id: uuid,
-                    data: data,
-                    deleted: false
-                }).then(function (response) {
-                    // handle response
-                    // list all docs in db
-                    dbqueue.allDocs({
-                        include_docs: true,
-                        attachments: true
-                    }).then(function (result) {
-                        // handle result
-                        console.log("send dbqueue.allDocs result: ", result);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-
-            }
 
         };
 
@@ -553,10 +562,11 @@ angular.module('bitaskApp.service.buffer', [
         dbqueue.changes(options).$promise
             .then(null, null, onChangeQueue);
 
+        processingQueue();
         /**
          * Processing queue | Обработка очереди
          */
-        function executeCmdFromQueue() {
+        function processingQueue() {
 
                 dbqueue.find({
                     selector: {deleted: false},
@@ -633,9 +643,9 @@ angular.module('bitaskApp.service.buffer', [
                                     return dbqueue.remove(doc);
                                 }).then(function (result) {
                                     // handle result
-                                    console.log("executeCmdFromQueue remove result: ", result);
+                                    console.log("processingQueue remove result: ", result);
                                 }).catch(function (err) {
-                                    console.log("executeCmdFromQueue remove err: ", err);
+                                    console.log("processingQueue remove err: ", err);
                                 });
 
                             };
@@ -654,18 +664,20 @@ angular.module('bitaskApp.service.buffer', [
          */
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
-            online = true;
-            $timeout(executeCmdFromQueue, 30000);
+            //online = true;
+            $rootScope.online = true;
+            $timeout(processingQueue, 30000);
             //initExecuteQueue();
         });
 
         /**
          * Event offline | Собитие нет подключения
          */
-        connectionStatus.$on('offline', function () {
+        /*connectionStatus.$on('offline', function () {
             $log.info('bufferService: We are now offline');
-            online = false;
-        });
+            $rootScope.online = false;
+            //online = false;
+        });*/
         
 
 }])
