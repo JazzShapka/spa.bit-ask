@@ -68,8 +68,8 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 })
 
 
-.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp', 'dbService',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp, dbService) {
+.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp', 'dbService', '$mdToast',
+    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp, dbService, $mdToast) {
 
         //console.log = function() {};
         console.log("Start bufferService.");
@@ -330,18 +330,24 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                     method: 'POST',
                     data: data
                 }).then(function successCallback(response) {
-                    if(typeof callback == 'function')
+
+                    for (var i=0; i<response.data.length; i++)
                     {
-                        for (var i=0; i<response.data.length; i++)
+                        if(response.data[i][1][0] == 200)
                         {
-                            if(response.data[i][1][0] == 200)
+                            if(typeof callback == 'function')
                             {
-                                callback(response.data[i][2]);
+                                callback (response.data[i][2]);
                             }
-                            else
-                            {
-                                $log.warn(response.data[i][1][1]);
-                            }
+                        }
+                        else
+                        {
+                            $log.warn(response.data[i][1][1]);
+                            $mdToast.show({
+                                template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
+                                hideDelay: 10000,
+                                position: 'right bottom'
+                            });
                         }
                     }
                 });

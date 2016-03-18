@@ -99,3 +99,7 @@ angular.module('bitaskApp', [
     });
 }]);
 
+function empty(mixed_var){
+    return ( (typeof mixed_var == 'number' && isNaN(mixed_var)) ||  mixed_var === undefined || mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === 'null' || mixed_var === false || mixed_var === 'false' || ( Array.isArray(mixed_var) && mixed_var.length === 0 ) || (typeof mixed_var == "object" && $.isEmptyObject(mixed_var)));
+}
+
