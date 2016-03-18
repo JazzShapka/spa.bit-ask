@@ -158,7 +158,7 @@ angular.module('bitaskApp.service.buffer', [
          */
         function getTasks() {
 
-            resetdb();
+            //resetdb();
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
                 console.log("getTasks doc.rows: ", doc.rows);
             });
