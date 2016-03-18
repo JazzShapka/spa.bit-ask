@@ -112,12 +112,7 @@ angular.module('bitaskApp.service.buffer', [
         this.deleteTask = deleteTask;
         this.sendData = sendData;
 
-        // clear all db
-        /*db.destroy().then(function (response) {
-            // success
-        }).catch(function (err) {
-            console.log(err);
-        });*/
+
 
         /**
          * Clear all data in db | Очистка бд
@@ -433,7 +428,7 @@ angular.module('bitaskApp.service.buffer', [
             console.log(err);
         });
 
-        /*
+        /**
          * Сreate index | Создание индекса
          */
         dbqueue.createIndex({
@@ -460,7 +455,7 @@ angular.module('bitaskApp.service.buffer', [
         });*/
 
         /**
-         *  Execute commands from queue if on event listener
+         *  For event listener
          */
         /*function initExecuteQueue(change) {
 
@@ -557,7 +552,7 @@ angular.module('bitaskApp.service.buffer', [
         dbqueue.changes(options).$promise
             .then(null, null, onChangeQueue);
 
-        /*
+        /**
          * Processing queue | Обработка очереди
          */
         function executeCmdFromQueue() {
@@ -653,9 +648,9 @@ angular.module('bitaskApp.service.buffer', [
                 });
         }
 
-        /*
+        /**
          * Event online | Событие есть подключение
-         */ 
+         */
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
             online = true;
@@ -663,7 +658,7 @@ angular.module('bitaskApp.service.buffer', [
             //initExecuteQueue();
         });
 
-        /*
+        /**
          * Event offline | Собитие нет подключения
          */
         connectionStatus.$on('offline', function () {
