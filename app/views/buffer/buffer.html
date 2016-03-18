@@ -7,7 +7,7 @@ setTask
 <md-button ng-click="bufferService.getTasks()">
 getTasks
 </md-button>
-<md-button ng-click="bufferService.deleteTask('ba1eb446-0bb3-ab0a-3e44-a182fc48d720')">
+<md-button ng-click="bufferService.deleteTask('ba1eb446-0bb3-ab0a-3e44-a182fc48d724')">
 deleteTask
 </md-button>
 
@@ -27,8 +27,14 @@ deleteTask
 
 <pre>{{ makePOST | json }}</pre>
 
+Queue:
 <div ng-repeat="queue in queues">
 	<pre>{{ queue }}</pre>
+</div>
+
+Tasks:
+<div ng-repeat="doc in docs">
+	<pre>{{ doc }}</pre>
 </div>
 
 <div ng-repeat="doc in docs">

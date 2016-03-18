@@ -118,12 +118,14 @@ angular.module('bitaskApp.service.buffer', [
         }).catch(function (err) {
             console.log(err);
         });*/
-        /*var resetdb = function() {
+
+        // clear all data in db
+        var resetdb = function() {
             db.destroy().then(function() {
                 db = dbService.getDb();
             });
         };
-        resetdb();*/
+        //resetdb();
 
 
 
@@ -149,14 +151,15 @@ angular.module('bitaskApp.service.buffer', [
             .then(null, null, onChange);
 
 
-
+        getTasks();
         /**
-         * Test get all task from server over http post
+         * Get all task from server over http post and put all to db
          */
-        function getTasks(callback) {
+        function getTasks() {
 
+            resetdb();
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                console.log("ALL DB: ", doc.rows);
+                console.log("getTasks doc.rows: ", doc.rows);
             });
 
             //localStorageService.set('key124', JSON.stringify(callback));
@@ -171,7 +174,7 @@ angular.module('bitaskApp.service.buffer', [
                 //cache: true,
                 offline: true
             }).then(function successCallback(response) {
-                $log.info('getTasks: ', response);
+                $log.info('getTasks response: ', response);
 
 
                 //console.log(response.data[0][2][0]['id']);
@@ -185,8 +188,8 @@ angular.module('bitaskApp.service.buffer', [
                     //$timeout(deleteTask(response.data[0][2][i]['id']), 1000);
 
                     //deleteTask(response.data[0][2][i]['id']);
-                    console.log("id: ", response.data[0][2][i]['id']);
-                    console.log("taskName", response.data[0][2][i]['taskName']);
+                    console.log("getTasks id: ", response.data[0][2][i]['id']);
+                    console.log("getTasks taskName", response.data[0][2][i]['taskName']);
 
                     db.put({
                         _id: response.data[0][2][i]['id'],
@@ -222,20 +225,21 @@ angular.module('bitaskApp.service.buffer', [
 
                     }).then(function (response) {
                         // handle response
+                        console.log("getTasks response: ", response);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("ALL DB OK: ", doc.rows);
+                            console.log("getTasks OK doc.rows: ", doc.rows);
                         });
                     }).catch(function (err) {
-                        console.log(err);
+                        console.log("getTasks err: ", err);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("ALL DB ERR: ", doc.rows);
+                            console.log("getTasks ERR doc.rows: ", doc.rows);
                         });
                     });
 
                 };
 
 
-                callback(response.data);
+                //callback(response.data);
             }, function(rejectReason) {
                 console.log('failure');
             });
@@ -254,7 +258,7 @@ angular.module('bitaskApp.service.buffer', [
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d716';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             if (online === false) {
@@ -337,8 +341,8 @@ angular.module('bitaskApp.service.buffer', [
          * Test send
          */
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d721';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d723';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 23'}]];
             this.send(data, console.log("ok"));
         }
 
