@@ -365,7 +365,7 @@ angular.module('bitaskApp.service.buffer', [
                             }
                             else
                             {
-                                $log.$warn(response.data[i][1][1]);
+                                $log.warn(response.data[i][1][1]);
                             }
                         }
                     }

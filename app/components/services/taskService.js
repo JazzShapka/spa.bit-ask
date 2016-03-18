@@ -71,7 +71,6 @@ angular.module('bitaskApp.service.task', [
                 // Отправляем новую задачу на сервер
                 bufferService.send([[ uuid4.generate(), true, "task/addtask", task ]]);
             };
-
             /**
              * Отправить запрос на изменение задачи
              *
@@ -85,7 +84,6 @@ angular.module('bitaskApp.service.task', [
                 params.id = taskId;
                 bufferService.send([[uuid4.generate(), true, "task/settask", params]]);
             };
-
             /**
              * Добавить задачу в массив отображающихся задач
              * @param task
@@ -106,7 +104,6 @@ angular.module('bitaskApp.service.task', [
                 }
 
             };
-
             /**
              * Обновить параметры у задачи в массиве задач
              *
@@ -120,6 +117,7 @@ angular.module('bitaskApp.service.task', [
                     self.tasks_indexed[taskId][param] = params[param];
                 }
             }
+
 
             /**
              * Обновить количество загруженых подзадач
@@ -141,7 +139,6 @@ angular.module('bitaskApp.service.task', [
                     }
                 }
             };
-
             /**
              * Получить подзадачи.
              * @param taskIds - массив id родителей || строка с id
@@ -177,7 +174,6 @@ angular.module('bitaskApp.service.task', [
                     });
                 }
             };
-
             /**
              * Загрузка наперед еще не открытых задач
              */
@@ -195,6 +191,20 @@ angular.module('bitaskApp.service.task', [
                 // Получаем детей загруженых задач (Загрузка на перед)
                 self.getChildren(taskIds);
             };
+            /**
+             * Свернуть все задачи и отправить на сервер.
+             */
+            self.shrinkAllTasks = function (){
+                for(var i=0; i<self.tasks.length; i++)
+                {
+                    self.tasks[i].viewBranch = 'hide';
+                }
+
+                bufferService.send([[uuid4.generate(), true, "task/shrinkalltask"]], function (data){
+
+
+                });
+            }
 
             /**
              * Конструктор
