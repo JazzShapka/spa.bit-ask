@@ -678,7 +678,6 @@ angular.module('bitaskApp.service.buffer', [
             $rootScope.online = false;
             //online = false;
         });*/
-        
 
 }])
 
