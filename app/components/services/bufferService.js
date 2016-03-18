@@ -9,14 +9,17 @@
  * Time: 10:25
  */
 
-angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb', 'AngularStompDK'])
+angular.module('bitaskApp.service.buffer', [
+    'uuid4',
+    'offline',
+    'pouchdb',
+    'AngularStompDK'])
 
-.config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider, ngstompProvider) {
-  /*localStorageServiceProvider
-    .setPrefix('bufferService')
-    .setStorageType('sessionStorage')
-    .setNotify(true, true);*/
-
+.config(function (
+        offlineProvider,
+        //$provide,
+        $httpProvider
+    ) {
     
     //offlineProvider.debug(true);
 
@@ -68,8 +71,32 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 })
 
 
-.service('bufferService', ['$resource', '$http', '$auth', 'uuid4', 'localStorageService', 'CacheFactory', 'offline', 'connectionStatus', '$log', '$q', 'pouchDB', '$timeout', '$rootScope', 'ngstomp', 'dbService', '$mdToast',
-    function($resource, $http, $auth, uuid4, localStorageService, CacheFactory, offline, connectionStatus, $log, $q, pouchDB, $timeout, $rootScope, ngstomp, dbService, $mdToast) {
+.service('bufferService', [
+        '$http',
+        '$auth',
+        'uuid4',
+        //'offline',
+        'connectionStatus',
+        '$log',
+        'pouchDB',
+        '$timeout',
+        '$rootScope',
+        'ngstomp',
+        'dbService',
+        '$mdToast',
+    function(
+        $http,
+        $auth,
+        uuid4,
+        //offline,
+        connectionStatus,
+        $log,
+        pouchDB,
+        $timeout,
+        $rootScope,
+        ngstomp,
+        dbService,
+        $mdToast) {
 
         //console.log = function() {};
         console.log("Start bufferService.");
@@ -312,7 +339,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
          * Test send
          */
         function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d720';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d721';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
             this.send(data, console.log("ok"));
         }
@@ -370,7 +397,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                         attachments: true
                     }).then(function (result) {
                         // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
+                        console.log("send dbqueue.allDocs result: ", result);
                     }).catch(function (err) {
                         console.log(err);
                     });
@@ -460,7 +487,8 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             console.log(err);
         });
 
-        /*dbqueue.createIndex({
+        // create index
+        dbqueue.createIndex({
             index: {
                 fields: ['deleted']
             }
@@ -470,7 +498,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         }).catch(function (err) {
             // ouch, an error
             console.log("dbqueue.createIndex err: ", err);
-        });*/
+        });
 
         /*dbqueue.find({
             selector: {deleted: false},
@@ -711,7 +739,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 }])
 
-.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope, bufferService) {
+.run(function (offline, $log, $rootScope) {
 
     //offline.start($http);
 });

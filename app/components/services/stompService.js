@@ -10,11 +10,11 @@
 var stompService = angular.module('stompService', [ 'AngularStompDK' ]);
 
 stompService.config(
-	function(ngstompProvider, $routeProvider){
+	function(ngstompProvider){
             ngstompProvider
                 .url('http://bitask-dev5.app.kras.1cbit.ru:15674/stomp')
                 .credential('guest', 'guest')
-                //.debug(true)
+                .debug(true)
                 .vhost('/')
                 .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
@@ -33,37 +33,23 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
 
 	console.log("Start stompService.");
 
-    //var db = pouchDB('dbname');
-
 	var uid = $auth.getPayload().sub;
-	//console.log("uid: ", uid);
-
-    //$scope.bufferService = bufferService;
-    /*bufferService.getId(function(data) {
-      //var id = data[0][2];
-      console.log("id: ", data[0][2]);
-      stompSubscribe(data[0][2]);
-      //console.log(ide);
-    });*/
-
-    //this.stompSubscribe = stompSubscribe;
-
     var items = [];
 
-    //function stompSubscribe(id) {
-	    ngstomp
-	        //.subscribeTo('/queue/queue')
-	            //.callback(whatToDoWhenMessageComming)
-	            //.withHeaders(headers)
-	            //.and()
-	        //.subscribeTo('/queue/' + id)
-            .subscribeTo('/queue/' + uid)
-	            .callback(whatToDoWhenMessageComming)
-	            //.withHeaders(headers)
-                //.bindTo($scope)
-	        .connect();
-    //}
 
+    // connect and subscribe
+	ngstomp
+	    //.subscribeTo('/queue/all')
+	        //.callback(whatToDoWhenMessageComming)
+	        //.and()
+        .subscribeTo('/queue/' + uid)
+	        .callback(whatToDoWhenMessageComming)
+            .bindTo($rootScope)
+	    .connect();
+
+    /**
+     * Execute every message received
+     */
     function whatToDoWhenMessageComming(message) {
         items.push(message.body);
         //$scope.items = items;
@@ -75,24 +61,18 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
         // parse
         var event = JSON.parse(message.body);
         //console.log("event: ", event);
-        //console.log("event0: ", event[0]);
-        //console.log("event1: ", event[1]);
-        //console.log("event2id: ", event[2]['id']);
-        //console.log("event2taskName: ", event[2]['taskName']);
-
-        //console.log('E21: ', event[2][1]);
+        //console.log("event 0: ", event[0]);
+        //console.log("event 1: ", event[1]);
+        //console.log("event 2 id: ", event[2]['id']);
+        //console.log("event 2 taskName: ", event[2]['taskName']);
+        //console.log('event 2 1: ', event[2][1]);
         var keys = Object.keys(event[2]);
         //console.log("keys: ", keys);
-        //console.log("key1: ", keys[1]);
+        //console.log("key 1: ", keys[1]);
         //var key = keys[1];
         
-        /*db.put({
-            _id: event.id,
-            title: 'Taskname'
-        });*/
 
         // update data in db
-        //var db = pouchDB('dbname');
         var db = dbService.getDb();
         db.get(event[2]['id']).then(function(doc) {
             return db.put({
@@ -149,7 +129,6 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
         });
 
         
-
-
     }
+
 }]);
