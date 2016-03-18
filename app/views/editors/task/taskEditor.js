@@ -109,7 +109,11 @@ angular.module('bitaskApp.editors.taskEditor', [
                         break;
                     }
                 }
-                //console.log(event.keyCode);
+
+                if(event.ctrlKey && event.keyCode == 13 || event.keyCode == 10)
+                {
+                    $scope.save();
+                }
             });
 
             /**
@@ -195,22 +199,6 @@ angular.module('bitaskApp.editors.taskEditor', [
              * @private
              */
             var __constructor = function (){
-
-                // Определяем заголовок окна
-                switch (locals.mode)
-                {
-                    case 'new_task':
-                    case 'sub_task':
-                    case 'brother_task':
-                        $scope.form_name = "Создать задачу";
-                        break;
-                    case 'edit_task':
-                        $scope.form_name = "Редактировать задачу";
-                        break;
-                    default:
-                        $scope.form_name = "Непонятный режим работы";
-                        break;
-                }
 
                 // Получить задачу с которой работаем
                 task = getTask();
