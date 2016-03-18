@@ -196,7 +196,7 @@ body *{
 .task_background .task .sub_buttons:hover{
     display: flex;
 }
-.task_background .task .buttons:hover + .sub_buttons{
+.task_background .task:hover .sub_buttons{
     display: flex;
 }
 .task_background .task .buttons .material-icons.gray.none{

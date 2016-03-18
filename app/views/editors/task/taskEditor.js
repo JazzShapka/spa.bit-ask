@@ -45,7 +45,7 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 if($scope.task.taskName == '' && $scope.task.taskDescription != '')
                 {
-                    $scope.task.taskName = $scope.task.taskDescription;
+                    $scope.task.taskName = $scope.task.taskDescription.split(' ').splice(0, 5).join(' ');
                 }
 
 
@@ -191,6 +191,8 @@ angular.module('bitaskApp.editors.taskEditor', [
                 $scope.task.taskDescription = task.taskDescription;
                 $scope.task.parentId = task.parentId;
                 $scope.task.status = task.status;
+
+                $scope.parent = empty(taskService.tasks_indexed[task.parentId])?'':taskService.tasks_indexed[task.parentId].taskName;
 
             };
 
