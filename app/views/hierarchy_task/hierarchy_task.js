@@ -238,7 +238,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         if(self_task == undefined)
                             focusToFirstElement();
 
-                        if(self_task.children && self_task.viewBranch == 'show')
+                        if(self_task.children_quantity && self_task.viewBranch == 'show')
                         {
                             $scope.expandTask(self_task.id, 'hide');
                             $scope.$apply();
@@ -264,7 +264,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         if(self_task == undefined)
                             focusToFirstElement();
 
-                        if(self_task.children)
+                        if(self_task.children_quantity)
                         {
                             if(self_task.viewBranch == 'hide')
                             {
@@ -349,18 +349,6 @@ angular.module('bitaskApp.hierarchy_task', [
             $scope.taskDbclick = function (taskId){
                 taskService.showTaskEditor('edit_task', selected_id)
             };
-            /**
-             * Филтр для отображаемых задач
-             * @param task
-             * @returns {*}
-             */
-            $scope.taskFilter = function (task){
-
-                if($scope.show_completed)
-                    return {parentId:(task?task.id:null)};
-                else
-                    return {parentId:(task?task.id:null), status:'!completed'};
-            }
 
             /**
              * Обьект контекстного меню

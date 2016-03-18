@@ -1,4 +1,4 @@
-<div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:taskFilter(task):true"
+<div class="task_background" ng-if="(task.status == 'new_task' && task.children_quantity > 0) || (task.status == 'completed' && show_completed) || task.status == 'delivered'" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true"
      on-finish-render="onRenderTask">
 
     <!-- Соеденительные линии -->
