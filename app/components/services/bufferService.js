@@ -389,7 +389,7 @@ angular.module('bitaskApp.service.buffer', [
                         attachments: true
                     }).then(function (result) {
                         // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
+                        console.log("send dbqueue.allDocs result: ", result);
                     }).catch(function (err) {
                         console.log(err);
                     });
