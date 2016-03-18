@@ -82,8 +82,13 @@ angular.module('bitaskApp', [
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
 .run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
 
+    $location.history = [];
+
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
+
+        // Сохраняем историю посещений в приделах текущего домена
+        $location.history.push($location.path());
 
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;

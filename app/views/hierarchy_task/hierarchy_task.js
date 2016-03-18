@@ -18,8 +18,8 @@ angular.module('bitaskApp.hierarchy_task', [
         });
     }])
     .controller('HierarchyTaskCtrl', ['$scope', '$log', 'taskService', 'dateService', '$document', 'keyboardService',
-        'userService', '$timeout',
-        function($scope, $log, taskService, dateService, $document, keyboardService, userService, $timeout) {
+        'userService', '$timeout', '$location',
+        function($scope, $log, taskService, dateService, $document, keyboardService, userService, $timeout, $location) {
 
             var selected_element = false,   // Выбранный элемент (с классом task_background)
                 selected_id = false;        // id выбранного элемента
@@ -72,7 +72,35 @@ angular.module('bitaskApp.hierarchy_task', [
                 else if(canvas_pos.left < 0 && canvas_pos.top > 0 && canvas_pos.right > 0 && canvas_pos.bottom < 0)
                     canvas.animate({left:-(canvas_width-window_width), top: 0}, 200);
             };
+            /**
+             * Кнопка - вернуться назад
+             */
+            $scope.goBack = function (){
 
+                if($location.history[$location.history.length - 2])
+                {
+                    $location.url($location.history[$location.history.length - 2]);
+                }
+                else
+                {
+                    $location.url('/');
+                }
+
+            };
+            /**
+             * Свернуть все задачи
+             */
+            $scope.shrinkAllTasks = function (){
+                taskService.shrinkAllTasks();
+
+                var task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+                distinguishTask(task_elem);
+                userService.setValue('selected_task', selected_id);
+            }
+            /**
+             * Переключение выключателя выполненных задач
+             *
+             */
             $scope.changeCompletedSwitch = function (){
                 if($scope.show_completed)
                     userService.setValue('show_completed', 'true');
@@ -166,8 +194,7 @@ angular.module('bitaskApp.hierarchy_task', [
                 if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
                 {
                     task_elem = angular.element('.hierarchy_task_background').find('.task:first');
-                    selected_id = task_elem.data('id');
-                    selected_element = task_elem.parent().addClass('selected');
+                    distinguishTask(task_elem);
 
                     return;
                 }

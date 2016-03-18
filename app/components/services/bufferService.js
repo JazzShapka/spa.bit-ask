@@ -532,7 +532,7 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                             }
                             else
                             {
-                                $log.$warn(response.data[i][1][1]);
+                                $log.warn(response.data[i][1][1]);
                             }
                         }
                     }
