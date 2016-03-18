@@ -12,20 +12,15 @@
 angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorageModule', 'angular-cache', 'offline', 'pouchdb', 'AngularStompDK'])
 
 .config(function (localStorageServiceProvider, offlineProvider, $provide, $httpProvider, ngstompProvider) {
-  localStorageServiceProvider
+  /*localStorageServiceProvider
     .setPrefix('bufferService')
     .setStorageType('sessionStorage')
-    .setNotify(true, true);
+    .setNotify(true, true);*/
 
     
-
     //offlineProvider.debug(true);
 
-
-
-        //enable cors
-        //$httpProvider.defaults.useXDomain = true;
-
+        // Interceptors
         /*$httpProvider.interceptors.push(['$location', '$injector', '$q', function ($location, $injector, $q) {
             return {
                 'request': function (config) {
@@ -79,126 +74,70 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         //console.log = function() {};
         console.log("Start bufferService.");
 
-        //var db = pouchDB('dbname');
-        var db = dbService.getDb();
-        db.destroy().then(function (response) {
-            // success
-        }).catch(function (err) {
-            console.log(err);
-        });
-
         $rootScope.docs = [];
         $rootScope.queues = [];
 
-        function onChange(change) {
-          $rootScope.docs.push(change);
-        }
-
-        var options = {
-          /*eslint-disable camelcase */
-          include_docs: true,
-          /*eslint-enable camelcase */
-          live: true
-        };
-
-        db.changes(options).$promise
-          .then(null, null, onChange);
-
-        /*function initdb() {
-            getTasks(function() {console.log("initdb ok")});
-        };
-        initdb();*/
-
-        //var db = pouchDB('dbname');
-        /*db.put({
-          _id: 'dave@gmail.com',
-          name: 'David',
-          age: 69
-        });*/
-
-        //db.changes().on('change', function() {
-          //console.log('Ch-Ch-Changes');
-        //});
-
-        //db.destroy();
-        
-
-
-        /*if (!CacheFactory.get('bookCache')) {
-            // or CacheFactory('bookCache', { ... });
-            CacheFactory.createCache('bookCache', {
-                deleteOnExpire: 'aggressive',
-                recycleFreq: 60000
-            });
-        }*/
-        //var bookCache = CacheFactory.get('bookCache');
-        //console.log("bookCache: ", bookCache);
-        
-
-
-        //var storageType = localStorageService.getStorageType();
-        //console.log("getStorageType: ", storageType);
-
-        //debugger;
-        //console.log ($auth.getToken());
-        //console.log ("getPayload: ", $auth.getPayload().sub);
-
         var self = this;
-
         var uid = $auth.getPayload().sub;
-
-
+        var db = dbService.getDb();
 
         this.getTasks = getTasks;
         this.setTask = setTask;
         this.getId = getId;
         this.deleteTask = deleteTask;
         this.sendData = sendData;
-        //this.findBookById = findBookById;
-        //this.getDataById = getDataById;
-        
 
-        /* service */
+        // clear all db
+        /*db.destroy().then(function (response) {
+            // success
+        }).catch(function (err) {
+            console.log(err);
+        });*/
+        /*var resetdb = function() {
+            db.destroy().then(function() {
+                db = dbService.getDb();
+            });
+        };
+        resetdb();*/
+
+
+
+        /**
+         * function for event listener db.changes
+         */
+        function onChange(change) {
+            $rootScope.docs.push(change);
+        }
+
+        // options for db
+        var options = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true
+        };
+
+        /**
+         * DB canges event listener
+         */
+        db.changes(options).$promise
+            .then(null, null, onChange);
+
+
+
+        /**
+         * Test get all task from server over http post
+         */
         function getTasks(callback) {
-
-            //var db = pouchDB('dbname');
-            /*db.destroy().then(function (response) {
-                // success
-                //var db = pouchDB('dbname');
-            }).catch(function (err) {
-                console.log(err);
-            });*/
-
-            //var db = pouchDB('dbname');
-            //var db = new pouchDB('dbname');
-
-            /*var resetdb = function() {
-              db.destroy().then(function() {
-                db = new pouchDB('dbname');
-              });
-            };
-            resetdb();*/
 
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
                 console.log("ALL DB: ", doc.rows);
             });
 
-            
-            
-
-            // push task to db
-
-            //console.log(callback);
             //localStorageService.set('key124', JSON.stringify(callback));
             //console.log(JSON.stringify(callback));
             //console.log ("LSget: ", localStorageService.get('key124'));
             //console.log("Keys: ", localStorageService.keys());
-
-            /*db.put({
-                _id: uuid4.generate(),
-                cmd: 'getTasks'
-            });*/
-
 
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
@@ -281,7 +220,221 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
 
+
+
+
+        /**
+         * Test create task | создание задачи
+         */
+        function setTask(taskName) {
+            console.log("setTask");
+            //var uuid = uuid4.generate();
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d716';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
+
+            if (online === false) {
+                // put data to db queue | пишем в бд запрос
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("setTask dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            
+            } else {
+
+                //console.log ("data: ", data);
+                $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data,
+                    //cache: true,
+                    //offline: true
+                }).then(function (response) {
+                    $log.info('setTask: ', response);
+                    //callback(response.data);
+                });
+            }
+        };
+
+
+        /**
+         * Test delete task.
+         */
+        function deleteTask(id) {
+            console.log("deleteTask id: ", id);
+            var data = [[1, false, "task/deletetask", {"id": id}]];
+            //console.log ("data: ", data);
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data,
+                //cache: true,
+                //offline: true
+            }).then(function (response) {
+                $log.info('deleteTask: ', response);
+                //callback(response.data);
+            });
+        };
+
+        /**
+         * Test get userd id from server db
+         */
+        function getId(callback) {
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: '[[1, false, "user/getid"]]',
+                //cache: true,
+                //offline: true
+            }).then(function (response) {
+                $log.info('getId: ', response);
+                callback(response.data);
+            });
+            
+        };
+
+        /**
+         * Test send
+         */
+        function sendData() {
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d720';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
+            this.send(data, console.log("ok"));
+        }
+
+        /**
+         * Отправить запрос на сервер, ответ обрабатывает callback
+         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
+         * @param callback
+         */
+        self.send = function (data, callback){
+
+            if (online === true) {
+                $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data
+                }).then(function successCallback(response) {
+                    if(typeof callback == 'function')
+                    {
+                        for (var i=0; i<response.data.length; i++)
+                        {
+                            if(response.data[i][1][0] == 200)
+                            {
+                                callback(response.data[i][2]);
+                            }
+                            else
+                            {
+                                $log.$warn(response.data[i][1][1]);
+                            }
+                        }
+                    }
+                });
+
+            } else {
+
+                // put query to db
+                console.log("data: ", data[0][3]);
+                var uuid = data[0][3]['id'];
+                console.log("uuid: ", uuid);
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("setTask dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            }
+
+        };
+
+        /*function findTask() {
+            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true});
+        };*/
+
+
+
+
+
+        /* factory */
+        /*return {
+            getTasks : function() {
+                return $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+                })
+            },
+            setTask : function(taskName) {
+                var uuid = uuid4.generate();
+                var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
+                //console.log ("data: ", data);
+                return $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data
+                })
+            }
+        };*/
+
+        /*return {
+            getDataById: function (id) {
+              var deferred = $q.defer();
+              var start = new Date().getTime();
+
+              $http.get('http://api.dev2.bit-ask.com/index.php/event/all', {
+                cache: true,
+                offline: true,
+                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
+              }).success(function (data) {
+                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
+                deferred.resolve(data);
+              });
+              return deferred.promise;
+            }
+        };*/
+
+
+
+
+
+
+
+
+        /*   QUEUE SERVICE   */
+
+        var httpStatus = -1;
         var dbqueue = pouchDB('queue');
+
         /*dbqueue.destroy().then(function (response) {
             // success
         }).catch(function (err) {
@@ -325,57 +478,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         });*/
 
 
-        // create task | создание задачи
-        function setTask(taskName) {
-            console.log("setTask");
-            //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d716';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
-
-            if (online === false) {
-                // put data to db queue | пишем в бд запрос
-                dbqueue.put({
-                    _id: uuid,
-                    data: data,
-                    deleted: false
-                }).then(function (response) {
-                    // handle response
-
-                    // list all docs in db
-                    dbqueue.allDocs({
-                        include_docs: true,
-                        attachments: true
-                    }).then(function (result) {
-                        // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-            
-            } else {
-
-                //console.log ("data: ", data);
-                $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data,
-                    //cache: true,
-                    //offline: true
-                }).then(function (response) {
-                    $log.info('setTask: ', response);
-                    //callback(response.data);
-                });
-            }
-        };
-
-
-
-        var httpStatus = -1;
-
+        /**
+         *  Execute commands from queue if on event listener
+         */
         function initExecuteQueue(change) {
 
             // execute cmd from queue
@@ -439,7 +544,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         }
 
 
-        // queue changed
+        /**
+         * Event: queue changed
+         */
         function onChangeQueue(change) {
             $rootScope.queues.push(change);
 
@@ -451,6 +558,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             
         }
 
+        /**
+         * Options for db
+         */
         var options = {
             /*eslint-disable camelcase */
             include_docs: true,
@@ -462,6 +572,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             }
         };
 
+        /**
+         * Event listener for db queue
+         */
         dbqueue.changes(options).$promise
             .then(null, null, onChangeQueue);
 
@@ -471,169 +584,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
 
 
-
-        function deleteTask(id) {
-            console.log("deleteTask id: ", id);
-            var data = [[1, false, "task/deletetask", {"id": id}]];
-            //console.log ("data: ", data);
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data,
-                //cache: true,
-                offline: true
-            }).then(function (response) {
-                $log.info('deleteTask: ', response);
-                //callback(response.data);
-            });
-        };
-
-
-        function getId(callback) {
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: '[[1, false, "user/getid"]]',
-                //cache: true,
-                offline: true
-            }).then(function (response) {
-                $log.info('getId: ', response);
-                callback(response.data);
-            });
-            
-        };
-
-
-        function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d720';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 456'}]];
-            this.send(data, console.log("ok"));
-        }
-        /**
-         * Отправить запрос на сервер, ответ обрабатывает callback
-         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
-         * @param callback
+        /*
+         * Execute commands from db
          */
-        self.send = function (data, callback){
-
-            if (online === true) {
-                $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data
-                }).then(function successCallback(response) {
-                    if(typeof callback == 'function')
-                    {
-                        for (var i=0; i<response.data.length; i++)
-                        {
-                            if(response.data[i][1][0] == 200)
-                            {
-                                callback(response.data[i][2]);
-                            }
-                            else
-                            {
-                                $log.$warn(response.data[i][1][1]);
-                            }
-                        }
-                    }
-                });
-
-            } else {
-
-                console.log("data: ", data[0][3]);
-                var uuid = data[0][3]['id'];
-                console.log("uuid: ", uuid);
-                dbqueue.put({
-                    _id: uuid,
-                    data: data,
-                    deleted: false
-                }).then(function (response) {
-                    // handle response
-
-                    // list all docs in db
-                    dbqueue.allDocs({
-                        include_docs: true,
-                        attachments: true
-                    }).then(function (result) {
-                        // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-
-            }
-
-        };
-
-        /*function findBookById(id) {
-            return $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true});
-        };*/
-
-        
-        /*function getDataById(id) {
-              var deferred = $q.defer();
-              var start = new Date().getTime();
-
-              $http.get('api/data/' + id, {
-                cache: true
-              }).success(function (data) {
-                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
-                deferred.resolve(data);
-              });
-              return deferred.promise;
-        };*/
-        
-
-
-        
-
-
-        /* factory */
-        /*return {
-            getTasks : function() {
-                return $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-                })
-            },
-            setTask : function(taskName) {
-                var uuid = uuid4.generate();
-                var data = [[1, false, "task/addtask", {"id": uuid, "authorId": uid, "taskName": taskName}]];
-                //console.log ("data: ", data);
-                return $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data
-                })
-            }
-        };*/
-
-        /*return {
-            getDataById: function (id) {
-              var deferred = $q.defer();
-              var start = new Date().getTime();
-
-              $http.get('http://api.dev2.bit-ask.com/index.php/event/all', {
-                cache: true,
-                offline: true,
-                data: '[[1, false, "task/subtasks", {"parentId": 0}]]'
-              }).success(function (data) {
-                console.log('time taken for request: ' + (new Date().getTime() - start) + 'ms');
-                deferred.resolve(data);
-              });
-              return deferred.promise;
-            }
-        };*/
-
-
-
-
-
         function executeCmdFromQueue() {
 
                 dbqueue.find({
@@ -691,8 +644,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
 
                             console.log("connectionStatus httpStatus: ", httpStatus);
                             if (httpStatus == 200) {
-                                // delete task from queue
-                                dbqueue.get(value['_id']).then(function(doc) {
+
+                                // update task from queue
+                                /*dbqueue.get(value['_id']).then(function(doc) {
                                     //console.log("dbqueue.get doc: ", doc);
                                     return dbqueue.put({
                                         _id: value['_id'],
@@ -704,18 +658,20 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
                                     console.log("connectionStatus dbqueue.get response", response);
                                 }).catch(function (err) {
                                     console.log("connectionStatus dbqueue.get err", err);
-                                });
-                            };
+                                });*/
 
-                            // remove
-                            /*dbqueue.get(change.change.id).then(function(doc) {
-                                return dbqueue.remove(doc);
-                            }).then(function (result) {
-                                // handle result
-                                console.log("onChangeQueue remove result: ", result);
-                            }).catch(function (err) {
-                                console.log("onChangeQueue remove err: ", err);
-                            });*/
+                                // remove
+                                dbqueue.get(value['_id']).then(function(doc) {
+                                    return dbqueue.remove(doc);
+                                }).then(function (result) {
+                                    // handle result
+                                    console.log("executeCmdFromQueue remove result: ", result);
+                                }).catch(function (err) {
+                                    console.log("executeCmdFromQueue remove err: ", err);
+                                });
+
+                            };
+                            
                         }); 
                         console.log("END LOOP");
                     });
@@ -726,6 +682,9 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
         }
 
 
+        /*
+         * Event online
+         */
         var online = true;
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
@@ -734,56 +693,20 @@ angular.module('bitaskApp.service.buffer', ['ngResource', 'uuid4', 'LocalStorage
             //initExecuteQueue();
         });
 
+        /*
+         * Event offline
+         */
         connectionStatus.$on('offline', function () {
             $log.info('bufferService: We are now offline');
             online = false;
         });
-
         
-
-        
-
-
-    
-
-
-
-
-
-
-
-
-
 
 
 }])
 
 .run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log, $rootScope, bufferService) {
 
-    $http.defaults.cache = CacheFactory('defaultCache', {
-        maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
-        cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-        deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
-    });
-
-
-    $http.defaults.cache = $cacheFactory('custom2');
-    offline.stackCache = CacheFactory.createCache('my-cache2', {
-        storageMode: 'localStorage'
-    });
-
-    offline.start($http);
-
-    /*connectionStatus.$on('online', function () {
-        $log.info('bufferService: We are now online');
-
-        //bufferService.initExecuteQueue();
-    });*/
-
-    
-
-    $rootScope.test = 'It works! Using ' + (CacheFactory ? 'angular-cache' : 'undefined');
-
-
+    //offline.start($http);
 });
 
