@@ -66,25 +66,25 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
 
 
     //offline.stackCache = $cacheFactory('custom-cache');
-    $scope.toggleOnline = function () {
+    /*$scope.toggleOnline = function () {
       connectionStatus.online = !connectionStatus.online;
       offline.processStack();
-    };
+    };*/
 
-    $scope.isOnline = function () {
+    /*$scope.isOnline = function () {
       return connectionStatus.isOnline();
-    };
+    };*/
 
-    $scope.makeGET = function () {
+    /*$scope.makeGET = function () {
       $http.get('/test.json', {offline: true})
       .then(function (response) {
         $log.info('GET RESULT', response.data);
       }, function (error) {
         $log.info('GET ERROR', error);
       });
-    };
+    };*/
 
-    $scope.makePOST = function () {
+    /*$scope.makePOST = function () {
       $http.post('http://api.dev2.bit-ask.com/index.php/event/all', '[[1, false, "task/subtasks", {"parentId": 0}]]', {offline: true})
       .then(function (response) {
         $log.info('POST RESULT', response);
@@ -94,7 +94,7 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
         $log.info('POST ERROR', error);
         $scope.tasks = response.data;
       });
-    };
+    };*/
 
     /*bufferService.getDataById(8)
     .then(function (response) {
@@ -115,12 +115,12 @@ buffer.controller('BufferCtrl', ['$scope', 'bufferService', 'offline', 'connecti
 
 
 buffer.run(function ($http, $cacheFactory, CacheFactory, offline, connectionStatus, $log) {
-  $http.defaults.cache = $cacheFactory('custom');
+  /*$http.defaults.cache = $cacheFactory('custom');
   offline.stackCache = CacheFactory.createCache('my-cache', {
     storageMode: 'localStorage'
-  });
+  });*/
 
-  offline.start($http);
+  //offline.start($http);
 
   /*connectionStatus.$on('online', function () {
     $log.info('buffer: We are now online');
