@@ -12,9 +12,9 @@ angular.module('bitaskApp.service.task', [
 
             var self = this;
 
-            self.new_task = {};             // Папка новые задачи
-            self.tasks = [];                // Массив задач
-            self.tasks_indexed = {};        // Проиндексированные задачи
+            self.new_task = {};             // Папка новые задачи (один объект задачи)
+            self.tasks = [];                // Массив задач  (Массив задач)
+            self.tasks_indexed = {};        // Проиндексированные задачи (id=>task)
 
 
             /**
@@ -63,6 +63,12 @@ angular.module('bitaskApp.service.task', [
             };
             /**
              * Открыть диалог удаления задачи
+             *
+             * Открывает диалог удаления, для подтверждения удаления.
+             * Вопрос удалить / отмена
+             *
+             * Если выбрали удалить, то отправляется запрос на сервер и задача удаляется
+             * из массивов задач
              */
             self.showDeleteTaskDialog = function (taskId){
                 keyboardService.on();
@@ -91,7 +97,7 @@ angular.module('bitaskApp.service.task', [
             /**
              * Отправить запрос на создание задачи
              *
-             * @param task
+             * @param task - объект задачи (http://app.kras.1cbit.ru/bitmind/index.php/%D0%9F%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B0_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8)
              */
             self.createTask = function (task){
 
@@ -105,7 +111,7 @@ angular.module('bitaskApp.service.task', [
              * Отправить запрос на изменение задачи
              *
              * @param taskId - id задачи
-             * @param params - новые параметры
+             * @param params - новые параметры (объект ключ-значение)
              */
             self.editTask = function (taskId, params){
 
@@ -116,7 +122,7 @@ angular.module('bitaskApp.service.task', [
             };
             /**
              * Добавить задачу в массив отображающихся задач
-             * @param task
+             * @param task - объект задачи (http://app.kras.1cbit.ru/bitmind/index.php/%D0%9F%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B0_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8)
              */
             self.addTaskOnView = function (task){
                 if(self.tasks_indexed.hasOwnProperty(task.id))
@@ -137,8 +143,8 @@ angular.module('bitaskApp.service.task', [
             /**
              * Обновить параметры у задачи в массиве задач
              *
-             * @param taskId
-             * @param params
+             * @param taskId - id задачи
+             * @param params - Параметры, которые нужно изменить (объект ключ-значение)
              */
             self.editTaskOnView = function (taskId, params){
 
@@ -149,7 +155,9 @@ angular.module('bitaskApp.service.task', [
             }
             /**
              * Удалить задачу из хранилища
-             * @param taskId
+             * @param taskId - id задачи
+             *
+             * Удаляет объект задачи из массивов self.tasks и self.tasks_indexed
              */
             self.deleteTask = function (taskId){
                 for(var i=0; i<self.tasks.length; i++)
@@ -164,6 +172,11 @@ angular.module('bitaskApp.service.task', [
 
             /**
              * Обновить количество загруженых подзадач
+             *
+             * Добавляет к объектам задач параметр "children_quantity"
+             * Который указывает количество ЗАГРУЖЕННЫХ подзадач.
+             * Реальное количество подзадач приходит с сервера в параметре "children"
+             *
              */
             self.refreshChildren = function (){
 
@@ -185,6 +198,10 @@ angular.module('bitaskApp.service.task', [
             /**
              * Получить подзадачи.
              * @param taskIds - массив id родителей || строка с id
+             *
+             * Проверяет, если реальное количество задач (children) отличается от
+             * загруженного количества задач (children_quantity), то отправляет запрос на сервер
+             * для получения подзадач.
              */
             self.getChildren = function (taskIds){
 
@@ -219,6 +236,9 @@ angular.module('bitaskApp.service.task', [
             };
             /**
              * Загрузка наперед еще не открытых задач
+             *
+             * Если у задачи есть подзадачи и она еще не открыта, загружаем
+             * их, чтобы не тормозило при открытии задачи.
              */
             self.loadingAdvance = function (){
 
@@ -236,6 +256,10 @@ angular.module('bitaskApp.service.task', [
             };
             /**
              * Свернуть все задачи и отправить на сервер.
+             *
+             * Перебирает все задачи и ставит параметр viewBranch = 'hide',
+             * Затем отправляет запрос на сервер, о том, что все задачи надо свернуть
+             *
              */
             self.shrinkAllTasks = function (){
                 for(var i=0; i<self.tasks.length; i++)
