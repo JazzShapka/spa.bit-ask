@@ -119,7 +119,9 @@ angular.module('bitaskApp.service.buffer', [
             console.log(err);
         });*/
 
-        // clear all data in db
+        /**
+         * Clear all data in db | Очистка бд
+         */
         var resetdb = function() {
             db.destroy().then(function() {
                 db = dbService.getDb();
@@ -128,13 +130,15 @@ angular.module('bitaskApp.service.buffer', [
         //resetdb();
 
         /**
-         * function for event listener db.changes
+         * Listen to database changes | Слушатель изменений данных в бд
          */
         function onChange(change) {
             $rootScope.docs.push(change);
         }
 
-        // options for db
+        /**
+         * Options for listen | Опции для слушателя
+         */
         var options = {
             /*eslint-disable camelcase */
             include_docs: true,
@@ -143,19 +147,19 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * DB canges event listener
+         * DB canges event listener | Слушатель для бд
          */
         db.changes(options).$promise
             .then(null, null, onChange);
 
         /**
-         * Load data from server to db
+         * Load data from server to db | Загрузка данных с сервера в бд
          */
         getTasks();
 
 
         /**
-         * Get all task from server over http post and put all to db
+         * Get all task from server over http post and put all to db | Загрузка данных с сервера в бд
          */
         function getTasks() {
 
@@ -245,7 +249,7 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * Test create task | создание задачи
+         * Test create task | Тест создание задачи
          */
         function setTask(taskName) {
             console.log("setTask");
@@ -293,7 +297,7 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * Test delete task.
+         * Test delete task | Удаление задачи
          */
         function deleteTask(id) {
             console.log("deleteTask id: ", id);
@@ -312,7 +316,7 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * Test get userd id from server db
+         * Test get userd id from server db.
          */
         /*function getId(callback) {
             $http({
@@ -328,7 +332,7 @@ angular.module('bitaskApp.service.buffer', [
         };*/
 
         /**
-         * Test send
+         * Test send | Тест отправда данных на сервер
          */
         function sendData() {
             var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d723';
@@ -404,7 +408,7 @@ angular.module('bitaskApp.service.buffer', [
 
 
 
-        /*   QUEUE SERVICE   */
+        /*   QUEUE SERVICE  | Работа с очередью   */
 
         var httpStatus = -1;
         var dbqueue = pouchDB('queue');
@@ -429,7 +433,9 @@ angular.module('bitaskApp.service.buffer', [
             console.log(err);
         });
 
-        // create index
+        /*
+         * Сreate index | Создание индекса
+         */
         dbqueue.createIndex({
             index: {
                 fields: ['deleted']
@@ -519,7 +525,7 @@ angular.module('bitaskApp.service.buffer', [
         }*/
 
         /**
-         * Event: queue changed
+         * Execute if changes in db queue | Выполняется если в бд произошли изменения
          */
         function onChangeQueue(change) {
             $rootScope.queues.push(change);
@@ -532,7 +538,7 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /**
-         * Options for db
+         * Options for listener | Опции для слушателя
          */
         var options = {
             /*eslint-disable camelcase */
@@ -546,13 +552,13 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * Event listener for db queue
+         * Listen to database changes | Слушатель для изменений в бд
          */
         dbqueue.changes(options).$promise
             .then(null, null, onChangeQueue);
 
         /*
-         * Execute commands from db
+         * Processing queue | Обработка очереди
          */
         function executeCmdFromQueue() {
 
@@ -648,7 +654,7 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /*
-         * Event online
+         * Event online | Событие есть подключение
          */ 
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
@@ -658,7 +664,7 @@ angular.module('bitaskApp.service.buffer', [
         });
 
         /*
-         * Event offline
+         * Event offline | Собитие нет подключения
          */
         connectionStatus.$on('offline', function () {
             $log.info('bufferService: We are now offline');
