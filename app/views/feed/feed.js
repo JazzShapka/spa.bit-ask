@@ -4,7 +4,7 @@ angular.module('bitaskApp.index', ['ngRoute', 'bitaskApp.service.keyboard'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
-      templateUrl: './app/views/index/index.html',
+      templateUrl: './app/views/feed/feed.html',
       controller: 'IndexCtrl'
   });
 }])
