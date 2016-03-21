@@ -15,4 +15,6 @@ angular.module('bitaskApp.goals', ['ngRoute'])
 	$scope.targets = ['target 1', 'target 2'];
 	console.log($scope.targets);
 
+	//bufferService.getTasks();
+
 }]);
