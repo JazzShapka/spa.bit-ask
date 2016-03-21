@@ -77,15 +77,38 @@ angular.module('bitaskApp.service.buffer', [
     '$http', '$auth', 'uuid4', 'connectionStatus', '$log', 'pouchDB', '$timeout', '$rootScope', 'dbService', '$mdToast',
     function($http, $auth, uuid4, connectionStatus, $log, pouchDB, $timeout, $rootScope, dbService, $mdToast) {
         var self = this;
-
+        var db = dbService.getDb();
+        var httpStatus = -1;
+        var dbqueue = pouchDB('queue');
+        var online = true;
+        /**
+         * @description Опции для слушателя
+         */
+        var dbOptions = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true
+        };
+        /**
+         * @description Options for listener | Опции для слушателя
+         */
+        var dbqueueOptions = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true,
+            filter: function (doc) {
+                // "_deleted":true
+                return doc.deleted === false;
+            }
+        };
         $rootScope.docs = [];
         $rootScope.queues = [];
 
-
-
         /**
          * Отправить запрос на сервер, ответ обрабатывает callback
-         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
+         * @param data - данные в формате [[id, false, "task/openedtasks", {parentId:0}],[...],[...]]
          * @param callback
          */
         self.send = function (data, callback){
@@ -162,20 +185,15 @@ angular.module('bitaskApp.service.buffer', [
 
         };
 
-
-
-        var db = dbService.getDb();
-
         /**
          * @description Clear all data in db | Очистка бд
          */
-        var resetdb = function() {
+        function resetdb() {
             db.destroy().then(function() {
                 db = dbService.getDb();
             });
-        };
-        //resetdb();
-
+        }
+        
         /**
          * @description Listen to database changes | Слушатель изменений данных в бд
          */
@@ -183,23 +201,6 @@ angular.module('bitaskApp.service.buffer', [
             $rootScope.docs.push(change);
         }
 
-        /**
-         * @description Options for listen | Опции для слушателя
-         */
-        var dbOptions = {
-            /*eslint-disable camelcase */
-            include_docs: true,
-            /*eslint-enable camelcase */
-            live: true
-        };
-
-        /**
-         * @description DB canges event listener | Слушатель для бд
-         */
-        db.changes(dbOptions).$promise
-            .then(null, null, onChange);
-
-        getTasks();
         /**
          * @description Get all task from server and put all to db | Загрузка данных с сервера в бд
          */
@@ -294,9 +295,6 @@ angular.module('bitaskApp.service.buffer', [
         /**
          *  @description QUEUE SERVICE | Работа с очередью
          */
-        var httpStatus = -1;
-        var dbqueue = pouchDB('queue');
-        var online = true;
 
         /**
          * @description Destroy db | Удаление бд
@@ -307,35 +305,6 @@ angular.module('bitaskApp.service.buffer', [
             console.log(err);
         });*/
 
-        /**
-         * @description list all docs in db | список всех документов в бд
-         */
-        dbqueue.allDocs({
-            include_docs: true,
-            attachments: true
-            //deleted:true,
-            //key: ['deleted:true'],
-        }).then(function (result) {
-            // handle result
-            console.log("START dbqueue.allDocs result: ", result);
-        }).catch(function (err) {
-            console.log(err);
-        });
-
-        /**
-         * @description Сreate index | Создание индекса
-         */
-        dbqueue.createIndex({
-            index: {
-                fields: ['deleted']
-            }
-        }).then(function (result) {
-            // yo, a result
-            console.log("dbqueue.createIndex result: ", result);
-        }).catch(function (err) {
-            // ouch, an error
-            console.log("dbqueue.createIndex err: ", err);
-        });
 
         /**
          * @description Find | Поиск в бд
@@ -428,28 +397,7 @@ angular.module('bitaskApp.service.buffer', [
                 //initExecuteQueue(change);
             }
         }
-
-        /**
-         * @description Options for listener | Опции для слушателя
-         */
-        var dbqueueOptions = {
-            /*eslint-disable camelcase */
-            include_docs: true,
-            /*eslint-enable camelcase */
-            live: true,
-            filter: function (doc) {
-                // "_deleted":true
-                return doc.deleted === false;
-            }
-        };
-
-        /**
-         * @description Listen to database changes | Слушатель для изменений в бд
-         */
-        dbqueue.changes(dbqueueOptions).$promise
-            .then(null, null, onChangeQueue);
-
-        processingQueue();
+        
         /**
          * @description Processing queue | Обработка очереди
          */
@@ -547,17 +495,6 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /**
-         * @description Event online | Событие есть подключение
-         */
-        connectionStatus.$on('online', function () {
-            $log.info('bufferService: We are now online');
-            //online = true;
-            $rootScope.online = true;
-            $timeout(processingQueue, 30000);
-            //initExecuteQueue();
-        });
-
-        /**
          * @description Event offline | Собитие нет подключения
          */
         /*connectionStatus.$on('offline', function () {
@@ -566,7 +503,67 @@ angular.module('bitaskApp.service.buffer', [
             //online = false;
         });*/
 
+        /**
+         * Инит
+         */
+        var init = function () {
+            //resetdb();
 
+            /**
+             * @description list all docs in db | список всех документов в бд
+             */
+            dbqueue.allDocs({
+                include_docs: true,
+                attachments: true
+                //deleted:true,
+                //key: ['deleted:true'],
+            }).then(function (result) {
+                // handle result
+                console.log("START dbqueue.allDocs result: ", result);
+            }).catch(function (err) {
+                console.log(err);
+            });
+
+            /**
+             * @description Сreate index | Создание индекса
+             */
+            dbqueue.createIndex({
+                index: {
+                    fields: ['deleted']
+                }
+            }).then(function (result) {
+                // yo, a result
+                console.log("dbqueue.createIndex result: ", result);
+            }).catch(function (err) {
+                // ouch, an error
+                console.log("dbqueue.createIndex err: ", err);
+            });
+
+            /**
+             * @description Слушатель для бд
+             */
+            db.changes(dbOptions).$promise.then(null, null, onChange);
+
+            /**
+             * @description Слушатель для изменений в бд
+             */
+            dbqueue.changes(dbqueueOptions).$promise.then(null, null, onChangeQueue);
+
+            /**
+             * @description Event online | Событие есть подключение
+             */
+            connectionStatus.$on('online', function () {
+                $log.info('bufferService: We are now online');
+                //online = true;
+                $rootScope.online = true;
+                $timeout(processingQueue, 30000);
+                //initExecuteQueue();
+            });
+
+            processingQueue();
+            getTasks();
+        };
+        init();
 
 
 
