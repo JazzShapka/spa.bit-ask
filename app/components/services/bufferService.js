@@ -83,6 +83,87 @@ angular.module('bitaskApp.service.buffer', [
 
 
 
+        /**
+         * Отправить запрос на сервер, ответ обрабатывает callback
+         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
+         * @param callback
+         */
+        self.send = function (data, callback){
+
+            /**
+             * Обработчик удаченого ответа сервера
+             * @param response
+             */
+            var successCallback = function (response){
+                if(response.status !== 200)
+                {
+                    errorCallback(response);
+                    return;
+                }
+
+
+                for (var i=0; i<response.data.length; i++)
+                {
+                    if(response.data[i][1][0] == 200)
+                    {
+                        if(typeof callback == 'function')
+                        {
+                            callback (response.data[i][2]);
+                        }
+                    }
+                    else
+                    {
+                        $log.warn(response.data[i][1][1]);
+                        $mdToast.show({
+                            template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
+                            hideDelay: 10000,
+                            position: 'right bottom'
+                        });
+                    }
+                }
+            };
+            /**
+             * Обработчик ошибки
+             * @param response
+             */
+            var errorCallback = function (response){
+                // put query to db
+                console.log("data: ", data[0][3]);
+                var uuid = data[0][3]['id'];
+                console.log("uuid: ", uuid);
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("send dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            };
+
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data
+            })
+                .then(successCallback, errorCallback);
+
+        };
+
+
+
         var db = dbService.getDb();
 
         /**
@@ -208,84 +289,6 @@ angular.module('bitaskApp.service.buffer', [
                 console.log('failure');
             });
         }
-
-
-        /**
-         * Отправить запрос на сервер, ответ обрабатывает callback
-         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
-         * @param callback
-         */
-        self.send = function (data, callback){
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data
-            })
-                .then(
-                    function(response) {
-
-                        debugger;
-                        //console.log("send $rootScope.online: ", $rootScope.online);
-
-                        if ( $rootScope.online )
-                        {
-                            for (var i=0; i<response.data.length; i++)
-                            {
-                                if(response.data[i][1][0] == 200)
-                                {
-                                    if(typeof callback == 'function')
-                                    {
-                                        callback (response.data[i][2]);
-                                    }
-                                }
-                                else
-                                {
-                                    $log.warn(response.data[i][1][1]);
-                                    $mdToast.show({
-                                        template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
-                                        hideDelay: 10000,
-                                        position: 'right bottom'
-                                    });
-                                }
-                            }
-                        }
-                        else
-                        {
-
-                            // put query to db
-                            console.log("data: ", data[0][3]);
-                            var uuid = data[0][3]['id'];
-                            console.log("uuid: ", uuid);
-                            dbqueue.put({
-                                _id: uuid,
-                                data: data,
-                                deleted: false
-                            }).then(function (response) {
-                                // handle response
-                                // list all docs in db
-                                dbqueue.allDocs({
-                                    include_docs: true,
-                                    attachments: true
-                                }).then(function (result) {
-                                    // handle result
-                                    console.log("send dbqueue.allDocs result: ", result);
-                                }).catch(function (err) {
-                                    console.log(err);
-                                });
-
-                            }).catch(function (err) {
-                                console.log(err);
-                            });
-
-                        }
-                    },
-                    function(response){
-                        debugger;
-                    }
-                );
-
-        };
-
 
 
         /**
@@ -562,6 +565,9 @@ angular.module('bitaskApp.service.buffer', [
             $rootScope.online = false;
             //online = false;
         });*/
+
+
+
 
 
 
