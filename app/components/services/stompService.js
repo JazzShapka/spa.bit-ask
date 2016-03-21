@@ -14,7 +14,7 @@ stompService.config(
             ngstompProvider
                 .url('http://bitask-dev5.app.kras.1cbit.ru:15674/stomp')
                 .credential('guest', 'guest')
-                .debug(true)
+                //.debug(true)
                 .vhost('/')
                 .heartbeat(0, 0)
                 .class(SockJS); // <-- Will be used by StompJS to do the connection
@@ -31,7 +31,7 @@ stompService.config(
 stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB', 'uuid4', 'taskService', 'dbService',
 	function(ngstomp, $auth, $rootScope, pouchDB, uuid4, taskService, dbService) {
 
-	console.log("Start stompService.");
+	//console.log("Start stompService.");
 
 	var uid = $auth.getPayload().sub;
     var items = [];
