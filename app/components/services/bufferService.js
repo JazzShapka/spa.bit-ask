@@ -15,11 +15,7 @@ angular.module('bitaskApp.service.buffer', [
     'pouchdb',
     'AngularStompDK'])
 
-.config(function (
-        //offlineProvider,
-        //$provide,
-        $httpProvider
-    ) {
+.config(function ($httpProvider) {
 
     /**
      * @description Interceptors | Обработчик http ответов
@@ -78,43 +74,15 @@ angular.module('bitaskApp.service.buffer', [
 })
 
 .service('bufferService', [
-        '$http',
-        '$auth',
-        'uuid4',
-        //'offline',
-        'connectionStatus',
-        '$log',
-        'pouchDB',
-        '$timeout',
-        '$rootScope',
-        //'ngstomp',
-        'dbService',
-        '$mdToast',
-    function(
-        $http,
-        $auth,
-        uuid4,
-        //offline,
-        connectionStatus,
-        $log,
-        pouchDB,
-        $timeout,
-        $rootScope,
-        //ngstomp,
-        dbService,
-        $mdToast) {
-
-        //console.log = function() {};
-        //console.log("Start bufferService.");
+    '$http', '$auth', 'uuid4', 'connectionStatus', '$log', 'pouchDB', '$timeout', '$rootScope', 'dbService', '$mdToast',
+    function($http, $auth, uuid4, connectionStatus, $log, pouchDB, $timeout, $rootScope, dbService, $mdToast) {
+        var self = this;
 
         $rootScope.docs = [];
         $rootScope.queues = [];
 
-        var self = this;
-        var uid;
-        if ($auth.isAuthenticated()) {
-            var uid = $auth.getPayload().sub;
-        }
+
+
         var db = dbService.getDb();
 
         /**
@@ -248,66 +216,73 @@ angular.module('bitaskApp.service.buffer', [
          * @param callback
          */
         self.send = function (data, callback){
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data
+            })
+                .then(
+                    function(response) {
 
-                $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data
-                }).then(function successCallback(response) {
+                        debugger;
+                        //console.log("send $rootScope.online: ", $rootScope.online);
 
-                    //console.log("send $rootScope.online: ", $rootScope.online);
-
-                    if ( $rootScope.online ) {
-
-                        for (var i=0; i<response.data.length; i++)
+                        if ( $rootScope.online )
                         {
-                            if(response.data[i][1][0] == 200)
+                            for (var i=0; i<response.data.length; i++)
                             {
-                                if(typeof callback == 'function')
+                                if(response.data[i][1][0] == 200)
                                 {
-                                    callback (response.data[i][2]);
+                                    if(typeof callback == 'function')
+                                    {
+                                        callback (response.data[i][2]);
+                                    }
+                                }
+                                else
+                                {
+                                    $log.warn(response.data[i][1][1]);
+                                    $mdToast.show({
+                                        template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
+                                        hideDelay: 10000,
+                                        position: 'right bottom'
+                                    });
                                 }
                             }
-                            else
-                            {
-                                $log.warn(response.data[i][1][1]);
-                                $mdToast.show({
-                                    template: '<md-toast><span style="color:red">Error:&nbsp;</span><span flex>'+ response.data[i][1][1] +'</span></md-toast>',
-                                    hideDelay: 10000,
-                                    position: 'right bottom'
-                                });
-                            }
                         }
+                        else
+                        {
 
-                    } else {
+                            // put query to db
+                            console.log("data: ", data[0][3]);
+                            var uuid = data[0][3]['id'];
+                            console.log("uuid: ", uuid);
+                            dbqueue.put({
+                                _id: uuid,
+                                data: data,
+                                deleted: false
+                            }).then(function (response) {
+                                // handle response
+                                // list all docs in db
+                                dbqueue.allDocs({
+                                    include_docs: true,
+                                    attachments: true
+                                }).then(function (result) {
+                                    // handle result
+                                    console.log("send dbqueue.allDocs result: ", result);
+                                }).catch(function (err) {
+                                    console.log(err);
+                                });
 
-                        // put query to db
-                        console.log("data: ", data[0][3]);
-                        var uuid = data[0][3]['id'];
-                        console.log("uuid: ", uuid);
-                        dbqueue.put({
-                            _id: uuid,
-                            data: data,
-                            deleted: false
-                        }).then(function (response) {
-                            // handle response
-                            // list all docs in db
-                            dbqueue.allDocs({
-                                include_docs: true,
-                                attachments: true
-                            }).then(function (result) {
-                                // handle result
-                                console.log("send dbqueue.allDocs result: ", result);
                             }).catch(function (err) {
                                 console.log(err);
                             });
 
-                        }).catch(function (err) {
-                            console.log(err);
-                        });
-
+                        }
+                    },
+                    function(response){
+                        debugger;
                     }
-                });
+                );
 
         };
 
