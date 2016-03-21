@@ -20,57 +20,52 @@ angular.module('bitaskApp.service.buffer', [
         //$provide,
         $httpProvider
     ) {
-    
-    //offlineProvider.debug(true);
 
-        // Interceptors
-        $httpProvider.interceptors.push(['$location', '$injector', '$q', '$rootScope', function ($location, $injector, $q, $rootScope) {
+        // Interceptors | Обработчик http запросов, ответов
+        $httpProvider.interceptors.push(['$rootScope', '$q', function ($rootScope, $q) {
             return {
                 'request': function (config) {
-                    console.log("INTERCEPTORS request 1", config);
+                    //console.log("INTER request 1", config);
+
                     //add headers
                     return config;
                 },
 
                 // optional method
-               'requestError': function(rejection) {
-                    console.log("INTERCEPTORS requestError 2", rejection);
+                'requestError': function(rejection) {
+                    console.log("INTER requestError 2", rejection);
+
                     // do something on error
                     return $q.reject(rejection);
                 },
 
                 // optional method
                 'response': function(response) {
-                    console.log("INTERCEPTORS response 3", response);
+                    //console.log("INTER response 3", response);
+
+                    // if not response from server | если нет ответа от сервера
                     if (response.status === -1) {
-                        //console.log("INTERCEPTORS 3 status: ", response.status);
+                        //console.log("INTER response 3 status: ", response.status);
                         $rootScope.online = false;
                         console.log("$rootScope.online f: ", $rootScope.online);
                     } else {
                         $rootScope.online = true;
                         console.log("$rootScope.online t: ", $rootScope.online);    
-                    };
+                    }
+
                     // do something on success
                     // $rootScope.online = true;
                     return response;
                 },
 
                 'responseError': function (rejection) {
-                    console.log("INTERCEPTORS responseError 4", rejection);
+                    console.log("INTER responseError 4", rejection);
+
                     $rootScope.online = false;
                     console.log("$rootScope.online: f", $rootScope.online);
-                    if (rejection.status === 500) {
 
-                        //injected manually to get around circular dependency problem.
-                        var AuthService = $injector.get('Auth');
-
-                        //if server returns 401 despite user being authenticated on app side, it means session timed out on server
-                        if (AuthService.isAuthenticated()) {
-                            AuthService.appLogOut();
-                        }
-                        $location.path('/login');
-                        return $q.reject(rejection);
-                    }
+                    //if (rejection.status === 500) {
+                    //}
                 }
             };
         }]);
@@ -243,12 +238,12 @@ angular.module('bitaskApp.service.buffer', [
                             console.log("getTasks ERR doc.rows: ", doc.rows);
                         });
                     });
-                };
+                }
                 //callback(response.data);
             }, function(rejectReason) {
                 console.log('failure');
             });
-        };
+        }
 
         /**
          * Test create task | Тест создание задачи
@@ -288,7 +283,7 @@ angular.module('bitaskApp.service.buffer', [
                 $http({
                     url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                     method: 'POST',
-                    data: data,
+                    data: data
                     //cache: true,
                     //offline: true
                 }).then(function (response) {
@@ -296,7 +291,7 @@ angular.module('bitaskApp.service.buffer', [
                     //callback(response.data);
                 });
             }
-        };
+        }
 
         /**
          * Test delete task | Удаление задачи
@@ -308,14 +303,14 @@ angular.module('bitaskApp.service.buffer', [
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: data,
+                data: data
                 //cache: true,
                 //offline: true
             }).then(function (response) {
                 $log.info('deleteTask: ', response);
                 //callback(response.data);
             });
-        };
+        }
 
         /**
          * Test get userd id from server db.
@@ -428,7 +423,7 @@ angular.module('bitaskApp.service.buffer', [
         // list all docs in db | список всех документов в бд
         dbqueue.allDocs({
             include_docs: true,
-            attachments: true,
+            attachments: true
             //deleted:true,
             //key: ['deleted:true'],
         }).then(function (result) {
@@ -539,7 +534,7 @@ angular.module('bitaskApp.service.buffer', [
             console.log("onChangeQueue change.change.id: ", change.change.id);
             if (online === true) {
                 //initExecuteQueue(change);
-            };  
+            }
         }
 
         /**
@@ -590,7 +585,7 @@ angular.module('bitaskApp.service.buffer', [
                         $http({
                             url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                             method: 'POST',
-                            data: value['data'],
+                            data: value['data']
                             //cache: true,
                             //offline: true
                         }).then(function (response) {
@@ -648,7 +643,7 @@ angular.module('bitaskApp.service.buffer', [
                                     console.log("processingQueue remove err: ", err);
                                 });
 
-                            };
+                            }
                             
                         }); 
                         console.log("END LOOP");
