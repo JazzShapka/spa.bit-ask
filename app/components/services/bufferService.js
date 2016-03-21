@@ -669,17 +669,17 @@ angular.module('bitaskApp.service.buffer', [
          * @description Test get userd id from server db.
          */
         /*function getId(callback) {
-         $http({
-         url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-         method: 'POST',
-         data: '[[1, false, "user/getid"]]',
-         //cache: true,
-         //offline: true
-         }).then(function (response) {
-         $log.info('getId: ', response);
-         callback(response.data);
-         });
-         };*/
+        $http({
+            url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+            method: 'POST',
+            data: '[[1, false, "user/getid"]]',
+            //cache: true,
+            //offline: true
+            }).then(function (response) {
+                $log.info('getId: ', response);
+                callback(response.data);
+            });
+        };*/
 
         /**
          * @description Test send | Тестовый запрос
