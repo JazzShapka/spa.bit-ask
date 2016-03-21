@@ -31,7 +31,7 @@ angular.module('bitaskApp.service.buffer', [
 
                 // optional method
                 'requestError': function(rejection) {
-                    console.log("INTER requestError 2", rejection);
+                    //console.log("INTER requestError 2", rejection);
 
                     // do something on error
                     return $q.reject(rejection);
@@ -45,9 +45,9 @@ angular.module('bitaskApp.service.buffer', [
                     if (response.status === -1) {
                         //console.log("INTER response 3 status: ", response.status);
                         $rootScope.online = false;
-                        console.log("$rootScope.online f: ", $rootScope.online);
+                        //console.log("$rootScope.online f: ", $rootScope.online);
                     } else if (response.status === 403) {
-                        console.log("!!! 403 !!!");
+                        //console.log("!!! 403 !!!");
                         $rootScope.online = true;
                         //console.log("$rootScope.online t: ", $rootScope.online);
                     } else {
@@ -61,10 +61,10 @@ angular.module('bitaskApp.service.buffer', [
                 },
 
                 'responseError': function (rejection) {
-                    console.log("INTER responseError 4", rejection);
+                    //console.log("INTER responseError 4", rejection);
 
                     $rootScope.online = false;
-                    console.log("$rootScope.online: f", $rootScope.online);
+                    //console.log("$rootScope.online: f", $rootScope.online);
 
                     //if (rejection.status === 500) {
                     //}
@@ -77,15 +77,38 @@ angular.module('bitaskApp.service.buffer', [
     '$http', '$auth', 'uuid4', 'connectionStatus', '$log', 'pouchDB', '$timeout', '$rootScope', 'dbService', '$mdToast',
     function($http, $auth, uuid4, connectionStatus, $log, pouchDB, $timeout, $rootScope, dbService, $mdToast) {
         var self = this;
-
+        var db = dbService.getDb();
+        var httpStatus = -1;
+        var dbqueue = pouchDB('queue');
+        var online = true;
+        /**
+         * @description Опции для слушателя
+         */
+        var dbOptions = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true
+        };
+        /**
+         * @description Options for listener | Опции для слушателя
+         */
+        var dbqueueOptions = {
+            /*eslint-disable camelcase */
+            include_docs: true,
+            /*eslint-enable camelcase */
+            live: true,
+            filter: function (doc) {
+                // "_deleted":true
+                return doc.deleted === false;
+            }
+        };
         $rootScope.docs = [];
         $rootScope.queues = [];
 
-
-
         /**
          * Отправить запрос на сервер, ответ обрабатывает callback
-         * @param data - данные в формате [id, false, "task/openedtasks", {parentId:0}]
+         * @param data - данные в формате [[id, false, "task/openedtasks", {parentId:0}],[...],[...]]
          * @param callback
          */
         self.send = function (data, callback){
@@ -128,9 +151,9 @@ angular.module('bitaskApp.service.buffer', [
              */
             var errorCallback = function (response){
                 // put query to db
-                console.log("data: ", data[0][3]);
+                //console.log("data: ", data[0][3]);
                 var uuid = data[0][3]['id'];
-                console.log("uuid: ", uuid);
+                //console.log("uuid: ", uuid);
                 dbqueue.put({
                     _id: uuid,
                     data: data,
@@ -143,13 +166,13 @@ angular.module('bitaskApp.service.buffer', [
                         attachments: true
                     }).then(function (result) {
                         // handle result
-                        console.log("send dbqueue.allDocs result: ", result);
+                        //console.log("send dbqueue.allDocs result: ", result);
                     }).catch(function (err) {
-                        console.log(err);
+                        //console.log(err);
                     });
 
                 }).catch(function (err) {
-                    console.log(err);
+                    //console.log(err);
                 });
             };
 
@@ -162,20 +185,15 @@ angular.module('bitaskApp.service.buffer', [
 
         };
 
-
-
-        var db = dbService.getDb();
-
         /**
          * @description Clear all data in db | Очистка бд
          */
-        var resetdb = function() {
+        function resetdb() {
             db.destroy().then(function() {
                 db = dbService.getDb();
             });
-        };
-        //resetdb();
-
+        }
+        
         /**
          * @description Listen to database changes | Слушатель изменений данных в бд
          */
@@ -184,30 +202,13 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /**
-         * @description Options for listen | Опции для слушателя
-         */
-        var dbOptions = {
-            /*eslint-disable camelcase */
-            include_docs: true,
-            /*eslint-enable camelcase */
-            live: true
-        };
-
-        /**
-         * @description DB canges event listener | Слушатель для бд
-         */
-        db.changes(dbOptions).$promise
-            .then(null, null, onChange);
-
-        getTasks();
-        /**
          * @description Get all task from server and put all to db | Загрузка данных с сервера в бд
          */
         function getTasks() {
 
             //resetdb();
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                console.log("getTasks doc.rows: ", doc.rows);
+                //console.log("getTasks doc.rows: ", doc.rows);
             });
 
             //localStorageService.set('key124', JSON.stringify(callback));
@@ -222,7 +223,7 @@ angular.module('bitaskApp.service.buffer', [
                 //cache: true,
                 //offline: true
             }).then(function successCallback(response) {
-                $log.info('getTasks response: ', response);
+                //$log.info('getTasks response: ', response);
 
 
                 //console.log(response.data[0][2][0]['id']);
@@ -236,8 +237,8 @@ angular.module('bitaskApp.service.buffer', [
                     //$timeout(deleteTask(response.data[0][2][i]['id']), 1000);
 
                     //deleteTask(response.data[0][2][i]['id']);
-                    console.log("getTasks id: ", response.data[0][2][i]['id']);
-                    console.log("getTasks taskName", response.data[0][2][i]['taskName']);
+                    //console.log("getTasks id: ", response.data[0][2][i]['id']);
+                    //console.log("getTasks taskName", response.data[0][2][i]['taskName']);
 
                     db.put({
                         _id: response.data[0][2][i]['id'],
@@ -273,20 +274,20 @@ angular.module('bitaskApp.service.buffer', [
 
                     }).then(function (response) {
                         // handle response
-                        console.log("getTasks response: ", response);
+                        //console.log("getTasks response: ", response);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("getTasks OK doc.rows: ", doc.rows);
+                            //console.log("getTasks OK doc.rows: ", doc.rows);
                         });
                     }).catch(function (err) {
-                        console.log("getTasks err: ", err);
+                        //console.log("getTasks err: ", err);
                         db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-                            console.log("getTasks ERR doc.rows: ", doc.rows);
+                            //console.log("getTasks ERR doc.rows: ", doc.rows);
                         });
                     });
                 }
                 //callback(response.data);
             }, function(rejectReason) {
-                console.log('failure');
+                //console.log('failure');
             });
         }
 
@@ -294,9 +295,6 @@ angular.module('bitaskApp.service.buffer', [
         /**
          *  @description QUEUE SERVICE | Работа с очередью
          */
-        var httpStatus = -1;
-        var dbqueue = pouchDB('queue');
-        var online = true;
 
         /**
          * @description Destroy db | Удаление бд
@@ -307,35 +305,6 @@ angular.module('bitaskApp.service.buffer', [
             console.log(err);
         });*/
 
-        /**
-         * @description list all docs in db | список всех документов в бд
-         */
-        dbqueue.allDocs({
-            include_docs: true,
-            attachments: true
-            //deleted:true,
-            //key: ['deleted:true'],
-        }).then(function (result) {
-            // handle result
-            console.log("START dbqueue.allDocs result: ", result);
-        }).catch(function (err) {
-            console.log(err);
-        });
-
-        /**
-         * @description Сreate index | Создание индекса
-         */
-        dbqueue.createIndex({
-            index: {
-                fields: ['deleted']
-            }
-        }).then(function (result) {
-            // yo, a result
-            console.log("dbqueue.createIndex result: ", result);
-        }).catch(function (err) {
-            // ouch, an error
-            console.log("dbqueue.createIndex err: ", err);
-        });
 
         /**
          * @description Find | Поиск в бд
@@ -422,34 +391,13 @@ angular.module('bitaskApp.service.buffer', [
         function onChangeQueue(change) {
             $rootScope.queues.push(change);
 
-            console.log("onChangeQueue change: ", change);
-            console.log("onChangeQueue change.change.id: ", change.change.id);
+            //console.log("onChangeQueue change: ", change);
+            //console.log("onChangeQueue change.change.id: ", change.change.id);
             if (online === true) {
                 //initExecuteQueue(change);
             }
         }
-
-        /**
-         * @description Options for listener | Опции для слушателя
-         */
-        var dbqueueOptions = {
-            /*eslint-disable camelcase */
-            include_docs: true,
-            /*eslint-enable camelcase */
-            live: true,
-            filter: function (doc) {
-                // "_deleted":true
-                return doc.deleted === false;
-            }
-        };
-
-        /**
-         * @description Listen to database changes | Слушатель для изменений в бд
-         */
-        dbqueue.changes(dbqueueOptions).$promise
-            .then(null, null, onChangeQueue);
-
-        processingQueue();
+        
         /**
          * @description Processing queue | Обработка очереди
          */
@@ -460,18 +408,19 @@ angular.module('bitaskApp.service.buffer', [
                     fields: ['_id', 'data']
                 }).then(function (result) {
                     // yo, a result
-                    console.log("dbqueue.find result: ", result);
+                    //console.log("dbqueue.find result: ", result);
                     // execute cmd from queue
-                    console.log("result.docs: ", result.docs[0]['data']);
+                    //console.log("result.docs: ", result.docs[0]['data']);
 
-                    console.log("result.docs.length: ", result.docs.length);
+                    //console.log("result.docs.length: ", result.docs.length);
 
-                    angular.forEach(result.docs, function(value, key) {          console.log(key + ': ' + value['data']);
+                    angular.forEach(result.docs, function(value, key) {
+                        //console.log(key + ': ' + value['data']);
                         //for (var i = 0; i < result.docs.length; i++){
                         //
                         //data = result.docs[i]['data'];
                         //initExecuteQueue(data);
-                        console.log("START LOOP");
+                        //console.log("START LOOP");
 
 
                         $http({
@@ -483,7 +432,7 @@ angular.module('bitaskApp.service.buffer', [
                         }).then(function (response) {
 
                             $log.info('connectionStatus http response: ', response);
-                            console.log('connectionStatus http response.status: ', response.status);
+                            //console.log('connectionStatus http response.status: ', response.status);
                             httpStatus = response.status;
                             //callback(response.data);
 
@@ -493,21 +442,21 @@ angular.module('bitaskApp.service.buffer', [
                                 attachments: true
                             }).then(function (result) {
                                 // handle result
-                                console.log("connectionStatus dbqueue.allDocs result: ", result);
+                                //console.log("connectionStatus dbqueue.allDocs result: ", result);
                             }).catch(function (err) {
-                                console.log(err);
+                                //console.log(err);
                             });
 
 
-                            console.log("connectionStatus value: ", value);
-                            console.log("connectionStatus value['data']: ", value['data']);
-                            console.log("connectionStatus value['_id']: ", value['_id']);
+                            //console.log("connectionStatus value: ", value);
+                            //console.log("connectionStatus value['data']: ", value['data']);
+                            //console.log("connectionStatus value['_id']: ", value['_id']);
                             //console.log("result.docs[i]['data']: ", result.docs[i]['data']);
                             //console.log("result.docs[0]: ", result.docs[0]);
                             //console.log("i: ", i);
                             //console.log("result.docs[i]: ", result.docs[i]);
 
-                            console.log("connectionStatus httpStatus: ", httpStatus);
+                            //console.log("connectionStatus httpStatus: ", httpStatus);
                             if (httpStatus == 200) {
 
                                 // update task from queue
@@ -530,32 +479,21 @@ angular.module('bitaskApp.service.buffer', [
                                     return dbqueue.remove(doc);
                                 }).then(function (result) {
                                     // handle result
-                                    console.log("processingQueue remove result: ", result);
+                                    //console.log("processingQueue remove result: ", result);
                                 }).catch(function (err) {
-                                    console.log("processingQueue remove err: ", err);
+                                    //console.log("processingQueue remove err: ", err);
                                 });
 
                             }
                             
                         }); 
-                        console.log("END LOOP");
+                        //console.log("END LOOP");
                     });
                 }).catch(function (err) {
                     // ouch, an error
-                    console.log("dbqueue.find err: ", err);
+                    //console.log("dbqueue.find err: ", err);
                 });
         }
-
-        /**
-         * @description Event online | Событие есть подключение
-         */
-        connectionStatus.$on('online', function () {
-            $log.info('bufferService: We are now online');
-            //online = true;
-            $rootScope.online = true;
-            $timeout(processingQueue, 30000);
-            //initExecuteQueue();
-        });
 
         /**
          * @description Event offline | Собитие нет подключения
@@ -566,7 +504,67 @@ angular.module('bitaskApp.service.buffer', [
             //online = false;
         });*/
 
+        /**
+         * Инит
+         */
+        var init = function () {
+            //resetdb();
 
+            /**
+             * @description list all docs in db | список всех документов в бд
+             */
+            /*dbqueue.allDocs({
+                include_docs: true,
+                attachments: true
+                //deleted:true,
+                //key: ['deleted:true'],
+            }).then(function (result) {
+                // handle result
+                //console.log("START dbqueue.allDocs result: ", result);
+            }).catch(function (err) {
+                //console.log(err);
+            });*/
+
+            /**
+             * @description Сreate index | Создание индекса
+             */
+            dbqueue.createIndex({
+                index: {
+                    fields: ['deleted']
+                }
+            }).then(function (result) {
+                // yo, a result
+                //console.log("dbqueue.createIndex result: ", result);
+            }).catch(function (err) {
+                // ouch, an error
+                //console.log("dbqueue.createIndex err: ", err);
+            });
+
+            /**
+             * @description Слушатель для бд
+             */
+            db.changes(dbOptions).$promise.then(null, null, onChange);
+
+            /**
+             * @description Слушатель для изменений в бд
+             */
+            dbqueue.changes(dbqueueOptions).$promise.then(null, null, onChangeQueue);
+
+            /**
+             * @description Event online | Событие есть подключение
+             */
+            connectionStatus.$on('online', function () {
+                $log.info('bufferService: We are now online');
+                //online = true;
+                $rootScope.online = true;
+                $timeout(processingQueue, 30000);
+                //initExecuteQueue();
+            });
+
+            processingQueue();
+            getTasks();
+        };
+        init();
 
 
 

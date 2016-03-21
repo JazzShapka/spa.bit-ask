@@ -9,6 +9,10 @@ angular.module('bitaskApp.goals', ['ngRoute'])
   });
 }])
 
-.controller('GoalsCtrl', [function() {
+.controller('GoalsCtrl', [ '$scope', function($scope) {
+
+	//$scope.targets = [];
+	$scope.targets = ['target 1', 'target 2'];
+	console.log($scope.targets);
 
 }]);
