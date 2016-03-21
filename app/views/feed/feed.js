@@ -16,7 +16,7 @@ angular.module('bitaskApp.index', ['ngRoute', 'bitaskApp.service.keyboard', 'bit
 
 
         keyboardService.on(function (){
-
+            $scope.$apply();
             console.log('index - keypress');
         });
 }]);
