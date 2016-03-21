@@ -21,9 +21,11 @@ angular.module('bitaskApp.service.buffer', [
         $httpProvider
     ) {
 
-        // Interceptors | Обработчик http запросов, ответов
-        $httpProvider.interceptors.push(['$rootScope', '$q', function ($rootScope, $q) {
-            return {
+    /**
+     * @description Interceptors | Обработчик http ответов
+     */
+    $httpProvider.interceptors.push(['$rootScope', '$q', function ($rootScope, $q) {
+        return {
                 'request': function (config) {
                     //console.log("INTER request 1", config);
 
@@ -41,13 +43,17 @@ angular.module('bitaskApp.service.buffer', [
 
                 // optional method
                 'response': function(response) {
-                    //console.log("INTER response 3", response);
+                    console.log("INTER response 3", response);
 
                     // if not response from server | если нет ответа от сервера
                     if (response.status === -1) {
                         //console.log("INTER response 3 status: ", response.status);
                         $rootScope.online = false;
                         console.log("$rootScope.online f: ", $rootScope.online);
+                    } else if (response.status === 403) {
+                        console.log("!!! 403 !!!");
+                        $rootScope.online = true;
+                        console.log("$rootScope.online t: ", $rootScope.online);
                     } else {
                         $rootScope.online = true;
                         console.log("$rootScope.online t: ", $rootScope.online);    
@@ -81,7 +87,7 @@ angular.module('bitaskApp.service.buffer', [
         'pouchDB',
         '$timeout',
         '$rootScope',
-        'ngstomp',
+        //'ngstomp',
         'dbService',
         '$mdToast',
     function(
@@ -94,7 +100,7 @@ angular.module('bitaskApp.service.buffer', [
         pouchDB,
         $timeout,
         $rootScope,
-        ngstomp,
+        //ngstomp,
         dbService,
         $mdToast) {
 
@@ -105,19 +111,14 @@ angular.module('bitaskApp.service.buffer', [
         $rootScope.queues = [];
 
         var self = this;
-        var uid = $auth.getPayload().sub;
+        var uid;
+        if ($auth.isAuthenticated()) {
+            var uid = $auth.getPayload().sub;
+        }
         var db = dbService.getDb();
 
-        this.getTasks = getTasks;
-        this.setTask = setTask;
-        //this.getId = getId;
-        this.deleteTask = deleteTask;
-        this.sendData = sendData;
-
-
-
         /**
-         * Clear all data in db | Очистка бд
+         * @description Clear all data in db | Очистка бд
          */
         var resetdb = function() {
             db.destroy().then(function() {
@@ -127,16 +128,16 @@ angular.module('bitaskApp.service.buffer', [
         //resetdb();
 
         /**
-         * Listen to database changes | Слушатель изменений данных в бд
+         * @description Listen to database changes | Слушатель изменений данных в бд
          */
         function onChange(change) {
             $rootScope.docs.push(change);
         }
 
         /**
-         * Options for listen | Опции для слушателя
+         * @description Options for listen | Опции для слушателя
          */
-        var options = {
+        var dbOptions = {
             /*eslint-disable camelcase */
             include_docs: true,
             /*eslint-enable camelcase */
@@ -144,19 +145,14 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * DB canges event listener | Слушатель для бд
+         * @description DB canges event listener | Слушатель для бд
          */
-        db.changes(options).$promise
+        db.changes(dbOptions).$promise
             .then(null, null, onChange);
 
-        /**
-         * Load data from server to db | Загрузка данных с сервера в бд
-         */
         getTasks();
-
-
         /**
-         * Get all task from server over http post and put all to db | Загрузка данных с сервера в бд
+         * @description Get all task from server and put all to db | Загрузка данных с сервера в бд
          */
         function getTasks() {
 
@@ -173,7 +169,7 @@ angular.module('bitaskApp.service.buffer', [
             $http({
                 url: 'http://api.dev2.bit-ask.com/index.php/event/all',
                 method: 'POST',
-                data: '[[1,false,"task/subtasks",{"parentId":"0"}]]',
+                data: '[[1,false,"task/subtasks",{"parentId":"0"}]]'
                 //cache: true,
                 //offline: true
             }).then(function successCallback(response) {
@@ -245,97 +241,6 @@ angular.module('bitaskApp.service.buffer', [
             });
         }
 
-        /**
-         * Test create task | Тест создание задачи
-         */
-        function setTask(taskName) {
-            console.log("setTask");
-            //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
-
-            if (online === false) {
-                // put data to db queue | пишем в бд запрос
-                dbqueue.put({
-                    _id: uuid,
-                    data: data,
-                    deleted: false
-                }).then(function (response) {
-                    // handle response
-                    // list all docs in db
-                    dbqueue.allDocs({
-                        include_docs: true,
-                        attachments: true
-                    }).then(function (result) {
-                        // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-            
-            } else {
-
-                //console.log ("data: ", data);
-                $http({
-                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                    method: 'POST',
-                    data: data
-                    //cache: true,
-                    //offline: true
-                }).then(function (response) {
-                    $log.info('setTask: ', response);
-                    //callback(response.data);
-                });
-            }
-        }
-
-        /**
-         * Test delete task | Удаление задачи
-         */
-        function deleteTask(id) {
-            console.log("deleteTask id: ", id);
-            var data = [[1, false, "task/deletetask", {"id": id}]];
-            //console.log ("data: ", data);
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: data
-                //cache: true,
-                //offline: true
-            }).then(function (response) {
-                $log.info('deleteTask: ', response);
-                //callback(response.data);
-            });
-        }
-
-        /**
-         * Test get userd id from server db.
-         */
-        /*function getId(callback) {
-            $http({
-                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
-                method: 'POST',
-                data: '[[1, false, "user/getid"]]',
-                //cache: true,
-                //offline: true
-            }).then(function (response) {
-                $log.info('getId: ', response);
-                callback(response.data);
-            });  
-        };*/
-
-        /**
-         * Test send | Тест отправда данных на сервер
-         */
-        function sendData() {
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 23'}]];
-            this.send(data, console.log("ok"));
-        }
 
         /**
          * Отправить запрос на сервер, ответ обрабатывает callback
@@ -408,19 +313,25 @@ angular.module('bitaskApp.service.buffer', [
 
 
 
-        /*   QUEUE SERVICE  | Работа с очередью   */
-
+        /**
+         *  @description QUEUE SERVICE | Работа с очередью
+         */
         var httpStatus = -1;
         var dbqueue = pouchDB('queue');
         var online = true;
 
+        /**
+         * @description Destroy db | Удаление бд
+         */
         /*dbqueue.destroy().then(function (response) {
             // success
         }).catch(function (err) {
             console.log(err);
         });*/
 
-        // list all docs in db | список всех документов в бд
+        /**
+         * @description list all docs in db | список всех документов в бд
+         */
         dbqueue.allDocs({
             include_docs: true,
             attachments: true
@@ -434,7 +345,7 @@ angular.module('bitaskApp.service.buffer', [
         });
 
         /**
-         * Сreate index | Создание индекса
+         * @description Сreate index | Создание индекса
          */
         dbqueue.createIndex({
             index: {
@@ -448,6 +359,9 @@ angular.module('bitaskApp.service.buffer', [
             console.log("dbqueue.createIndex err: ", err);
         });
 
+        /**
+         * @description Find | Поиск в бд
+         */
         /*dbqueue.find({
             selector: {deleted: false},
             fields: ['_id', 'data']
@@ -460,7 +374,7 @@ angular.module('bitaskApp.service.buffer', [
         });*/
 
         /**
-         *  For event listener
+         *  @description For event listener
          */
         /*function initExecuteQueue(change) {
 
@@ -525,7 +439,7 @@ angular.module('bitaskApp.service.buffer', [
         }*/
 
         /**
-         * Execute if changes in db queue | Выполняется если в бд произошли изменения
+         * @description Listener function | Функция для слушателя
          */
         function onChangeQueue(change) {
             $rootScope.queues.push(change);
@@ -538,9 +452,9 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /**
-         * Options for listener | Опции для слушателя
+         * @description Options for listener | Опции для слушателя
          */
-        var options = {
+        var dbqueueOptions = {
             /*eslint-disable camelcase */
             include_docs: true,
             /*eslint-enable camelcase */
@@ -552,14 +466,14 @@ angular.module('bitaskApp.service.buffer', [
         };
 
         /**
-         * Listen to database changes | Слушатель для изменений в бд
+         * @description Listen to database changes | Слушатель для изменений в бд
          */
-        dbqueue.changes(options).$promise
+        dbqueue.changes(dbqueueOptions).$promise
             .then(null, null, onChangeQueue);
 
         processingQueue();
         /**
-         * Processing queue | Обработка очереди
+         * @description Processing queue | Обработка очереди
          */
         function processingQueue() {
 
@@ -655,7 +569,7 @@ angular.module('bitaskApp.service.buffer', [
         }
 
         /**
-         * Event online | Событие есть подключение
+         * @description Event online | Событие есть подключение
          */
         connectionStatus.$on('online', function () {
             $log.info('bufferService: We are now online');
@@ -666,7 +580,7 @@ angular.module('bitaskApp.service.buffer', [
         });
 
         /**
-         * Event offline | Собитие нет подключения
+         * @description Event offline | Собитие нет подключения
          */
         /*connectionStatus.$on('offline', function () {
             $log.info('bufferService: We are now offline');
@@ -674,7 +588,109 @@ angular.module('bitaskApp.service.buffer', [
             //online = false;
         });*/
 
-}])
+
+
+        /*   Test functions | Тестовые функции   */
+
+        this.getTasks = getTasks;
+        this.setTask = setTask;
+        //this.getId = getId;
+        this.deleteTask = deleteTask;
+        this.sendData = sendData;
+
+        /**
+         * @description Test create task | Тест создание задачи
+         */
+        function setTask(taskName) {
+            console.log("setTask");
+            //var uuid = uuid4.generate();
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
+
+            if (online === false) {
+                // put data to db queue | пишем в бд запрос
+                dbqueue.put({
+                    _id: uuid,
+                    data: data,
+                    deleted: false
+                }).then(function (response) {
+                    // handle response
+                    // list all docs in db
+                    dbqueue.allDocs({
+                        include_docs: true,
+                        attachments: true
+                    }).then(function (result) {
+                        // handle result
+                        console.log("setTask dbqueue.allDocs result: ", result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+            } else {
+
+                //console.log ("data: ", data);
+                $http({
+                    url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                    method: 'POST',
+                    data: data
+                    //cache: true,
+                    //offline: true
+                }).then(function (response) {
+                    $log.info('setTask: ', response);
+                    //callback(response.data);
+                });
+            }
+        }
+
+        /**
+         * @description Test delete task | Тестовое удаление задачи
+         */
+        function deleteTask(id) {
+            console.log("deleteTask id: ", id);
+            var data = [[1, false, "task/deletetask", {"id": id}]];
+            //console.log ("data: ", data);
+            $http({
+                url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+                method: 'POST',
+                data: data
+                //cache: true,
+                //offline: true
+            }).then(function (response) {
+                $log.info('deleteTask: ', response);
+                //callback(response.data);
+            });
+        }
+
+        /**
+         * @description Test get userd id from server db.
+         */
+        /*function getId(callback) {
+         $http({
+         url: 'http://api.dev2.bit-ask.com/index.php/event/all',
+         method: 'POST',
+         data: '[[1, false, "user/getid"]]',
+         //cache: true,
+         //offline: true
+         }).then(function (response) {
+         $log.info('getId: ', response);
+         callback(response.data);
+         });
+         };*/
+
+        /**
+         * @description Test send | Тестовый запрос
+         */
+        function sendData() {
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
+            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task 23'}]];
+            this.send(data, console.log("ok"));
+        }
+
+    }])
 
 .run(function ($log, $rootScope) {
 
