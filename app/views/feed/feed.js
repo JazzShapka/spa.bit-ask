@@ -1,24 +1,22 @@
 'use strict';
 
-angular.module('bitaskApp.index', ['ngRoute', 'bitaskApp.service.keyboard'])
+angular.module('bitaskApp.index', ['ngRoute', 'bitaskApp.service.keyboard', 'bitaskApp.service.feed'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
       templateUrl: './app/views/feed/feed.html',
-      controller: 'IndexCtrl'
+      controller: 'FeedCtrl'
   });
 }])
 
-.controller('IndexCtrl', function($scope, $http, keyboardService) {
+.controller('FeedCtrl', ['$scope', '$http', 'feedService', 'keyboardService',
+    function($scope, $http, feedService, keyboardService) {
 
-    $scope.send = function (){
-        $http.post(bitaskAppConfig.api_url + 'index.php/event/all', [
-            "hello",
-            'World!!!'
-        ])
-    };
+        $scope.feeds = feedService.feeds;
 
-    keyboardService.on(function (){
-        console.log('index - keypress');
-    });
-});
+
+        keyboardService.on(function (){
+
+            console.log('index - keypress');
+        });
+}]);
