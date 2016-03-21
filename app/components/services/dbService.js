@@ -15,7 +15,7 @@ angular.module('bitaskApp.service.db', ['pouchdb'])
     function($log, pouchDB, $rootScope) {
 
         //console.log = function() {};
-        console.log("Start dbService.");
+        //console.log("Start dbService.");
 
         this.getDb = getDb;
 

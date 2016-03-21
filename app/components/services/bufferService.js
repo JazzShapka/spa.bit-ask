@@ -43,7 +43,7 @@ angular.module('bitaskApp.service.buffer', [
 
                 // optional method
                 'response': function(response) {
-                    console.log("INTER response 3", response);
+                    //console.log("INTER response 3", response);
 
                     // if not response from server | если нет ответа от сервера
                     if (response.status === -1) {
@@ -53,10 +53,10 @@ angular.module('bitaskApp.service.buffer', [
                     } else if (response.status === 403) {
                         console.log("!!! 403 !!!");
                         $rootScope.online = true;
-                        console.log("$rootScope.online t: ", $rootScope.online);
+                        //console.log("$rootScope.online t: ", $rootScope.online);
                     } else {
                         $rootScope.online = true;
-                        console.log("$rootScope.online t: ", $rootScope.online);    
+                        //console.log("$rootScope.online t: ", $rootScope.online);
                     }
 
                     // do something on success
@@ -105,7 +105,7 @@ angular.module('bitaskApp.service.buffer', [
         $mdToast) {
 
         //console.log = function() {};
-        console.log("Start bufferService.");
+        //console.log("Start bufferService.");
 
         $rootScope.docs = [];
         $rootScope.queues = [];
@@ -255,7 +255,7 @@ angular.module('bitaskApp.service.buffer', [
                     data: data
                 }).then(function successCallback(response) {
 
-                    console.log("send $rootScope.online: ", $rootScope.online);
+                    //console.log("send $rootScope.online: ", $rootScope.online);
 
                     if ( $rootScope.online ) {
 
