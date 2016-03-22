@@ -51,6 +51,8 @@ stompService.service('stompService', ['ngstomp', '$auth', '$rootScope', 'pouchDB
      * Execute every message received
      */
     function whatToDoWhenMessageComming(message) {
+
+        debugger;
         items.push(message.body);
         //$scope.items = items;
         $rootScope.items = items;
