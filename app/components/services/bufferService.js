@@ -37,12 +37,13 @@ angular.module('bitaskApp.service.buffer', [
         var db_data = pouchDB('data');              // БД для данных (задачи, встречи, структура, ...)
         var db_queue = pouchDB('queue');            // БД для очереди (сохранение запросов при оффлайне)
 
-        var test_online_timer = false;                      // Объект таймера, который проверяет онлайн ли сервер.
-        var test_online_seconds = 5;                // Через какой интервал пинговать сервер
+        var test_online_timer = false;              // Объект таймера, который проверяет онлайн ли сервер.
+        var test_online_seconds = 5;                // Через какой интервал пинговать сервер (сек)
 
 
         /**
          * Отправить запрос на сервер, ответ обрабатывает callback
+         *
          * @param data - данные в формате [[id, false, "task/openedtasks", {parentId:0}],[...],[...]]
          * @param callback
          */
@@ -60,7 +61,7 @@ angular.module('bitaskApp.service.buffer', [
                 }
 
                 // Если ответ с сервера нормальный, изменяем статус на online
-                setOnline(true);
+                setConnect(true);
 
                 // Обрабатываем все сообщения с сервера
                 for (var i=0; i<response.data.length; i++)
@@ -93,11 +94,11 @@ angular.module('bitaskApp.service.buffer', [
             var errorCallback = function (){
 
                 // Изменяем статус подключения
-                setOnline(false, 'Offline');
+                setConnect(false, 'Offline');
 
                 // Если тест на онлайн не запущен, запускаем его.
                 if(!test_online_timer)
-                    test_online_timer = $timeout(testOnline, 5000);
+                    test_online_timer = $timeout(testConnect, 5000);
 
 
                 // Сохраняем сообщения в базе, если нужно
@@ -157,20 +158,20 @@ angular.module('bitaskApp.service.buffer', [
          *
          * Вызывается циклически пока не появится соеденеие
          */
-        var testOnline = function (){
+        var testConnect = function (){
 
             $http.head(bitaskAppConfig.api_url).then(function (response){
                 // Если соеденение восстановлено
                 if(response.status == 200)
                 {
                     test_online_timer = false;
-                    setOnline(true);
-                    newOnline();
+                    setConnect(true);
+                    newConnect();
 
                 }
                 else
                 {
-                    test_online_timer = $timeout(testOnline, test_online_seconds * 1000);
+                    test_online_timer = $timeout(testConnect, test_online_seconds * 1000);
                 }
             });
         };
@@ -179,7 +180,7 @@ angular.module('bitaskApp.service.buffer', [
          *
          * Синхронизация с сервером, отпаравка и получение новых сообщений
          */
-        var newOnline = function (){
+        var newConnect = function (){
 
             // Получаем все записи из базы с сортировкой по времени вставки
             db_queue.find({selector:{time: {$gt: 0}}, sort:['time']}).then(function (data){
@@ -200,8 +201,7 @@ angular.module('bitaskApp.service.buffer', [
                     self.send(messages);
 
                 }
-            })
-
+            });
         };
         /**
          * Изменить состояние подключения.
@@ -210,7 +210,7 @@ angular.module('bitaskApp.service.buffer', [
          * @param status (bool) - онлайн или нет
          * @param message (string) - сообщение, если оффлайн
          */
-        var setOnline = function (status, message){
+        var setConnect = function (status, message){
             if(status)
             {
                 $rootScope.buffer = {
@@ -251,6 +251,7 @@ angular.module('bitaskApp.service.buffer', [
          */
         var __constructor = function () {
 
+            // Добавляем индекс к базе очередей (для сортировки, иначе не работает)
             db_queue.createIndex({
                 index:{fields:['time', '_id']}
             });
@@ -262,7 +263,7 @@ angular.module('bitaskApp.service.buffer', [
                 .callback(socketCallback)
                 .connect();
 
-            newOnline();
+            newConnect();
         };
         __constructor();
 
