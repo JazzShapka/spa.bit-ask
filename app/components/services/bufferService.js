@@ -26,7 +26,6 @@ angular.module('bitaskApp.service.buffer', [
         .heartbeat(0, 0)                                            // Частота пингов
         .class(WebSocket);                                          // <-- Will be used by StompJS to do the connection
 
-
 })
 .service('bufferService', [
     '$http', '$auth', 'uuid4', '$log', 'pouchDB', '$timeout', '$rootScope', '$mdToast', 'ngstomp', //ngstomp
@@ -260,6 +259,7 @@ angular.module('bitaskApp.service.buffer', [
             var uid = $auth.getPayload().sub;
             ngstomp
                 .subscribeTo('/queue/' + uid)
+                .withHeaders({'Access-Control-Allow-Origin':'*'})
                 .callback(socketCallback)
                 .connect();
 

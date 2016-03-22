@@ -13,6 +13,13 @@ angular.module('bitaskApp.service.feed', [
             self.feeds = [];
             self.feeds_indexed = {};
 
+            /**
+             * Обновить объекты
+             */
+            var refreshObjects = function (){
+
+            }
+
             var __constructor = function (){
 
                 // Получаем все новости
@@ -28,7 +35,7 @@ angular.module('bitaskApp.service.feed', [
                         {
                             case 'task':{
 
-                                // Присваиваем заменяем id объекта, на реальный объект
+                                // Заменяем id объекта, на реальный объект
                                 data[i].objects[0] = taskService.tasks_indexed[data[i].objects[0].objectId];
 
                                 // Показываем карточки только с загруженными объектами
