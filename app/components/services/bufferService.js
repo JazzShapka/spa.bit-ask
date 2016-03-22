@@ -19,12 +19,12 @@ angular.module('bitaskApp.service.buffer', [
 
     // Настройка веб сокетов
     ngstompProvider
-        .url(url + ':'+ bitaskAppConfig.api_socket_port +'/ws')     // URL сервера
+        .url(url + ':'+ bitaskAppConfig.api_socket_port +'/stomp')     // URL сервера
         .credential('guest', 'guest')                               // Учетные данные (логин, пароль)
         .debug(bitaskAppConfig.debug)                               // Вывод в лог
         .vhost('/')
         .heartbeat(0, 0)                                            // Частота пингов
-        .class(WebSocket);                                          // <-- Will be used by StompJS to do the connection
+        .class(SockJS);                                          // <-- Will be used by StompJS to do the connection
 
 
 })
