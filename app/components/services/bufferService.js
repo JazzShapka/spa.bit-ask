@@ -13,7 +13,7 @@ angular.module('bitaskApp.service.buffer', [
 .config(function ($httpProvider, ngstompProvider) {
 
     // Получить url сокет сервера без слеша в конце, что бы добавить порт
-    var url = bitaskAppConfig.socket_url;
+    var url = bitaskAppConfig.api_socket_url;
     if(url[url.length-1] == '/')
         url = url.slice(0, -1);
 
