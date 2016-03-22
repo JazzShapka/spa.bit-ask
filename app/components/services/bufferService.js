@@ -13,18 +13,18 @@ angular.module('bitaskApp.service.buffer', [
 .config(function ($httpProvider, ngstompProvider) {
 
     // Получить url сокет сервера без слеша в конце, что бы добавить порт
-    var url = bitaskAppConfig.socket_url;
+    var url = bitaskAppConfig.api_socket_url;
     if(url[url.length-1] == '/')
         url = url.slice(0, -1);
 
     // Настройка веб сокетов
     ngstompProvider
-        .url(url + ':'+ bitaskAppConfig.api_socket_port +'/ws')     // URL сервера
+        .url(url + ':'+ bitaskAppConfig.api_socket_port +'/stomp')     // URL сервера
         .credential('guest', 'guest')                               // Учетные данные (логин, пароль)
         .debug(bitaskAppConfig.debug)                               // Вывод в лог
         .vhost('/')
         .heartbeat(0, 0)                                            // Частота пингов
-        .class(WebSocket);                                          // <-- Will be used by StompJS to do the connection
+        .class(SockJS);                                          // <-- Will be used by StompJS to do the connection
 
 })
 .service('bufferService', [

@@ -5,10 +5,10 @@ var bitaskAppConfig = {
     // Адрес сервера api
     api_url:'vApiUrl',
     auth_url:'vAuthUrl',
-    socket_url:'vSocketUrl',
+    api_socket_url:'vApiSocketUrl',
 
     // Порт сервера сокетов
-    api_socket_port:'vSocketPort', //15674
+    api_socket_port:'vApiSocketPort', //15674
 
     // ID приложений - для авторизации
     google_id:'vGoogleId',
