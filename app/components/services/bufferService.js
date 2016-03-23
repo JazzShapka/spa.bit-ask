@@ -583,7 +583,7 @@ angular.module('bitaskApp.service.buffer', [
         function setTask(taskName) {
             console.log("setTask");
             //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d724';
+            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d725';
             var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
             if (online === false) {

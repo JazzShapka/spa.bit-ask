@@ -8,10 +8,23 @@
     <md-card-content>
         Тут будут цели показатели
     </md-card-content>
-    <div ng-repeat="target in targets">
-		<pre>{{ target }}</pre>
-	</div>
-	
-    <input ng-model="user.title">
+
+
+    <md-divider></md-divider>
+    <md-subheader class="md-no-sticky">Цели - показатели</md-subheader>
+    <md-list-item ng-repeat="target in targets">
+        <md-checkbox ng-model="target.selected"></md-checkbox>
+        <p>{{ target.taskName }}</p>
+        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat" md-svg-icon="communication:message"></md-icon>
+    </md-list-item>
+    <md-divider></md-divider>
+
+
+
+    <md-button class="md-raised" ng-click="addTarget()">Добавить цель</md-button>
+    <md-button class="md-raised" ng-click="addSubTarget()">Добавить подцель</md-button>
+    <md-button class="md-raised" ng-click="deleteTarget()">Удалить</md-button>
+
+    <pre> {{ targets | json }} <pre>
 
 </md-card>
