@@ -38,7 +38,7 @@ angular.module('bitaskApp.service.task', [
              *      Вторым параметром передаем id родительской задачи.
              *
              * 4) Редактирование задачи.
-             *      taskService.showTaskEditor('sub_task', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      taskService.showTaskEditor('edit_task', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
              *      Вторым параметром передаем id задачи которую хотим отредактировать.
              *
              *      -- Как то так...
