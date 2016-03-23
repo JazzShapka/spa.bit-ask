@@ -248,40 +248,8 @@ angular.module('bitaskApp.service.buffer', [
         /**
          * Конструктор
          */
-<<<<<<< HEAD
-        function setTask(taskName) {
-            console.log("setTask");
-            //var uuid = uuid4.generate();
-            var uuid = 'ba1eb446-0bb3-ab0a-3e44-a182fc48d725';
-            var data = [[1, false, "task/addtask", {"id": uuid, "taskName": taskName}]];
 
-            if (online === false) {
-                // put data to db queue | пишем в бд запрос
-                dbqueue.put({
-                    _id: uuid,
-                    data: data,
-                    deleted: false
-                }).then(function (response) {
-                    // handle response
-                    // list all docs in db
-                    dbqueue.allDocs({
-                        include_docs: true,
-                        attachments: true
-                    }).then(function (result) {
-                        // handle result
-                        console.log("setTask dbqueue.allDocs result: ", result);
-                    }).catch(function (err) {
-                        console.log(err);
-                    });
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-
-            } else {
-=======
         var __constructor = function () {
->>>>>>> b3559fa9bd76c9f7ae4685be724e6731be221f65
 
             // Добавляем индекс к базе очередей (для сортировки, иначе не работает)
             db_queue.createIndex({
