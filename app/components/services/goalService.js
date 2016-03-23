@@ -10,9 +10,16 @@ angular.module('bitaskApp.service.goal', [
 
             var self = this;
 
-            self.goals = [];
-            self.goals_indexed = {};
+            self.goals = [];                // Массив загруженых целей
+            self.goals_indexed = {};        // Проиндексированный массив загруженных целей
 
+            /**
+             * Конструктор.
+             *
+             * Получает список целей с сервера.
+             *
+             * @private
+             */
             var __constructor = function (){
 
                 var userId = $auth.getPayload().sub;
