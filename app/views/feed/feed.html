@@ -1,21 +1,24 @@
-<div class="index-card" ng-repeat="feed in feeds | filter:{show:true}:true" ng-switch on="feed.type">
-    <!-- Карточка задачи -->
-    <md-card ng-switch-when="task">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">Задача</span>
-            </md-card-title-text>
-        </md-card-title>
+<div class="feed_scroll" ng-nicescroll nice-option="getNiceScrollOption()" nice-scroll-object="nice_scroll">
+    <div class="index-card" ng-repeat="feed in feeds | filter:{show:true}:true" ng-switch on="feed.type">
+        <!-- Карточка задачи -->
+        <md-card ng-switch-when="task" ng-click="showTaskEditor(feed.objects[0].id)">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Задача</span>
+                </md-card-title-text>
+            </md-card-title>
 
-        <md-card-content>
-            <h4>{{feed.objects[0].taskName}}</h4>
-            <h5>{{feed.objects[0].taskDescription}}</h5>
-        </md-card-content>
+            <md-card-content>
+                <h4>{{feed.objects[0].taskName}}</h4>
+                <h5>{{feed.objects[0].taskDescription}}</h5>
+            </md-card-content>
 
-        <md-card-actions>
-            <md-button class="md-raised">Выполнить</md-button>
-            <md-button class="md-raised">Поручить</md-button>
-            <md-button class="md-raised">Перенести</md-button>
-        </md-card-actions>
-    </md-card>
+            <md-card-actions>
+                <md-button class="md-raised" ng-click="decision(feed.id, 'task/completed')">Выполнить</md-button>
+                <md-button class="md-raised" ng-click="decision(feed.id, 'task/setPerformer')">Поручить</md-button>
+                <md-button class="md-raised" ng-click="decision(feed.id, 'task/setDate')">Перенести</md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    <div class="clear"></div>
 </div>

@@ -14,11 +14,49 @@ angular.module('bitaskApp.service.feed', [
             self.feeds_indexed = {};
 
             /**
-             * Обновить объекты
+             * Отработка принятого решения по карточке
+             *
+             * @param cardId (string) - id карточки
+             * @param decision (string) - принятое решение
+             * @param otherInfo (object) - дополнительные данные {key:value}
              */
-            var refreshObjects = function (){
+            self.decision = function (cardId, decision, otherInfo){
 
-            }
+                var card = self.feeds_indexed[cardId];
+
+                switch(decision)
+                {
+                    // Завершить задачу
+                    case 'task/completed':{
+
+                        bufferService.send([[uuid4.generate(), true, 'card/decision', {id:card.id, decision:'complete'}]]);
+                        taskService.editTask(card.objects[0].id, {status: 'completed'});
+                    }
+                }
+
+                deleteFeed(cardId);
+            };
+
+            self.showTaskEditor = function (taskId){
+                taskService.showTaskEditor('edit_task', taskId);
+            };
+
+            /**
+             * Удалить карточку.
+             * @param cardId
+             */
+            var deleteFeed = function (cardId){
+
+                for(var i=0; i<self.feeds.length; i++)
+                {
+                    if(self.feeds[i].id == cardId)
+                    {
+                        self.feeds.splice(i, 1);
+                        break;
+                    }
+                }
+                delete self.feeds_indexed[cardId];
+            };
 
             var __constructor = function (){
 

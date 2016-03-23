@@ -117,12 +117,12 @@ angular.module('bitaskApp.hierarchy_task', [
                     $event.stopPropagation();
 
                 if(taskService.tasks_indexed[taskId].status == 'delivered')
-                    taskService.tasks_indexed[taskId].status = 'completed';
+                    taskService.editTask(taskId, {status:'completed'});
 
                 else if(taskService.tasks_indexed[taskId].status == 'completed')
-                    taskService.tasks_indexed[taskId].status = 'delivered';
+                    taskService.editTask(taskId, {status:'delivered'});
 
-                taskService.editTask(taskId, {status:taskService.tasks_indexed[taskId].status});
+
             };
             /**
              * Кнопка - развернуть задачу

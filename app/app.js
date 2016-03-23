@@ -18,7 +18,8 @@ angular.module('bitaskApp', [
     'bitaskApp.config',
     'bitaskApp.hierarchy_task',
     'bitaskApp.service.task',
-    'bitaskApp.service.buffer'
+    'bitaskApp.service.buffer',
+    'bitaskApp.service.goal'
 ])
 
 // Конфигурация приложения

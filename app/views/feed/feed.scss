@@ -1,4 +1,19 @@
+.feed_scroll{
+    top: 64px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 64px);
+    position: fixed;
+}
+.feed_scroll .clear{
+    width: 980px;
+    height:800px;
+    margin: 0 auto;
+}
 .index-card{
     width: 980px;
     margin: 0 auto;
+}
+.index-card md-card{
+    outline: none;
 }

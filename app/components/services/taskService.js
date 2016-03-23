@@ -177,7 +177,11 @@ angular.module('bitaskApp.service.task', [
                 for(var i=0; i<self.tasks.length; i++)
                 {
                     if(self.tasks[i].id == taskId)
+                    {
                         self.tasks.splice(i, 1);
+                        break;
+                    }
+
                 }
 
                 delete self.tasks_indexed[taskId];
