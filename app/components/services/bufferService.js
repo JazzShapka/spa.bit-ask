@@ -248,7 +248,6 @@ angular.module('bitaskApp.service.buffer', [
         /**
          * Конструктор
          */
-
         var __constructor = function () {
 
             // Добавляем индекс к базе очередей (для сортировки, иначе не работает)

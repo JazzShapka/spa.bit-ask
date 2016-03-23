@@ -1,0 +1,57 @@
+<md-dialog aria-label="task editor"  ng-cloak class="task editor">
+    <!-- Шапка -->
+    <md-button class="close_button md-icon-button" ng-click="close()">
+        <md-tooltip md-direction="top">Закрыть</md-tooltip>
+        <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
+    </md-button>
+
+
+    <!-- Контент -->
+    <md-dialog-content ng-nicescroll nice-option="{cursorcolor: '#424242', zindex:81}">
+        <div class="md-dialog-content">
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block task-name md-icon-left" md-no-float>
+                    <input maxlength="800" placeholder="Название цели/показателя" ng-model="goal.description" />
+                </md-input-container>
+
+                <md-input-container class="md-block task-date" md-no-float>
+                    <input disabled placeholder="Срок" ng-model="date"/>
+                </md-input-container>
+            </div>
+
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block task-performer" md-no-float>
+                    <input disabled placeholder="Делегировать"  value="Я" />
+                </md-input-container>
+
+                <md-input-container class="md-block task-parent" md-no-float>
+                    <input disabled placeholder="Родитель" ng-model="goal.parentId"/>
+                </md-input-container>
+            </div>
+
+            <div layout-gt-sm="row" ng-show="indicators_open">
+                <span>Таблица показателей, вы ее не видите, а она есть...</span>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <!-- Кнопки -->
+    <md-dialog-actions layout="row">
+        <md-button class="md-icon-button" ng-click="openIndicators()">
+            <md-icon ng-hide="indicators_open" class="material-icons">keyboard_arrow_down</md-icon>
+            <md-icon ng-show="indicators_open" class="material-icons">keyboard_arrow_up</md-icon>
+        </md-button>
+        <span flex></span>
+        <md-button class="md-icon-button">
+            <md-tooltip md-direction="bottom">Поделиться...</md-tooltip>
+            <md-icon class="material-icons">share</md-icon>
+        </md-button>
+        <md-button class="md-icon-button" ng-click="delete()">
+            <md-tooltip md-direction="bottom">Удалить</md-tooltip>
+            <md-icon class="material-icons">delete_forever</md-icon>
+        </md-button>
+        <md-button class="md-raised submit-button" ng-click="save()">OK</md-button>
+    </md-dialog-actions>
+</md-dialog>
