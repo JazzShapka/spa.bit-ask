@@ -11,14 +11,31 @@
 
 
     <md-divider></md-divider>
-    <md-subheader class="md-no-sticky">Цели - показатели</md-subheader>
+    <md-subheader class="md-no-sticky">
+    <md-button class="md-raised" ng-click="getAllTarget()">home</md-button>
+    </md-subheader>
     <md-list-item ng-repeat="target in targets">
-        <md-checkbox ng-model="target.selected"></md-checkbox>
+        <md-checkbox ng-model="target.selected" ng-change="change()"></md-checkbox>
         <p>{{ target.taskName }}</p>
         <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat" md-svg-icon="communication:message"></md-icon>
     </md-list-item>
     <md-divider></md-divider>
 
+
+    <div ivh-treeview="targets"
+        ivh-treeview-id-attribute="'id'"
+        ivh-treeview-label-attribute="'taskName'"
+        ivh-treeview-children-attribute="'children'"
+        ivh-treeview-selected-attribute="'selected'">
+    </div>
+
+    <div ng-controller="GoalsCtrl as fancy">
+      <input type="text" ng-model="goalsSearch" />
+      <div
+        ivh-treeview="fancy.goals"
+        ivh-treeview-filter="goalsSearch">
+      </div>
+    </div>
 
 
     <md-button class="md-raised" ng-click="addTarget()">Добавить цель</md-button>
