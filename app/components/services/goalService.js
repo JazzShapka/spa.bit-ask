@@ -17,7 +17,7 @@ angular.module('bitaskApp.service.goal', [
             /**
              * Открыть редактор цели.
              *
-             * @param mode - 'new_task' || 'sub_task' || 'brother_task' || 'edit_task'
+             * @param mode - 'new' || 'sub' || 'brother' || 'edit'
              * @param goalId - id цели в контексте которой происходит открытие окна
              *
              *  ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ:
@@ -100,6 +100,59 @@ angular.module('bitaskApp.service.goal', [
                     });
                 }
             };
+
+
+            /**
+             * Запрос на создание цели
+             *
+             * @param goal - объект цели
+             */
+            self.createGoal = function (goal){
+                // Добавляем цель в массив
+                self.addGoalOnView(goal);
+
+                // Отправляем новую цель на сервер
+                bufferService.send([[ uuid4.generate(), true, "target/create", goal ]]);
+            };
+            /**
+             * Запрос на редактирование цели.
+             *
+             * @param goalId - id редактируемой цели
+             * @param params - (object) параметры, которые должны быть отредактированы (key => value)
+             */
+            self.editGoal = function (goalId, params){
+
+                self.editTaskOnView(goalId, params);
+
+                params.id = goalId;
+                bufferService.send([[uuid4.generate(), true, "target/edit", params]]);
+            };
+            /**
+             * Добавить цель в модель, для отображения.
+             */
+            self.addGoalOnView = function (goal){
+                if(self.goals_indexed.hasOwnProperty(goal.id))
+                {
+                    // TODO: Описть, что делать, если цель уже есть
+                }
+                else
+                {
+                    self.goals.push(goal);
+                }
+            };
+            /**
+             * Обновить модель цели.
+             *
+             * @param goalId
+             * @param params
+             */
+            self.editGoalOnView = function (goalId, params){
+
+                for(var param in params)
+                {
+                    self.goals_indexed[goalId][param] = params[param];
+                }
+            };
             /**
              * Удалить цель из хранилища целей (goals и goals_indexed)
              * @param goalId
@@ -117,23 +170,30 @@ angular.module('bitaskApp.service.goal', [
 
                 delete self.goals_indexed[goalId];
             };
+
+
             /**
-             * Запрос на редактирование цели.
-             *
-             * @param goalId - id редактируемой цели
-             * @param param - (object) параметры, которые должны быть отредактированы (key => value)
+             * Обновить количество подцелей
              */
-            self.editGoal = function (goalId, param){
-                // TODO: Реализовать редактирование целей
+            self.refreshChildren = function (){
+
+                for(var i=0; i<self.goals.length; i++)
+                {
+                    // индексируем цели
+                    self.goals_indexed[self.goals[i].id] = self.goals[i];
+
+                    self.goals[i].children_quantity = 0;
+                    for(var j=0; j<self.goals.length; j++)
+                    {
+                        if(self.goals[i].id == self.goals[j].parentId)
+                        {
+                            self.goals[i].children_quantity++;
+                        }
+                    }
+                }
             };
-            /**
-             * Запрос на создание цели
-             *
-             * @param goal - объект цели
-             */
-            self.createGoal = function (goal){
-                // TODO: Реализовать создание цели.
-            };
+
+
 
             /**
              * Конструктор.
@@ -148,13 +208,12 @@ angular.module('bitaskApp.service.goal', [
                 // Получаем все цели
                 bufferService.send([[uuid4.generate(), false, "target/list", {userId:userId}]], function (data){
 
-                    // Добавляем все новости в массив отображения
+                    // Добавляем все цели в массив отображения
                     for(var i=0; i<data.length; i++)
                     {
-                        // Индексируем массив карточек (новостей)
-                        self.goals_indexed[data[i].id] = data[i];
-                        self.goals.push(data[i]);
+                        self.addGoalOnView(data[i]);
                     }
+                    self.refreshChildren();
                 });
             };
             __constructor();

@@ -21,10 +21,12 @@ angular.module('bitaskApp.editors.taskEditor', [
             // Показать чекбокс завершения только при редактировании
             $scope.show_completebox = (locals.mode == "edit");
 
+            /**
+             * Событие закрытия окна.
+             */
             locals.onClose = function (){
                 keyboardService.off();
             }
-
             /**
              * Кнопка сохранить (ОК)
              */
@@ -73,7 +75,6 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 $scope.close();
             };
-
             /**
              * Кнопка закрыть (Х)
              */
@@ -82,14 +83,12 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 $mdDialog.hide();
             };
-
             /**
              * Кнопка - удалить задачу
              */
             $scope.delete = function (){
                 taskService.showDeleteTaskDialog(task.id);
             };
-
             /**
              * Обработчик смены статуса (чекбокса)
              */
@@ -99,7 +98,6 @@ angular.module('bitaskApp.editors.taskEditor', [
                 else if($scope.task.status == 'delivered')
                     $scope.task.status = 'completed';
             }
-
             /**
              * Обработчик клавиш
              */
@@ -183,7 +181,6 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 return task;
             };
-
             /**
              * Заполняем поля формы
              */
@@ -198,7 +195,6 @@ angular.module('bitaskApp.editors.taskEditor', [
                 $scope.parent = empty(taskService.tasks_indexed[task.parentId])?'':taskService.tasks_indexed[task.parentId].taskName;
 
             };
-
             /**
              * Конструктор
              * @private

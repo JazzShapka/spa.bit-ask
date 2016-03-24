@@ -37,6 +37,9 @@ angular.module('bitaskApp.editors.goalEditor', [
                 if($scope.goal.parentId == '')
                     $scope.goal.parentId = null;
 
+                if($scope.goal.divisionId == '')
+                    $scope.goal.divisionId = null;
+
 
                 // Если поле описание не заполнено, просто закрываем и выходим
                 if($scope.goal.description == '')
@@ -132,14 +135,14 @@ angular.module('bitaskApp.editors.goalEditor', [
                 else
                     goal = {
                         "id":uuid4.generate(),
-                        "description ": "",
-                        "divisionId ": "",
-                        "parentId": null //,
-                         /*"limitDate": null,
-                        "beginDate": null,
-                        "endDate": null,
-                        "period": null,
-                        "indicators": [
+                        "description": "",
+                        "divisionId": "",
+                        "parentId": null,
+                        "limitDate": null,
+                        "beginDate": 0,
+                        "endDate": 0,
+                        "period": "day"//,  // (day,week,month,year)
+                        /*"indicators": [
                             {
                                 "id": uuid4.generate(),
                                 "indicatorName":null,
