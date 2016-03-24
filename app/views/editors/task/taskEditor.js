@@ -19,7 +19,7 @@ angular.module('bitaskApp.editors.taskEditor', [
             };
 
             // Показать чекбокс завершения только при редактировании
-            $scope.show_completebox = (locals.mode == "edit_task");
+            $scope.show_completebox = (locals.mode == "edit");
 
             locals.onClose = function (){
                 keyboardService.off();
@@ -49,7 +49,7 @@ angular.module('bitaskApp.editors.taskEditor', [
                 }
 
 
-                if(locals.mode == 'edit_task')
+                if(locals.mode == 'edit')
                 {
                     var new_params = {};
                     for(param in $scope.task)
@@ -124,7 +124,7 @@ angular.module('bitaskApp.editors.taskEditor', [
             var getTask = function (){
 
                 var task;
-                if(locals.mode == 'edit_task')
+                if(locals.mode == 'edit')
                     task = taskService.tasks_indexed[locals.taskId];
                 else
                     task = {
@@ -163,16 +163,16 @@ angular.module('bitaskApp.editors.taskEditor', [
 
                 // Определяем родителя
                 switch (locals.mode){
-                    case 'new_task':
+                    case 'new':
                         task.parentId = taskService.new_task.id
                         break;
-                    case 'sub_task':
+                    case 'sub':
                         task.parentId = locals.taskId;
                         break;
-                    case 'brother_task':
+                    case 'brother':
                         task.parentId = taskService.tasks_indexed[locals.taskId].parentId;
                         break;
-                    case 'edit_task':
+                    case 'edit':
                         break;
                     default:
                         break;

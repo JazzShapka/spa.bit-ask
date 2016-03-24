@@ -25,20 +25,20 @@ angular.module('bitaskApp.service.task', [
              *  ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ:
              *
              * 1) Создание новой задачи
-             *      taskService.showTaskEditor('new_task');
+             *      taskService.showTaskEditor('new');
              *      Создастся задача в папке новые задачи, тоесть в поле parentId записывается
              *      id папки "Новые задачи"
              *
              * 2) Создание задачи на том же уровне
-             *      taskService.showTaskEditor('brother_task', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      taskService.showTaskEditor('brother', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
              *      Вторым параметром передаем id задачи на чьем уровне должна создаться подзадача.
              *
              * 3) Создание подзадачи
-             *      taskService.showTaskEditor('sub_task', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      taskService.showTaskEditor('sub', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
              *      Вторым параметром передаем id родительской задачи.
              *
              * 4) Редактирование задачи.
-             *      taskService.showTaskEditor('edit_task', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      taskService.showTaskEditor('edit', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
              *      Вторым параметром передаем id задачи которую хотим отредактировать.
              *
              *      -- Как то так...

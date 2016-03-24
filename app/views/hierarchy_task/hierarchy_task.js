@@ -290,7 +290,7 @@ angular.module('bitaskApp.hierarchy_task', [
                     case 13:    // enter
                     {
                         if(selected_id)
-                            taskService.showTaskEditor('brother_task', selected_id)
+                            taskService.showTaskEditor('brother', selected_id)
                         break;
                     }
                     case 32:    // space
@@ -302,13 +302,13 @@ angular.module('bitaskApp.hierarchy_task', [
                     case 9:     // tab
                     {
                         if(selected_id)
-                            taskService.showTaskEditor('sub_task', selected_id)
+                            taskService.showTaskEditor('sub', selected_id)
                         break;
                     }
                     case 113:   // f2
                     {
                         if(selected_id)
-                            taskService.showTaskEditor('edit_task', selected_id)
+                            taskService.showTaskEditor('edit', selected_id)
                         break;
                     }
                     case 46:    // Del
@@ -347,7 +347,7 @@ angular.module('bitaskApp.hierarchy_task', [
              * @param taskId
              */
             $scope.taskDbclick = function (taskId){
-                taskService.showTaskEditor('edit_task', selected_id)
+                taskService.showTaskEditor('edit', selected_id)
             };
 
             /**
@@ -358,7 +358,7 @@ angular.module('bitaskApp.hierarchy_task', [
                 function(attrs)         // Редактировать задачу
                 {
                     return {name: "Редактировать задачу", hotkey:"F2", handler: function (){
-                        taskService.showTaskEditor('edit_task', attrs.id);
+                        taskService.showTaskEditor('edit', attrs.id);
                     }}
                 },
                 function(attrs)         // Выполнить
@@ -377,13 +377,13 @@ angular.module('bitaskApp.hierarchy_task', [
                 function(attrs)         // Добавить задачу
                 {
                     return {name: "Добавить задачу", hotkey:"Enter", handler: function (){
-                        taskService.showTaskEditor('brother_task', attrs.id);
+                        taskService.showTaskEditor('brother', attrs.id);
                     }}
                 },
                 function(attrs)         // Добавить подзадачу
                 {
                     return {name: "Добавить подзадачу", hotkey:"Tab", handler: function (){
-                        taskService.showTaskEditor('sub_task', attrs.id);
+                        taskService.showTaskEditor('sub', attrs.id);
                     }}
                 },
                 'divider',

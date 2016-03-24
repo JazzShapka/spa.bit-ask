@@ -14,19 +14,19 @@ angular.module('bitaskApp.editors.goalEditor', [
             var goal = {};
 
             $scope.goal = {
-                description:'',
+                description: '',
                 divisionId: null,
                 parentId: null
             };
             $scope.indicators_open = false;
 
-            // Показать чекбокс завершения только при редактировании
-            $scope.show_completebox = (locals.mode == "edit_goal");
 
+            /**
+             * Обработчик закрытия окна
+             */
             locals.onClose = function (){
                 keyboardService.off();
             };
-
             /**
              * Кнопка сохранить (ОК)
              */
@@ -34,7 +34,6 @@ angular.module('bitaskApp.editors.goalEditor', [
 
                 $scope.close();
             };
-
             /**
              * Кнопка закрыть (Х)
              */
@@ -43,21 +42,27 @@ angular.module('bitaskApp.editors.goalEditor', [
 
                 $mdDialog.hide();
             };
-
             /**
              * Кнопка - удалить цель
              */
             $scope.delete = function (){
+
                 goalService.showDeleteGoalDialog(goal.id);
             };
-
             /**
              * Открыть показатели.
              */
             $scope.openIndicators = function (){
                 $scope.indicators_open = !$scope.indicators_open;
             };
-
+            /**
+             * Настройка скролла на странице.
+             *
+             * @returns {{cursorcolor: string, zindex: number}}
+             */
+            $scope.niceScrollOption = function (){
+                return {cursorcolor: '#424242', zindex:81};
+            };
             /**
              * Обработчик клавиш
              */
@@ -77,36 +82,60 @@ angular.module('bitaskApp.editors.goalEditor', [
                 }
             });
 
+
             /**
-             * Получить задачу с которой работаем.
+             * Получить цель с которой работаем.
              *
              * Создает новый или получает существующий объект.
+             * Если цель редактируем, то получаем существующий объект из goalService,
+             * если создаем цель, то создаем новый объект цели с пустыми полями.
              */
             var getGoal = function (){
 
                 var goal;
-                if(locals.mode == 'edit_goal')
+                if(locals.mode == 'edit')
                     goal = goalService.goals_indexed[locals.goalId];
                 else
                     goal = {
                         "id":uuid4.generate(),
                         "description ": "",
-                        "divisionId ": "",
-                        "parentId":null
+                        "divisionId ": "" //,
+                        /*"parentId": null,
+                        "limitDate": null,
+                        "beginDate": null,
+                        "endDate": null,
+                        "period": null,
+                        "indicators": [
+                            {
+                                "id": uuid4.generate(),
+                                "indicatorName":null,
+                                "type": null,
+                                "lineNumber": null,
+                                "formula": null,
+                                "startValue": null,
+                                "measures": [
+                                    {
+                                        "date":null,
+                                        "value": null,
+                                        "auto": false
+                                    }
+                                ]
+                            }
+                        ]*/
                     };
 
                 // Определяем родителя
                 switch (locals.mode){
-                    case 'new_goal':
+                    case 'new':
                         goal.parentId = null;
                         break;
-                    case 'sub_goal':
+                    case 'sub':
                         goal.parentId = locals.goalId;
                         break;
-                    case 'brother_goal':
+                    case 'brother':
                         goal.parentId = goalService.goals_indexed[locals.goalId].parentId;
                         break;
-                    case 'edit_goal':
+                    case 'edit':
                         break;
                     default:
                         break;
@@ -114,9 +143,10 @@ angular.module('bitaskApp.editors.goalEditor', [
 
                 return goal;
             };
-
             /**
              * Заполняем поля формы
+             *
+             * Переносим поля объекта цели в объект формы, для редактирования.
              */
             var fillField = function (){
 
@@ -124,14 +154,13 @@ angular.module('bitaskApp.editors.goalEditor', [
                 $scope.goal.divisionId = goal.divisionId;
                 $scope.goal.parentId = goal.parentId;
             };
-
             /**
              * Конструктор
              * @private
              */
             var __constructor = function (){
 
-                // Получить задачу с которой работаем
+                // Получить цель с которой работаем
                 goal = getGoal();
 
                 // Заполняем поля формы

@@ -38,7 +38,7 @@ angular.module('bitaskApp.service.feed', [
             };
 
             self.showTaskEditor = function (taskId){
-                taskService.showTaskEditor('edit_task', taskId);
+                taskService.showTaskEditor('edit', taskId);
             };
 
             /**

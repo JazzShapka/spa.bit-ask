@@ -58,6 +58,65 @@ angular.module('bitaskApp.service.goal', [
                     clickOutsideToClose:false
                 });
             };
+            /**
+             * Открыть диалог удаления цели
+             *
+             * Если цель есть в массиве показывает диалог (удалить/отмена),
+             * если нажать удалить, отправляется запрос в буффер на удаление
+             */
+            self.showDeleteGoalDialog = function (goalId){
+                keyboardService.on();
+
+                var goal = self.goals_indexed[goalId];
+
+                if(empty(goal))
+                {
+                    var alert = $mdDialog.confirm()
+                        .title('Удаление цели')
+                        .textContent("Цель еще не создана")
+                        .ariaLabel('Delete goal')
+                        .ok('Ок');
+                    //.cancel('Отмена');
+                    $mdDialog.show(alert).then(function (){
+                        keyboardService.off();
+                    });
+                }
+                else {
+                    var confirm = $mdDialog.confirm()
+                        .title('Удаление цели')
+                        .textContent('Вы собираетесь удалить цель.')
+                        .ariaLabel('Delete goal')
+                        .ok('Удалить')
+                        .cancel('Отмена');
+                    $mdDialog.show(confirm).then(function() {
+
+                        self.deleteGoal(goal.id);
+
+                        bufferService.send([[ uuid4.generate(), true, "target/delete", {id: goal.id}]]);
+
+                        keyboardService.off();
+                    }, function() {
+                        keyboardService.off();
+                    });
+                }
+            };
+            /**
+             * Удалить цель из хранилища целей (goals и goals_indexed)
+             * @param goalId
+             */
+            self.deleteGoal = function (goalId){
+                for(var i=0; i<self.goals.length; i++)
+                {
+                    if(self.goals[i].id == goalId)
+                    {
+                        self.goals.splice(i, 1);
+                        break;
+                    }
+
+                }
+
+                delete self.goals_indexed[goalId];
+            };
 
             /**
              * Конструктор.
