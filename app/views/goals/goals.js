@@ -101,7 +101,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
     	//console.log("addTarget uuid: ", uuid);
 
     	//var data = [[1, false, "task/addtask", {"id": uuid, "taskName": 'new task ' + uuid}]];
-    	var data = [[1, false, "target/create", {"id": uuid}]];
+    	var data = [[1, false, "target/create", {"id": uuid, "description":"des"}]];
 		bufferService.send(data, function(data) {
 	        console.log("selfsend: ", data);
 	        //$scope.targets.push(data);
@@ -114,8 +114,18 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
      * Добавить подцель
      */
     $scope.addSubTarget = function() {
+    	var uuid = uuid4.generate();
     	var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
     	console.log("addSubTarget for: ", obj.id);
+
+    	var data = [[1, false, "target/create", { "id": uuid, "description":"subdes", parentId:obj.id }]];
+		bufferService.send(data, function(data) {
+	        console.log("selfsend: ", data);
+	        //$scope.targets.push(data);
+	        //$scope.targets = data;
+	        $scope.getAllTarget();
+	    });
+
     }
 
     /**
