@@ -19,7 +19,7 @@ angular.module('bitaskApp.service.task', [
 
             /**
              * Открыть редактор задачи.
-             * @param mode - 'new_task' || 'sub_task' || 'brother_task' || 'edit_task'
+             * @param mode - 'new' || 'sub' || 'brother' || 'edit'
              * @param taskId - id задачи в контексте которой вызываем окно
              *
              *  ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ:
@@ -141,7 +141,7 @@ angular.module('bitaskApp.service.task', [
             self.addTaskOnView = function (task){
                 if(self.tasks_indexed.hasOwnProperty(task.id))
                 {
-
+                    // TODO: Описать, что делать, если задача с таким
                 }
                 else
                 {
