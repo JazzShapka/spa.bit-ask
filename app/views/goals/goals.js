@@ -14,13 +14,18 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
     .defaultIconSet('img/icons/sets/core-icons.svg', 24);
 }])
 
-.controller('GoalsCtrl', [ '$scope', 'bufferService', 'uuid4', '$mdDialog', '_', function($scope, bufferService, uuid4, $mdDialog, _) {
+.controller('GoalsCtrl', [ '$scope', 'bufferService', 'goalService', 'uuid4', '$mdDialog', '_', 
+	function($scope, bufferService, goalService, uuid4, $mdDialog, _) {
 
 	//$scope.targets = [];
 	//$scope.targets = ['target 1', 'target 2'];
 	//console.log($scope.targets);
 
 	$scope.bufferService = bufferService;
+
+	$scope.targets = goalService.goals;
+	console.log("$scope.targets: ", $scope.targets);
+
 	//$scope.deleteTarget = deleteTarget;
 	//var vm = this;
 	//vm.deleteTarget = deleteTarget;
@@ -54,14 +59,18 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	/**
 	 * Загружаем все цели
 	 */
-	$scope.getAllTarget = function() {
+	/*$scope.getAllTarget = function() {
 		//var alldata = '[[1,false,"task/subtasks",{"parentId":"0"}]]';
 		var alldata = '[[1,false,"target/list",{"parentId":"0"}]]';
 		bufferService.send(alldata, function(data) {
 	        //console.log("selfsend: ", data);
+
+	        //var obj = _.find(data, function(obj) { return obj.parentId == null });
+
 	        $scope.targets = data;
 
 	        console.log("data: ", data);
+	        //console.log("obj: ", obj);
 	        
 	        //var obj = _.find($scope.targets, function(obj) { return obj.children == 0 });
 	        
@@ -72,7 +81,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	        //}
 	        //this.goals = data ;
 	    });
-	}
+	}*/
 
 	/**
 	 * Загружаем под цели
@@ -81,15 +90,19 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 		
 		var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
 		var parentId = obj.id;
-		
 		console.log("parentId: ", parentId);
+
+		var objParent = _.find($scope.targets, function(obj) { return obj.parentId == parentId });
+		console.log("objParent: ", objParent);
+
+		$scope.targets.push(objParent);
 		
-		var alldata = [[1,false,"task/subtasks",{"parentId":parentId}]];
+		/*var alldata = [[1,false,"task/subtasks",{"parentId":parentId}]];
 		bufferService.send(alldata, function(data) {
 	        //console.log("selfsend: ", data);
 	        $scope.targets = data;
 	        console.log("data: ", data);
-	    });
+	    });*/
 	}
 
 
@@ -106,7 +119,9 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	        console.log("selfsend: ", data);
 	        //$scope.targets.push(data);
 	        //$scope.targets = data;
-	        $scope.getAllTarget();
+	        //$scope.getAllTarget();
+	        $scope.targets = goalService.goals;
+
 	    });
 	}
 
@@ -123,7 +138,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	        console.log("selfsend: ", data);
 	        //$scope.targets.push(data);
 	        //$scope.targets = data;
-	        $scope.getAllTarget();
+	        //$scope.getAllTarget();
 	    });
 
     }
@@ -142,7 +157,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 		bufferService.send(deleteGoal, function(data) {
 	        //console.log("selfsend: ", data);
 	        //$scope.targets = data;
-	        $scope.getAllTarget();
+	        //$scope.getAllTarget();
 	    });
 	}
 
@@ -151,6 +166,17 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	 */
 	$scope.change = function() {
 		console.log("change");
+    	var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
+    	console.log("obj: ", obj);
+    	console.log("objId: ", obj.id);
+
+    	var parentId = objParent;
+    	var objParent = _.find($scope.targets, function(obj) { return obj.parentId == parentId });
+    	console.log("objParent: ", objParent);
+    	objParent.parentId = null;
+
+
+		//target.parentId;
 		//getSubTarget();
 	}
 
@@ -181,7 +207,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
 	 * Старт
 	 */
 	function init() {
-		$scope.getAllTarget();
+		//$scope.getAllTarget();
 	}
 	init();
 

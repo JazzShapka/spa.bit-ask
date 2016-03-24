@@ -1,3 +1,4 @@
+
 <md-card class="goals-card">
     <md-card-header>
         <md-card-header-text>
@@ -9,16 +10,11 @@
         Тут будут цели показатели
     </md-card-content>
 
-
     <md-divider></md-divider>
     <md-subheader class="md-no-sticky">
     <md-button class="md-raised" ng-click="getAllTarget()">home</md-button>
     </md-subheader>
-    <md-list-item ng-repeat="target in targets">
-        <md-checkbox ng-model="target.selected" ng-change="change()"></md-checkbox>
-        <p>{{ target.description }}</p>
-        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat" md-svg-icon="communication:message"></md-icon>
-    </md-list-item>
+
     <md-divider></md-divider>
 
 
@@ -30,12 +26,14 @@
     </div>
 
     <div ng-controller="GoalsCtrl as fancy">
-      <input type="text" ng-model="goalsSearch" />
-      <div
-        ivh-treeview="fancy.goals"
-        ivh-treeview-filter="goalsSearch">
-      </div>
+        <input type="text" ng-model="goalsSearch" />
+        <div
+            ivh-treeview="fancy.goals"
+            ivh-treeview-filter="goalsSearch">
+        </div>
     </div>
+
+    <div ng-include="'app/views/goals/one_goal.html'">!!</div>
 
 
     <md-button class="md-raised" ng-click="addTarget()">Добавить цель</md-button>
@@ -44,4 +42,9 @@
 
     <pre> {{ targets | json }} <pre>
 
+
+
 </md-card>
+
+
+

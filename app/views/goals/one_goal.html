@@ -1,0 +1,24 @@
+<div ng-repeat="target in targets">
+
+<//div ng-show="!target.parentId">
+<md-list-item>
+
+        <md-checkbox ng-model="target.selected" ng-change="change()"></md-checkbox>
+
+        <div ng-if="target.parentId === null">
+            [ + ] {{ target.description }}
+        </div>
+        <div ng-if="target.parentId !== null">
+            {{ target.description }}
+        </div>
+
+
+        <div ng-show="target.parentId">
+        </div>
+
+        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat" md-svg-icon="communication:message"></md-icon>
+
+</md-list-item>
+</div>
+
+</div>
