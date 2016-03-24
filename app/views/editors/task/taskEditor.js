@@ -30,7 +30,7 @@ angular.module('bitaskApp.editors.taskEditor', [
              */
             $scope.save = function (){
 
-                var param;
+                var param; // Наименование параметра
 
                 if($scope.task.parentId == '')
                     $scope.task.parentId = null;
@@ -43,12 +43,14 @@ angular.module('bitaskApp.editors.taskEditor', [
                     return;
                 }
 
+                // Если заполнено только описание, то копируем первые пять слов в название задачи
                 if($scope.task.taskName == '' && $scope.task.taskDescription != '')
                 {
                     $scope.task.taskName = $scope.task.taskDescription.split(' ').splice(0, 5).join(' ');
                 }
 
 
+                // Если редактирование, но берем только те параметры которые изменились
                 if(locals.mode == 'edit')
                 {
                     var new_params = {};
@@ -59,6 +61,7 @@ angular.module('bitaskApp.editors.taskEditor', [
                     }
                     taskService.editTask(task.id, new_params);
                 }
+                // Если создание то отправляем объект целиком.
                 else
                 {
                     for(param in $scope.task)

@@ -10,33 +10,35 @@
 .editor md-dialog-content{
     width: 780px;
 }
-.editor md-dialog-content .task-name{
+.editor md-dialog-content .name{
     margin-right: 10px;
 }
-.editor md-dialog-content .task-name input{
+.editor md-dialog-content .name input{
     width: 500px;
 }
-.editor md-dialog-content .task-name md-checkbox{
+.editor md-dialog-content .name md-checkbox{
     top: 5px;
     margin-left: -31px;
     position: relative;
     float: left;
 }
-.editor md-dialog-content .task-date{
+.editor md-dialog-content .date{
 
 }
-.editor md-dialog-content .task-performer{
+.editor md-dialog-content .performer{
     margin-right: 10px;
 }
-.editor md-dialog-content .task-performer input{
+.editor md-dialog-content .performer input{
     width: 380px;
 }
-.editor md-dialog-content .task-parent input{
+.editor md-dialog-content .parent input{
     width: 333px;
 }
-.editor md-dialog-content .task-description textarea{
+.editor md-dialog-content .description textarea{
     width: 725px;
 }
+
+
 
 // Кнопки внизу
 .editor md-dialog-actions{

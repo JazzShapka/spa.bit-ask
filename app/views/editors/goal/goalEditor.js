@@ -32,6 +32,40 @@ angular.module('bitaskApp.editors.goalEditor', [
              */
             $scope.save = function (){
 
+                var param; // Наименование параметра
+
+                if($scope.goal.parentId == '')
+                    $scope.goal.parentId = null;
+
+
+                // Если поле описание не заполнено, просто закрываем и выходим
+                if($scope.goal.description == '')
+                {
+                    $scope.close();
+                    return;
+                }
+
+                // Если редактирование, но берем только те параметры которые изменились
+                if(locals.mode == 'edit')
+                {
+                    var new_params = {};
+                    for(param in $scope.goal)
+                    {
+                        if($scope.goal[param] != goal[param])
+                            new_params[param] = $scope.goal[param];
+                    }
+                    goalService.editGoal(goal.id, new_params);
+                }
+                // Если создание то отправляем объект целиком.
+                else
+                {
+                    for(param in $scope.goal)
+                    {
+                        goal[param] = $scope.goal[param];
+                    }
+                    goalService.createGoal(goal);
+                }
+
                 $scope.close();
             };
             /**
@@ -99,9 +133,9 @@ angular.module('bitaskApp.editors.goalEditor', [
                     goal = {
                         "id":uuid4.generate(),
                         "description ": "",
-                        "divisionId ": "" //,
-                        /*"parentId": null,
-                        "limitDate": null,
+                        "divisionId ": "",
+                        "parentId": null //,
+                         /*"limitDate": null,
                         "beginDate": null,
                         "endDate": null,
                         "period": null,

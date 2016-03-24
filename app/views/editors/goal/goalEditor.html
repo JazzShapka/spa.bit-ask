@@ -7,26 +7,26 @@
 
 
     <!-- Контент -->
-        <md-dialog-content ng-nicescroll nice-option="niceScrollOption()">
+    <md-dialog-content ng-nicescroll nice-option="niceScrollOption()">
         <div class="md-dialog-content">
 
             <div layout-gt-sm="row">
-                <md-input-container class="md-block task-name md-icon-left" md-no-float>
+                <md-input-container class="md-block name" md-no-float>
                     <input maxlength="800" placeholder="Название цели/показателя" ng-model="goal.description" />
                 </md-input-container>
 
-                <md-input-container class="md-block task-date" md-no-float>
+                <md-input-container class="md-block date" md-no-float>
                     <input disabled placeholder="Срок" ng-model="date"/>
                 </md-input-container>
             </div>
 
 
             <div layout-gt-sm="row">
-                <md-input-container class="md-block task-performer" md-no-float>
+                <md-input-container class="md-block performer" md-no-float>
                     <input disabled placeholder="Делегировать"  value="Я" />
                 </md-input-container>
 
-                <md-input-container class="md-block task-parent" md-no-float>
+                <md-input-container class="md-block parent" md-no-float>
                     <input disabled placeholder="Родитель" ng-model="goal.parentId"/>
                 </md-input-container>
             </div>

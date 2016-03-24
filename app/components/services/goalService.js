@@ -117,6 +117,23 @@ angular.module('bitaskApp.service.goal', [
 
                 delete self.goals_indexed[goalId];
             };
+            /**
+             * Запрос на редактирование цели.
+             *
+             * @param goalId - id редактируемой цели
+             * @param param - (object) параметры, которые должны быть отредактированы (key => value)
+             */
+            self.editGoal = function (goalId, param){
+                // TODO: Реализовать редактирование целей
+            };
+            /**
+             * Запрос на создание цели
+             *
+             * @param goal - объект цели
+             */
+            self.createGoal = function (goal){
+                // TODO: Реализовать создание цели.
+            };
 
             /**
              * Конструктор.
