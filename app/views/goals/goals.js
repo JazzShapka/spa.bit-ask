@@ -170,10 +170,12 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.t
     	console.log("obj: ", obj);
     	console.log("objId: ", obj.id);
 
-    	var parentId = objParent;
-    	var objParent = _.find($scope.targets, function(obj) { return obj.parentId == parentId });
+    	var parentId = obj.parentId;
+    	console.log("parentId: ", parentId);
+
+    	var objParent = _.find($scope.targets, function(obj2) { return obj2.parentId == obj.id });
     	console.log("objParent: ", objParent);
-    	objParent.parentId = null;
+    	objParent.parentId = true;
 
 
 		//target.parentId;
