@@ -18,6 +18,8 @@ angular.module('bitaskApp.editors.goalEditor', [
                 divisionId: null,
                 parentId: null
             };
+            $scope.begin_date = '';
+            $scope.end_date = '';
             $scope.indicators_open = false;
 
 

@@ -255,15 +255,20 @@ angular.module('bitaskApp.service.buffer', [
                 index:{fields:['time', '_id']}
             });
 
-            // Id Пользователя
-            var uid = $auth.getPayload().sub;
-            ngstomp
-                .subscribeTo('/queue/' + uid)
-                .withHeaders({'Access-Control-Allow-Origin':'*'})
-                .callback(socketCallback)
-                .connect();
 
-            newConnect();
+            if($auth.isAuthenticated())
+            {
+                // Id Пользователя
+                var uid = $auth.getPayload().sub;
+                ngstomp
+                    .subscribeTo('/queue/' + uid)
+                    .withHeaders({'Access-Control-Allow-Origin':'*'})
+                    .callback(socketCallback)
+                    .connect();
+
+                newConnect();
+            }
+
         };
         __constructor();
 

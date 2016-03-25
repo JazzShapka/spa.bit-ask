@@ -2,6 +2,7 @@
 
 // Объявления приложения и модулей для представлений и компонент
 angular.module('bitaskApp', [
+    // Сторонние модули
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
@@ -9,6 +10,7 @@ angular.module('bitaskApp', [
     'satellizer',
     'angular-nicescroll',
 
+    // Наши модули
     'bitaskApp.index',
     'bitaskApp.goals',
     'bitaskApp.schedule',
@@ -16,10 +18,7 @@ angular.module('bitaskApp', [
     'bitaskApp.header',
     'bitaskApp.floating_button',
     'bitaskApp.config',
-    'bitaskApp.hierarchy_task',
-    'bitaskApp.service.task',
-    'bitaskApp.service.buffer',
-    'bitaskApp.service.goal'
+    'bitaskApp.hierarchy_task'
 ])
 
 // Конфигурация приложения

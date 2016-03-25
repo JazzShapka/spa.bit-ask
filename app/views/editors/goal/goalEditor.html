@@ -32,7 +32,15 @@
             </div>
 
             <div layout-gt-sm="row" ng-show="indicators_open">
-                <span>Таблица показателей, вы ее не видите, а она есть...</span>
+                <div class="option_buttons">
+                    <span>Отображать с </span>
+                    <md-datepicker ng-model="begin_date"></md-datepicker>
+                    <span> по </span>
+                    <md-datepicker ng-model="end_date"></md-datepicker>
+                </div>
+                <table><tbody>
+
+                </tbody></table>
             </div>
         </div>
     </md-dialog-content>

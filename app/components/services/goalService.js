@@ -171,7 +171,6 @@ angular.module('bitaskApp.service.goal', [
                 delete self.goals_indexed[goalId];
             };
 
-
             /**
              * Обновить количество подцелей
              */
@@ -194,7 +193,6 @@ angular.module('bitaskApp.service.goal', [
             };
 
 
-
             /**
              * Конструктор.
              *
@@ -204,17 +202,21 @@ angular.module('bitaskApp.service.goal', [
              */
             var __constructor = function (){
 
-                var userId = $auth.getPayload().sub;
-                // Получаем все цели
-                bufferService.send([[uuid4.generate(), false, "target/list", {userId:userId}]], function (data){
+                if($auth.isAuthenticated())
+                {
+                    var userId = $auth.getPayload().sub;
+                    // Получаем все цели
+                    bufferService.send([[uuid4.generate(), false, "target/list", {userId:userId}]], function (data){
 
-                    // Добавляем все цели в массив отображения
-                    for(var i=0; i<data.length; i++)
-                    {
-                        self.addGoalOnView(data[i]);
-                    }
-                    self.refreshChildren();
-                });
+                        // Добавляем все цели в массив отображения
+                        for(var i=0; i<data.length; i++)
+                        {
+                            self.addGoalOnView(data[i]);
+                        }
+                        self.refreshChildren();
+                    });
+                }
+
             };
             __constructor();
         }

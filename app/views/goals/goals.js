@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'underscore', 'ivh.treeview'])
+angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.goal', 'underscore', 'ivh.treeview'])
 
 .config(['$routeProvider', '$mdIconProvider', function($routeProvider, $mdIconProvider) {
   $routeProvider.when('/goals', {
