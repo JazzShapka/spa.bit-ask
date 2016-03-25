@@ -31,15 +31,44 @@
                 </md-input-container>
             </div>
 
-            <div layout-gt-sm="row" ng-show="indicators_open">
+            <!-- Таблица показателей -->
+            <div ng-show="indicators_open">
                 <div class="option_buttons">
-                    <span>Отображать с </span>
-                    <md-datepicker ng-model="begin_date"></md-datepicker>
-                    <span> по </span>
-                    <md-datepicker ng-model="end_date"></md-datepicker>
-                </div>
-                <table><tbody>
+                    <span class="label">Отображать с </span>
+                    <md-datepicker class="date" ng-model="begin_date"></md-datepicker>
+                    <span class="label"> по </span>
+                    <md-datepicker class="date" ng-model="end_date"></md-datepicker>
 
+                    <div flex></div>
+
+                    <md-button class="period-btn">День</md-button>
+                    <md-button class="period-btn">Неделя</md-button>
+                    <md-button class="period-btn selected">Месяц</md-button>
+                    <md-button class="period-btn">Год</md-button>
+                </div>
+                <table class="indicators-table"><tbody>
+                    <tr>
+                        <td class="width-80px caption">Счетчик</td>
+                        <td class="width-80px caption">Формула</td>
+                        <td class="width-80px caption">Старт</td>
+                        <td class="" rowspan="3"></td>
+                        <td class="width-80px caption">Итог</td>
+                        <td class="width-80px caption">Тип</td>
+                    </tr>
+                    <tr>
+                        <td>План</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Факт</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </tbody></table>
             </div>
         </div>

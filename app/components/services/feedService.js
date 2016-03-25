@@ -62,28 +62,29 @@ angular.module('bitaskApp.service.feed', [
 
                 // Получаем все новости
                 bufferService.send([[uuid4.generate(), false, "card/list"]], function (data){
-
-                    // Добавляем все новости в массив отображения
-                    for(var i=0; i<data.length; i++)
-                    {
-                        // Индексируем массив карточек (новостей)
-                        self.feeds_indexed[data[i].id] = data[i];
-
-                        switch (data[i].type)
+                    $timeout(function (){
+                        // Добавляем все новости в массив отображения
+                        for(var i=0; i<data.length; i++)
                         {
-                            case 'task':{
+                            // Индексируем массив карточек (новостей)
+                            self.feeds_indexed[data[i].id] = data[i];
 
-                                // Заменяем id объекта, на реальный объект
-                                data[i].objects[0] = taskService.tasks_indexed[data[i].objects[0].objectId];
+                            switch (data[i].type)
+                            {
+                                case 'task':{
 
-                                // Показываем карточки только с загруженными объектами
-                                data[i].show = data[i].objects[0] !== undefined;
+                                    // Заменяем id объекта, на реальный объект
+                                    data[i].objects[0] = taskService.tasks_indexed[data[i].objects[0].objectId];
 
-                                self.feeds.push(data[i]);
+                                    // Показываем карточки только с загруженными объектами
+                                    data[i].show = data[i].objects[0] !== undefined;
+
+                                    self.feeds.push(data[i]);
+                                }
                             }
-                        }
 
-                    }
+                        }
+                    }, 1000);
                 });
             };
             __constructor();
