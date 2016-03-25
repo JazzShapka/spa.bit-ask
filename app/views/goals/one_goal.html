@@ -3,36 +3,70 @@
 
 	<div layout="row" class="main">
 
-	    <div ng-if="target.parentId === null" layout="row" layout-align="start center">
-	    	<md-button ng-click="showme=true" ng-hide="showme" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_down</md-icon>
-	        </md-button>
-	    	<md-button ng-click="showme=false" ng-show="showme" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_right</md-icon>
-	        </md-button>
-	        {{ target.description }}
-	    </div>
-	    <div ng-if="target.parentId !== null" layout="row" layout-align="start center" ng-hide="showme">
-	        {{ target.description }}
-	    </div>
-        
+		<div class="main-target">
 
-        <md-card-actions layout="row" layout-align="end center">
-	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">share</md-icon>
-	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">account_box</md-icon>
-	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">date_range</md-icon>
-	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
-	        	<md-icon class="md-secondary" aria-label="Chat">more_vert</md-icon>
-	        </md-button>
-        </md-card-actions>
+			<div layout="row">
 
-        <div ng-include="'app/views/goals/one_goal.html'"></div>
+			    <div ng-if="target.parentId === null" layout="row" layout-align="start center">
+			    	<md-button ng-click="target.showme=true" ng-hide="target.showme" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_right</md-icon>
+			        </md-button>
+			    	<md-button ng-click="target.showme=false" ng-show="target.showme" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_down</md-icon>
+			        </md-button>
+			        {{ target.description }}
+			    </div>
+
+			    <div ng-if="target.parentId !== null" layout="row" layout-align="start center" ng-hide="target.showme">
+			        {{ target.description }}
+			    </div>
+		        
+
+		        <md-card-actions layout="row" layout-align="end center">
+			        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">share</md-icon>
+			        </md-button>
+			        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">account_box</md-icon>
+			        </md-button>
+			        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">date_range</md-icon>
+			        </md-button>
+			        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+			        	<md-icon class="md-secondary" aria-label="Chat">more_vert</md-icon>
+			        </md-button>
+		        </md-card-actions>
+	        </div>
+
+	        
+	          <md-button ng-click="target.showme2=false" ng-show="target.showme2" class="md-icon-button">
+	          	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_down</md-icon>
+	          </md-button>
+	          <md-button ng-click="target.showme2=true" ng-hide="target.showme2" class="md-icon-button">
+	          	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_up</md-icon>
+	          </md-button>
+
+	      	<md-card ng-show="target.showme2">
+	        <md-card-title>
+	          <md-card-title-text>
+	            <span class="md-headline"></span>
+	            <span class="md-subhead"></span>
+	          </md-card-title-text>
+	          <md-card-title-media>
+	            <div class="md-media-sm card-media"></div>
+	          </md-card-title-media>
+	        </md-card-title>
+	        <md-card-actions layout="row" layout-align="end center">
+	          <md-button></md-button>
+	        </md-card-actions>
+	      	</md-card>
+
+	      	<div ng-show="target.showme" ng-include="'app/views/goals/one_goal.html'"></div>
+
+
+      	</div>
+
+
 
     </div>
 

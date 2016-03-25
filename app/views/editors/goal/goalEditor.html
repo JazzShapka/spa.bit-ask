@@ -41,33 +41,45 @@
 
                     <div flex></div>
 
-                    <md-button class="period-btn">День</md-button>
-                    <md-button class="period-btn">Неделя</md-button>
-                    <md-button class="period-btn selected">Месяц</md-button>
-                    <md-button class="period-btn">Год</md-button>
+                    <md-button class="period-btn" ng-class="goal.period=='day'?'selected':''" ng-click="selectPeriod('day')">
+                        День
+                    </md-button>
+                    <md-button class="period-btn" ng-class="goal.period=='week'?'selected':''" ng-click="selectPeriod('week')">
+                        Неделя
+                    </md-button>
+                    <md-button class="period-btn" ng-class="goal.period=='month'?'selected':''" ng-click="selectPeriod('month')">
+                        Месяц
+                    </md-button>
+                    <md-button class="period-btn" ng-class="goal.period=='year'?'selected':''" ng-click="selectPeriod('year')">
+                        Год
+                    </md-button>
                 </div>
                 <table class="indicators-table"><tbody>
                     <tr>
                         <td class="width-80px caption">Счетчик</td>
                         <td class="width-80px caption">Формула</td>
                         <td class="width-80px caption">Старт</td>
-                        <td class="" rowspan="3"></td>
+                        <td class="" rowspan="{{goal.indicators.length+1}}"></td>
                         <td class="width-80px caption">Итог</td>
-                        <td class="width-80px caption">Тип</td>
+                        <td class="width-120px caption">Тип</td>
                     </tr>
-                    <tr>
-                        <td>План</td>
+
+                    <tr ng-repeat="indicator in goal.indicators">
+                        <td>{{indicator.indicatorName}}</td>
+                        <td>{{indicator.formula}}</td>
+                        <td>
+                            <md-input-container>
+                                <input type="text" ng-model="indicator.startValue">
+                            </md-input-container>
+                        </td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Факт</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <md-select ng-model="indicator.type">
+                                <md-option ng-value="'average'">Среднее</md-option>
+                                <md-option ng-value="'last'">Последнее</md-option>
+                                <md-option ng-value="'sum'">Суммарное</md-option>
+                            </md-select>
+                        </td>
                     </tr>
                 </tbody></table>
             </div>

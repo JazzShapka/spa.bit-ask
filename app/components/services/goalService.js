@@ -206,7 +206,7 @@ angular.module('bitaskApp.service.goal', [
                 {
                     var userId = $auth.getPayload().sub;
                     // Получаем все цели
-                    bufferService.send([[uuid4.generate(), false, "target/list", {userId:userId}]], function (data){
+                    bufferService.send([[uuid4.generate(), false, "target/list", {userId:userId, beginDate:Date.now(), endDate:Date.now()}]], function (data){
 
                         // Добавляем все цели в массив отображения
                         for(var i=0; i<data.length; i++)
