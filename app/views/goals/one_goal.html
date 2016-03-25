@@ -8,12 +8,20 @@
             {{ target.description }}
         </div>
 
-        <md-button>
-        	<md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_up</md-icon>
-        </md-button>
-        <md-button>
-        	<md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_up</md-icon>
-        </md-button>
+        <md-card-actions layout="row" layout-align="end center">
+	        <md-button ng-click="doSecondaryAction($event)">
+	        	<md-icon class="md-secondary"  aria-label="Chat">trending_up</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)">
+	        	<md-icon class="md-secondary"  aria-label="Chat">timeline</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)">
+	        	<md-icon class="md-secondary"  aria-label="Chat">menu</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)">
+	        	<md-icon class="md-secondary"  aria-label="Chat">more_vert</md-icon>
+	        </md-button>
+        </md-card-actions>
 
 	</md-card>
 </div>
