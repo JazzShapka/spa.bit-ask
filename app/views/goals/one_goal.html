@@ -38,30 +38,18 @@
 		        </md-card-actions>
 	        </div>
 
-	        <md-card>
-	        <md-card-title>
-	          <md-card-title-text>
-	            <span class="md-headline">Card 1</span>
-	            <span class="md-subhead">Small</span>
-	          </md-card-title-text>
-	          <md-card-title-media>
-	            <div class="md-media-sm card-media"></div>
-	          </md-card-title-media>
-	        </md-card-title>
-	        <md-card-actions layout="row" layout-align="start center">
+	        
 	          <md-button ng-click="target.showme2=false" ng-show="target.showme2" class="md-icon-button">
 	          	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_down</md-icon>
 	          </md-button>
 	          <md-button ng-click="target.showme2=true" ng-hide="target.showme2" class="md-icon-button">
 	          	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_up</md-icon>
 	          </md-button>
-	        </md-card-actions>
-	      	</md-card>
 
 	      	<md-card ng-show="target.showme2">
 	        <md-card-title>
 	          <md-card-title-text>
-	            <span class="md-headline">Card 2</span>
+	            <span class="md-headline">Card 1</span>
 	            <span class="md-subhead">Small</span>
 	          </md-card-title-text>
 	          <md-card-title-media>
@@ -74,17 +62,12 @@
 	        </md-card-actions>
 	      	</md-card>
 
+	      	<div ng-show="target.showme" ng-include="'app/views/goals/one_goal.html'"></div>
+
 
       	</div>
 
 
-      
-
-
-        
-
-
-        <div ng-show="target.showme" ng-include="'app/views/goals/one_goal.html'"></div>
 
     </div>
 
