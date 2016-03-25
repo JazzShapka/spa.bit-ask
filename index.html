@@ -15,13 +15,13 @@
 <body ng-app="bitaskApp">
 
     <!-- Показываем шапку, если вход выполнен -->
-    <div ng-show="show_menu" ng-include="'app/views/header/header.html'"></div>
+    <div ng-if="show_menu" ng-include="'app/views/header/header.html'"></div>
 
     <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
 
     <!-- Круглая кнопка меню -->
-    <div ng-show="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
+    <div ng-if="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
 
 
     <!-- Конфиги -->

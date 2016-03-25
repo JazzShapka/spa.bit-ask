@@ -15,5 +15,5 @@ var bitaskAppConfig = {
     facebook_id:'vFacebookId',
 
     // Дебаг режим
-    debug: false
+    debug: vDebugMode
 };

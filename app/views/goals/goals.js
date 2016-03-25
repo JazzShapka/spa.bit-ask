@@ -1,47 +1,47 @@
 'use strict';
 
-angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.goal', 'underscore', 'ivh.treeview'])
+angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.goal'])
 
 .config(['$routeProvider', '$mdIconProvider', function($routeProvider, $mdIconProvider) {
   $routeProvider.when('/goals', {
     templateUrl: './app/views/goals/goals.html',
     controller: 'GoalsCtrl'
   });
-  $mdIconProvider
+  /*$mdIconProvider
     .iconSet('social', 'img/icons/sets/social-icons.svg', 24)
     .iconSet('device', 'img/icons/sets/device-icons.svg', 24)
     .iconSet('communication', 'img/icons/sets/communication-icons.svg', 24)
-    .defaultIconSet('img/icons/sets/core-icons.svg', 24);
+    .defaultIconSet('img/icons/sets/core-icons.svg', 24);*/
 }])
 
-.controller('GoalsCtrl', [ '$scope', 'bufferService', 'goalService', 'uuid4', '$mdDialog', '_', 
-	function($scope, bufferService, goalService, uuid4, $mdDialog, _) {
+.controller('GoalsCtrl', [ '$scope', 'bufferService', 'goalService', 'uuid4', '$mdDialog', 
+	function($scope, bufferService, goalService, uuid4, $mdDialog) {
 
 	//$scope.targets = [];
 	//$scope.targets = ['target 1', 'target 2'];
 	//console.log($scope.targets);
 
-	$scope.bufferService = bufferService;
+	//$scope.bufferService = bufferService;
 
 	$scope.targets = goalService.goals;
-	console.log("$scope.targets: ", $scope.targets);
+	//console.log("$scope.targets: ", $scope.targets);
 
 	//$scope.deleteTarget = deleteTarget;
 	//var vm = this;
 	//vm.deleteTarget = deleteTarget;
 
-	$scope.doSecondaryAction = function(event) {
-    	/*$mdDialog.show(
+	/*$scope.doSecondaryAction = function(event) {
+    	$mdDialog.show(
       		$mdDialog.alert()
 		        .title('Secondary Action')
 		        .textContent('Secondary actions can be used for one click actions')
 		        .ariaLabel('Secondary click demo')
 		        .ok('Neat!')
 		        .targetEvent(event)
-	    );*/
+	    );
 	    console.log("doSecondaryAction");
 	    getSubTarget();
-  	};
+  	};*/
 
   	/**
   	 * del
@@ -86,7 +86,7 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 	/**
 	 * Загружаем под цели
 	 */
-	function getSubTarget() {
+	/*function getSubTarget() {
 		
 		var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
 		var parentId = obj.id;
@@ -97,19 +97,19 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 
 		$scope.targets.push(objParent);
 		
-		/*var alldata = [[1,false,"task/subtasks",{"parentId":parentId}]];
-		bufferService.send(alldata, function(data) {
+		//var alldata = [[1,false,"task/subtasks",{"parentId":parentId}]];
+		//bufferService.send(alldata, function(data) {
 	        //console.log("selfsend: ", data);
-	        $scope.targets = data;
-	        console.log("data: ", data);
-	    });*/
-	}
+	        //$scope.targets = data;
+	        //console.log("data: ", data);
+	    //});
+	}*/
 
 
     /**
      * Добавить цель
      */
-    $scope.addTarget = function() {
+    /*$scope.addTarget = function() {
     	var uuid = uuid4.generate();
     	//console.log("addTarget uuid: ", uuid);
 
@@ -123,12 +123,12 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 	        $scope.targets = goalService.goals;
 
 	    });
-	}
+	}*/
 
     /**
      * Добавить подцель
      */
-    $scope.addSubTarget = function() {
+    /*$scope.addSubTarget = function() {
     	var uuid = uuid4.generate();
     	var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
     	console.log("addSubTarget for: ", obj.id);
@@ -141,12 +141,12 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 	        //$scope.getAllTarget();
 	    });
 
-    }
+    }*/
 
     /**
      * Удалить цель
      */
-    $scope.deleteTarget = function() {
+    /*$scope.deleteTarget = function() {
     	var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
     	console.log("obj: ", obj);
     	//$scope.targets;
@@ -159,12 +159,12 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 	        //$scope.targets = data;
 	        //$scope.getAllTarget();
 	    });
-	}
+	}*/
 
 	/**
 	 * Чекбокс вкл/выкл
 	 */
-	$scope.change = function() {
+	/*$scope.change = function() {
 		console.log("change");
     	var obj = _.find($scope.targets, function(obj) { return obj.selected == true });
     	console.log("obj: ", obj);
@@ -180,11 +180,11 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 
 		//target.parentId;
 		//getSubTarget();
-	}
+	}*/
 
 	//$scope.targets;
 
-	this.goals = [{
+	/*this.goals = [{
 	      label: 'Glasses',
 	      value: 'glasses',
 	      children: [{
@@ -194,23 +194,23 @@ angular.module('bitaskApp.goals', ['ngRoute', 'ngMaterial', 'bitaskApp.service.g
 	        label: 'Curly Mustache',
 	        value: 'mustachio'
 	      }]
-	}];
+	}];*/
 
-	this.awesomeCallback = function(node, tree) {
+	//this.awesomeCallback = function(node, tree) {
 	    // Do something with node or tree
-	};
+	//};
 
-	this.otherAwesomeCallback = function(node, isSelected, tree) {
+	//this.otherAwesomeCallback = function(node, isSelected, tree) {
 	    // Do soemthing with node or tree based on isSelected
-	}
+	//}
 
 
 	/**
 	 * Старт
 	 */
-	function init() {
+	//function init() {
 		//$scope.getAllTarget();
-	}
-	init();
+	//}
+	//init();
 
 }]);
