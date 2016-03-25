@@ -1,26 +1,19 @@
 <div ng-repeat="target in targets">
-
-<//div ng-show="!target.parentId">
-<md-list-item>
-
-        <md-checkbox ng-model="target.selected" ng-change="change()"></md-checkbox>
+	<md-card class="goals-card">
 
         <div ng-if="target.parentId === null">
-            [ + ] {{ target.description }}
+            [ V ] {{ target.description }}
         </div>
         <div ng-if="target.parentId !== null">
             {{ target.description }}
         </div>
 
+        <md-button>
+        	<md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_up</md-icon>
+        </md-button>
+        <md-button>
+        	<md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_up</md-icon>
+        </md-button>
 
-        <div ng-show="target.parentId">
-        </div>
-        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_up</md-icon>
-        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_flat</md-icon>
-        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">trending_down</md-icon>
-        <md-icon class="md-secondary" ng-click="doSecondaryAction($event)" aria-label="Chat">update</md-icon>
-
-</md-list-item>
-</div>
-
+	</md-card>
 </div>
