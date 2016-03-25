@@ -1,24 +1,26 @@
 <div ng-repeat="target in targets">
-	<md-card class="goals-card">
+	<md-card class="goals-card" layout="row">
 
-        <div ng-if="target.parentId === null">
-            [ V ] {{ target.description }}
-        </div>
-        <div ng-if="target.parentId !== null">
-            {{ target.description }}
-        </div>
+		
+	    <div ng-if="target.parentId === null" flex layout="row" layout-align="start center">
+	        [ V ] {{ target.description }}
+	    </div>
+	    <span ng-if="target.parentId !== null" flex layout="row" layout-align="start center">
+	        {{ target.description }}
+	    </span>
+        
 
         <md-card-actions layout="row" layout-align="end center">
-	        <md-button ng-click="doSecondaryAction($event)">
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
 	        	<md-icon class="md-secondary"  aria-label="Chat">trending_up</md-icon>
 	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)">
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
 	        	<md-icon class="md-secondary"  aria-label="Chat">timeline</md-icon>
 	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)">
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
 	        	<md-icon class="md-secondary"  aria-label="Chat">menu</md-icon>
 	        </md-button>
-	        <md-button ng-click="doSecondaryAction($event)">
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
 	        	<md-icon class="md-secondary"  aria-label="Chat">more_vert</md-icon>
 	        </md-button>
         </md-card-actions>
