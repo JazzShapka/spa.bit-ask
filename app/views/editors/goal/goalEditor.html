@@ -1,0 +1,94 @@
+<md-dialog aria-label="goal editor"  ng-cloak class="goal editor">
+    <!-- Шапка -->
+    <md-button class="close_button md-icon-button" ng-click="close()">
+        <md-tooltip md-direction="top">Закрыть</md-tooltip>
+        <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
+    </md-button>
+
+
+    <!-- Контент -->
+    <md-dialog-content ng-nicescroll nice-option="niceScrollOption()">
+        <div class="md-dialog-content">
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block name" md-no-float>
+                    <input maxlength="800" placeholder="Название цели/показателя" ng-model="goal.description" />
+                </md-input-container>
+
+                <md-input-container class="md-block date" md-no-float>
+                    <input disabled placeholder="Срок" ng-model="date"/>
+                </md-input-container>
+            </div>
+
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block performer" md-no-float>
+                    <input disabled placeholder="Делегировать"  value="Я" />
+                </md-input-container>
+
+                <md-input-container class="md-block parent" md-no-float>
+                    <input disabled placeholder="Родитель" ng-model="goal.parentId"/>
+                </md-input-container>
+            </div>
+
+            <!-- Таблица показателей -->
+            <div ng-show="indicators_open">
+                <div class="option_buttons">
+                    <span class="label">Отображать с </span>
+                    <md-datepicker class="date" ng-model="begin_date"></md-datepicker>
+                    <span class="label"> по </span>
+                    <md-datepicker class="date" ng-model="end_date"></md-datepicker>
+
+                    <div flex></div>
+
+                    <md-button class="period-btn">День</md-button>
+                    <md-button class="period-btn">Неделя</md-button>
+                    <md-button class="period-btn selected">Месяц</md-button>
+                    <md-button class="period-btn">Год</md-button>
+                </div>
+                <table class="indicators-table"><tbody>
+                    <tr>
+                        <td class="width-80px caption">Счетчик</td>
+                        <td class="width-80px caption">Формула</td>
+                        <td class="width-80px caption">Старт</td>
+                        <td class="" rowspan="3"></td>
+                        <td class="width-80px caption">Итог</td>
+                        <td class="width-80px caption">Тип</td>
+                    </tr>
+                    <tr>
+                        <td>План</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Факт</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody></table>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <!-- Кнопки -->
+    <md-dialog-actions layout="row">
+        <md-button class="md-icon-button" ng-click="openIndicators()">
+            <md-icon ng-hide="indicators_open" class="material-icons">keyboard_arrow_down</md-icon>
+            <md-icon ng-show="indicators_open" class="material-icons">keyboard_arrow_up</md-icon>
+        </md-button>
+        <span flex></span>
+        <md-button class="md-icon-button">
+            <md-tooltip md-direction="bottom">Поделиться...</md-tooltip>
+            <md-icon class="material-icons">share</md-icon>
+        </md-button>
+        <md-button class="md-icon-button" ng-click="delete()">
+            <md-tooltip md-direction="bottom">Удалить</md-tooltip>
+            <md-icon class="material-icons">delete_forever</md-icon>
+        </md-button>
+        <md-button class="md-raised submit-button" ng-click="save()">OK</md-button>
+    </md-dialog-actions>
+</md-dialog>

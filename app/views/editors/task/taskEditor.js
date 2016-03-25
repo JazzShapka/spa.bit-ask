@@ -8,89 +8,204 @@ angular.module('bitaskApp.editors.taskEditor', [
     .controller('taskEditor',['$scope', 'taskService', '$mdDialog', 'locals', '$interval', '$auth', 'uuid4', 'keyboardService',
         function ($scope, taskService, $mdDialog, locals, $interval, $auth, uuid4, keyboardService){
 
+            var task = {};
+
             $scope.task = {
                 taskName:'',
                 performer:'',
                 taskDescription:'',
-                parentId: ''
+                parentId: '',
+                status:''
             };
+
+            // Показать чекбокс завершения только при редактировании
+            $scope.show_completebox = (locals.mode == "edit");
+
+            /**
+             * Событие закрытия окна.
+             */
             locals.onClose = function (){
                 keyboardService.off();
-                $scope.save();
-            };
+            }
+            /**
+             * Кнопка сохранить (ОК)
+             */
             $scope.save = function (){
 
+                var param; // Наименование параметра
+
                 if($scope.task.parentId == '')
-                    $scope.task.parentId = taskService.new_task.id;
-                else if($scope.task.parentId == 'null')
                     $scope.task.parentId = null;
 
 
-                if($scope.task.taskName == '')
+                // Если поле имя и описание не заполнены, просто закрываем и выходим
+                if($scope.task.taskName == '' && $scope.task.taskDescription == '')
                 {
                     $scope.close();
                     return;
                 }
 
-                var task = {
+                // Если заполнено только описание, то копируем первые пять слов в название задачи
+                if($scope.task.taskName == '' && $scope.task.taskDescription != '')
+                {
+                    $scope.task.taskName = $scope.task.taskDescription.split(' ').splice(0, 5).join(' ');
+                }
 
-                    "id":uuid4.generate(),
-                    "taskName": $scope.task.taskName,
-                    "taskDescription": $scope.task.taskDescription,
-                    "createTime":1442895357,
 
-                    "timeBeginAuthor": null,
-                    "timeEndAuhor": null,
-                    "dateBeginAuthor": null,
-                    "dateEndAuthor": null,
-
-                    "timeBeginPerformer": null,
-                    "timeEndPerformer": null,
-                    "dateBeginPerformer": null,
-                    "dateEndPerformer": null,
-
-                    "regularSetting":null,
-
-                    "author": $auth.getPayload().email,
-                    "performer": $auth.getPayload().email,
-
-                    "shared":0,
-                    "directionBranch": "right",
-                    "viewBranch":"hide",
-                    "status":"delivered",
-                    "completeTime": 0,
-                    "reminder": 0,
-                    "changed": 0,
-                    "mapIndex": 0,
-                    "parentId": $scope.task.parentId,
-                    "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
-                    "actions":"227"
-                };
-
-                taskService.createTask(task);
-
+                // Если редактирование, но берем только те параметры которые изменились
+                if(locals.mode == 'edit')
+                {
+                    var new_params = {};
+                    for(param in $scope.task)
+                    {
+                        if($scope.task[param] != task[param])
+                            new_params[param] = $scope.task[param];
+                    }
+                    taskService.editTask(task.id, new_params);
+                }
+                // Если создание то отправляем объект целиком.
+                else
+                {
+                    for(param in $scope.task)
+                    {
+                        task[param] = $scope.task[param];
+                    }
+                    taskService.createTask(task);
+                }
 
                 $scope.close();
             };
+            /**
+             * Кнопка закрыть (Х)
+             */
             $scope.close = function (){
+
+
                 $mdDialog.hide();
             };
+            /**
+             * Кнопка - удалить задачу
+             */
+            $scope.delete = function (){
+                taskService.showDeleteTaskDialog(task.id);
+            };
+            /**
+             * Обработчик смены статуса (чекбокса)
+             */
+            $scope.setStatus = function (){
+                if($scope.task.status == 'completed')
+                    $scope.task.status = 'delivered';
+                else if($scope.task.status == 'delivered')
+                    $scope.task.status = 'completed';
+            }
+            /**
+             * Обработчик клавиш
+             */
+            keyboardService.on(null, function (event){
 
-            var __constructor = function (){
-                $scope.show_completebox = (locals.mode == "edit_task");
-                switch (locals.mode){
-                    case 'sub_task':
-                    case 'brother_task':
-                        $scope.form_name = "Создать задачу";
+                switch (event.keyCode){
+                    case 27:        // Esc
+                    {
+                        $scope.close();
                         break;
-                    case 'edit_task':
-                        $scope.form_name = "Редактировать задачу";
+                    }
+                }
+
+                if(event.ctrlKey && event.keyCode == 13 || event.keyCode == 10)
+                {
+                    $scope.save();
+                }
+            });
+
+            /**
+             * Получить задачу с которой работаем.
+             *
+             * Создает новый или получает существующий объект.
+             */
+            var getTask = function (){
+
+                var task;
+                if(locals.mode == 'edit')
+                    task = taskService.tasks_indexed[locals.taskId];
+                else
+                    task = {
+                        "id":uuid4.generate(),
+                        "taskName": "",
+                        "taskDescription": "",
+                        "createTime":1442895357,
+
+                        "timeBeginAuthor": null,
+                        "timeEndAuhor": null,
+                        "dateBeginAuthor": null,
+                        "dateEndAuthor": null,
+
+                        "timeBeginPerformer": null,
+                        "timeEndPerformer": null,
+                        "dateBeginPerformer": null,
+                        "dateEndPerformer": null,
+
+                        "regularSetting":null,
+
+                        "author": null,
+                        "performer": null,
+
+                        "shared":0,
+                        "directionBranch": "right",
+                        "viewBranch":"hide",
+                        "status":"delivered",
+                        "completeTime": 0,
+                        "reminder": 0,
+                        "changed": 0,
+                        "mapIndex": 0,
+                        "parentId": null,
+                        "role":19,  // 17 - автор, 18 - сполнитель, 19 - и то и то
+                        "actions":"227"
+                    }
+
+                // Определяем родителя
+                switch (locals.mode){
+                    case 'new':
+                        task.parentId = taskService.new_task.id
+                        break;
+                    case 'sub':
+                        task.parentId = locals.taskId;
+                        break;
+                    case 'brother':
+                        task.parentId = taskService.tasks_indexed[locals.taskId].parentId;
+                        break;
+                    case 'edit':
+                        break;
+                    default:
                         break;
                 }
 
-                keyboardService.on(function (){
-                    console.log('taskEditor - keypress');
-                });
+                return task;
+            };
+            /**
+             * Заполняем поля формы
+             */
+            var fillField = function (){
+
+                $scope.task.taskName = task.taskName;
+                $scope.task.performer = task.performer;
+                $scope.task.taskDescription = task.taskDescription;
+                $scope.task.parentId = task.parentId;
+                $scope.task.status = task.status;
+
+                $scope.parent = empty(taskService.tasks_indexed[task.parentId])?'':taskService.tasks_indexed[task.parentId].taskName;
+
+            };
+            /**
+             * Конструктор
+             * @private
+             */
+            var __constructor = function (){
+
+                // Получить задачу с которой работаем
+                task = getTask();
+
+                // Заполняем поля формы
+                fillField();
             };
             __constructor();
         }

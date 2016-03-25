@@ -1,4 +1,7 @@
 /* Float Button */
+.floating-button md-fab-speed-dial{
+    position: fixed;
+}
 .floating-button md-fab-speed-dial md-fab-trigger button{
     background-color: $main-color !important;
 

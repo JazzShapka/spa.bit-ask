@@ -6,52 +6,195 @@ angular.module('bitaskApp.service.task', [
     'bitaskApp.service.buffer',
     'uuid4'
 ])
-    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4',
-        function ($timeout, $mdDialog, bufferService, uuid4)
+    .service('taskService', ['$timeout', '$mdDialog', 'bufferService', 'uuid4', 'keyboardService',
+        function ($timeout, $mdDialog, bufferService, uuid4, keyboardService)
         {
 
             var self = this;
 
-            self.new_task = {};             // Папка новые задачи
-            self.tasks = [];                // Массив задач
-            self.tasks_indexed = {};        // Проиндексированные задачи
+            self.new_task = {};             // Папка новые задачи (один объект задачи)
+            self.tasks = [];                // Массив задач  (Массив задач)
+            self.tasks_indexed = {};        // Проиндексированные задачи (id=>task)
 
 
             /**
              * Открыть редактор задачи.
-             * @param mode - 'sub_task' || 'brother_task' || 'edit_task'
+             * @param mode - 'new' || 'sub' || 'brother' || 'edit'
+             * @param taskId - id задачи в контексте которой вызываем окно
+             *
+             *  ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ:
+             *
+             * 1) Создание новой задачи
+             *      taskService.showTaskEditor('new');
+             *      Создастся задача в папке новые задачи, тоесть в поле parentId записывается
+             *      id папки "Новые задачи"
+             *
+             * 2) Создание задачи на том же уровне
+             *      taskService.showTaskEditor('brother', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      Вторым параметром передаем id задачи на чьем уровне должна создаться подзадача.
+             *
+             * 3) Создание подзадачи
+             *      taskService.showTaskEditor('sub', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      Вторым параметром передаем id родительской задачи.
+             *
+             * 4) Редактирование задачи.
+             *      taskService.showTaskEditor('edit', "13cb2b00-c37c-f52a-1f2a-59b934a4c2b8");
+             *      Вторым параметром передаем id задачи которую хотим отредактировать.
+             *
+             *      -- Как то так...
              */
-            self.showTaskEditor = function (mode){
+            self.showTaskEditor = function (mode, taskId){
 
                 var locals = {
-                    mode:mode
-                };
+                    mode:mode,
+                    taskId:taskId
+                }
+
                 $mdDialog.show({
                     controller: 'taskEditor',
                     templateUrl: 'app/views/editors/task/taskEditor.html',
                     onRemoving: function (){
-                        if(typeof locals.onClose == 'function')
-                            locals.onClose();
+                        locals.onClose();
                     },
                     locals : locals,
-                    clickOutsideToClose:true
+                    escapeToClose: false,
+                    clickOutsideToClose:false
                 });
             };
+            /**
+             * Открыть диалог удаления задачи
+             *
+             * Открывает диалог удаления, для подтверждения удаления.
+             * Вопрос удалить / отмена
+             *
+             * Если выбрали удалить, то отправляется запрос на сервер и задача удаляется
+             * из массивов задач
+             */
+            self.showDeleteTaskDialog = function (taskId){
+                keyboardService.on();
 
+                var task = self.tasks_indexed[taskId];
+
+                if(empty(task))
+                {
+                    var alert = $mdDialog.confirm()
+                        .title('Удаление задачи')
+                        .textContent("Задача еще не создана")
+                        .ariaLabel('Delete task')
+                        .ok('Ок')
+                        //.cancel('Отмена');
+                    $mdDialog.show(alert).then(function (){
+                        keyboardService.off();
+                    });
+                }
+                else {
+                    var confirm = $mdDialog.confirm()
+                        .title('Удаление задачи')
+                        .textContent(empty(task.regularSetting)?'Вы собираетесь удалить задачу':'Удалить все будущие повторения?')
+                        .ariaLabel('Delete task')
+                        .ok('Удалить')
+                        .cancel('Отмена');
+                    $mdDialog.show(confirm).then(function() {
+
+                        self.deleteTask(task.id)
+
+                        bufferService.send([[ uuid4.generate(), true, "task/deletetask", {id: task.id} ]]);
+
+                        keyboardService.off();
+                    }, function() {
+                        keyboardService.off();
+                    });
+                }
+            }
+
+
+            /**
+             * Отправить запрос на создание задачи
+             *
+             * @param task - объект задачи (http://app.kras.1cbit.ru/bitmind/index.php/%D0%9F%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B0_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8)
+             */
+            self.createTask = function (task){
+
+                // Добавляем задачу в массив
+                self.addTaskOnView(task);
+
+                // Отправляем новую задачу на сервер
+                bufferService.send([[ uuid4.generate(), true, "task/addtask", task ]]);
+            };
             /**
              * Отправить запрос на изменение задачи
+             *
              * @param taskId - id задачи
-             * @param params - новые параметры
+             * @param params - новые параметры (объект ключ-значение)
              */
-            self.setTask = function (taskId, params){
+            self.editTask = function (taskId, params){
+
+                self.editTaskOnView(taskId, params);
 
                 params.id = taskId;
-
                 bufferService.send([[uuid4.generate(), true, "task/settask", params]]);
             };
+            /**
+             * Добавить задачу в массив отображающихся задач
+             * @param task - объект задачи (http://app.kras.1cbit.ru/bitmind/index.php/%D0%9F%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B0_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8)
+             */
+            self.addTaskOnView = function (task){
+                if(self.tasks_indexed.hasOwnProperty(task.id))
+                {
+                    // TODO: Описать, что делать, если задача с таким
+                }
+                else
+                {
+                    self.tasks.push(task);
+
+                    // Логирование
+                    //console.groupCollapsed(task.taskName);
+                    //console.log(task.taskName + ' ' + task.id);
+                    //console.groupEnd();
+                }
+
+            };
+            /**
+             * Обновить параметры у задачи в массиве задач
+             *
+             * @param taskId - id задачи
+             * @param params - Параметры, которые нужно изменить (объект ключ-значение)
+             */
+            self.editTaskOnView = function (taskId, params){
+
+                for(var param in params)
+                {
+                    self.tasks_indexed[taskId][param] = params[param];
+                }
+            }
+            /**
+             * Удалить задачу из хранилища
+             * @param taskId - id задачи
+             *
+             * Удаляет объект задачи из массивов self.tasks и self.tasks_indexed
+             */
+            self.deleteTask = function (taskId){
+                for(var i=0; i<self.tasks.length; i++)
+                {
+                    if(self.tasks[i].id == taskId)
+                    {
+                        self.tasks.splice(i, 1);
+                        break;
+                    }
+
+                }
+
+                delete self.tasks_indexed[taskId];
+            };
+
 
             /**
-             * Обновить количество подзадач
+             * Обновить количество загруженых подзадач
+             *
+             * Добавляет к объектам задач параметр "children_quantity"
+             * Который указывает количество ЗАГРУЖЕННЫХ подзадач.
+             * Реальное количество подзадач приходит с сервера в параметре "children"
+             *
              */
             self.refreshChildren = function (){
 
@@ -70,10 +213,13 @@ angular.module('bitaskApp.service.task', [
                     }
                 }
             };
-
             /**
              * Получить подзадачи.
              * @param taskIds - массив id родителей || строка с id
+             *
+             * Проверяет, если реальное количество задач (children) отличается от
+             * загруженного количества задач (children_quantity), то отправляет запрос на сервер
+             * для получения подзадач.
              */
             self.getChildren = function (taskIds){
 
@@ -106,43 +252,11 @@ angular.module('bitaskApp.service.task', [
                     });
                 }
             };
-
             /**
-             * Создать задачу
-             * @param task
-             */
-            self.createTask = function (task){
-
-                // Добавляем задачу в массив
-                self.addTaskOnView(task);
-
-                // Отправляем новую задачу на сервер
-                bufferService.send([[ uuid4.generate(), true, "task/addtask", task ]]);
-            };
-
-            /**
-             * Добавить задачу в массив отображающихся задач
-             * @param task
-             */
-            self.addTaskOnView = function (task){
-                if(self.tasks_indexed.hasOwnProperty(task.id))
-                {
-
-                }
-                else
-                {
-                    self.tasks.push(task);
-
-                    // Логирование
-                    //console.groupCollapsed(task.taskName);
-                    //console.log(task.taskName + ' ' + task.id);
-                    //console.groupEnd();
-                }
-
-            };
-
-            /**
-             * Загрузка наперед ще не открытых задач
+             * Загрузка наперед еще не открытых задач
+             *
+             * Если у задачи есть подзадачи и она еще не открыта, загружаем
+             * их, чтобы не тормозило при открытии задачи.
              */
             self.loadingAdvance = function (){
 
@@ -158,6 +272,24 @@ angular.module('bitaskApp.service.task', [
                 // Получаем детей загруженых задач (Загрузка на перед)
                 self.getChildren(taskIds);
             };
+            /**
+             * Свернуть все задачи и отправить на сервер.
+             *
+             * Перебирает все задачи и ставит параметр viewBranch = 'hide',
+             * Затем отправляет запрос на сервер, о том, что все задачи надо свернуть
+             *
+             */
+            self.shrinkAllTasks = function (){
+                for(var i=0; i<self.tasks.length; i++)
+                {
+                    self.tasks[i].viewBranch = 'hide';
+                }
+
+                bufferService.send([[uuid4.generate(), true, "task/shrinkalltask"]], function (data){
+
+
+                });
+            }
 
             /**
              * Конструктор

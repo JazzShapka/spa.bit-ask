@@ -1,4 +1,4 @@
-<div class="task_background" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true"
+<div class="task_background" ng-if="(task.status == 'new_task' && task.children_quantity > 0) || (task.status == 'completed' && show_completed) || task.status == 'delivered'" ng-repeat="task in tasks | orderBy:'index' | filter:{parentId:(task?task.id:null)}:true"
      on-finish-render="onRenderTask">
 
     <!-- Соеденительные линии -->
@@ -8,7 +8,7 @@
     </div>
 
     <!-- Блок задачи -->
-    <div class="task" data-id="{{task.id}}" ng-click="selectTask(task.id)" ng-draggable helper="clone" cursor="default">
+    <div class="task" ng-context-menu  data-id="{{task.id}}" ng-dblclick="taskDbclick(task.id)" ng-click="selectTask(task.id)" ng-draggable helper="clone" cursor="default">
         <div ng-show="task.status!='new_task'">
             <md-tooltip md-direction="bottom">{{task.status=='completed'?'Отменить выполнение':'Выполнить задачу'}}</md-tooltip>
             <md-checkbox ng-checked="task.status=='completed'" ng-click="comleteTask(task.id, $event)" aria-label="complete" class="completebox md-primary"></md-checkbox>
@@ -56,10 +56,11 @@
             </div>
             <div>
                 <md-tooltip md-direction="top">Контекстное меню</md-tooltip>
-                <md-icon class="material-icons gray">more_vert</md-icon>
+                <md-icon ng-click="contextmenu(task.id, $event)" class="material-icons gray">more_vert</md-icon>
             </div>
         </div>
 
+        <!-- Стрелки открытия и напрвления открытия -->
         <div class="expand_block" ng-class="getExpandBoxClass(task.id)" ng-show="task.children_quantity">
 
             <svg class="arrow_main" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px" ng-click="expandTask(task.id)">
@@ -67,7 +68,7 @@
                 <polyline class="arrow_right" fill="none" stroke="#CADFFC" stroke-width="1.5" points="7,4 12,9 7,14" />
                 <polyline class="arrow_left" fill="none" stroke="#CADFFC" stroke-width="1.5" points="12,4 7,9 12,14" />
             </svg>
-            <svg class="arrow_middle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px">
+            <svg class="arrow_middle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="18px" height="18px" ng-click="setDirection(task.id)">
                 <circle cx="9px" cy="9px" r="8px" fill="#FFFFFF" stroke="#CADFFC"  stroke-width="1.5"/>
                 <polyline fill="none" stroke="#CADFFC" stroke-width="1.5" points="4,7 9,12 14,7" />
             </svg>

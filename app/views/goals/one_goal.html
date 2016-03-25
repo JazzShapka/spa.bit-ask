@@ -1,0 +1,40 @@
+<div ng-repeat="target in targets | filter:{parentId:(target?target.id:null)}:true" layout="row">
+	<md-card class="goals-card" data-parent-id="{{target.parentId}}">
+
+	<div layout="row" class="main">
+
+	    <div ng-if="target.parentId === null" layout="row" layout-align="start center">
+	    	<md-button ng-click="showme=true" ng-hide="showme" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_down</md-icon>
+	        </md-button>
+	    	<md-button ng-click="showme=false" ng-show="showme" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">keyboard_arrow_right</md-icon>
+	        </md-button>
+	        {{ target.description }}
+	    </div>
+	    <div ng-if="target.parentId !== null" layout="row" layout-align="start center" ng-hide="showme">
+	        {{ target.description }}
+	    </div>
+        
+
+        <md-card-actions layout="row" layout-align="end center">
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">share</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">account_box</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">date_range</md-icon>
+	        </md-button>
+	        <md-button ng-click="doSecondaryAction($event)" class="md-icon-button">
+	        	<md-icon class="md-secondary" aria-label="Chat">more_vert</md-icon>
+	        </md-button>
+        </md-card-actions>
+
+        <div ng-include="'app/views/goals/one_goal.html'"></div>
+
+    </div>
+
+	</md-card>
+</div>

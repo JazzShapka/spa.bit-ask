@@ -11,6 +11,11 @@ $normal-icon-color: #B5B7B8;
 $hover-icon-color: #636466;
 
 
+.width-80px{
+    width: 80px;
+}
+
+
 
 @import "../../../bower_components/angular-material/angular-material.scss";
 
@@ -22,5 +27,5 @@ $hover-icon-color: #636466;
 @import "../../views/schedule/schedule";
 @import "../../views/floating_button/floating_button";
 @import "../../views/hierarchy_task/hierarchy_task";
-@import "../../views/index/index";
+@import "../../views/feed/feed";
 @import "../../views/editors/editors";

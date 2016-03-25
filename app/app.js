@@ -2,6 +2,7 @@
 
 // Объявления приложения и модулей для представлений и компонент
 angular.module('bitaskApp', [
+    // Сторонние модули
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
@@ -9,6 +10,7 @@ angular.module('bitaskApp', [
     'satellizer',
     'angular-nicescroll',
 
+    // Наши модули
     'bitaskApp.index',
     'bitaskApp.goals',
     'bitaskApp.schedule',
@@ -16,13 +18,7 @@ angular.module('bitaskApp', [
     'bitaskApp.header',
     'bitaskApp.floating_button',
     'bitaskApp.config',
-    'bitaskApp.hierarchy_task',
-    'bitaskApp.service.task',
-    'bitaskApp.service.buffer',
-    'bitaskApp.service.db',
-    'stompService',
-    'buffer'
-    //'stompdk'
+    'bitaskApp.hierarchy_task'
 ])
 
 // Конфигурация приложения
@@ -82,8 +78,13 @@ angular.module('bitaskApp', [
 //На каждое удачно изменение роутера мы обновляем router, который можно использовать в любом тимплейте {{router}}
 .run(['$rootScope','$location', '$auth', function($rootScope, $location, $auth) {
 
+    $location.history = [];
+
     $rootScope.router = $location.path();
     $rootScope.$on('$routeChangeSuccess', function (event, current) {
+
+        // Сохраняем историю посещений в приделах текущего домена
+        $location.history.push($location.path());
 
         $rootScope.router = $location.path();
         $rootScope.current = current.$$route;
@@ -93,4 +94,8 @@ angular.module('bitaskApp', [
         $rootScope.show_menu = !auth_page && $rootScope.router!='/config';
     });
 }]);
+
+function empty(mixed_var){
+    return ( (typeof mixed_var == 'number' && isNaN(mixed_var)) ||  mixed_var === undefined || mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === 'null' || mixed_var === false || mixed_var === 'false' || ( Array.isArray(mixed_var) && mixed_var.length === 0 ) || (typeof mixed_var == "object" && $.isEmptyObject(mixed_var)));
+}
 

@@ -27,12 +27,15 @@
     "angular-uuid4": "^0.3.1",
     "angular-nicescroll": "^0.0.9",
     "AngularStompDK": "^0.8.1",
-    "angular-local-storage": "^0.2.5",
     "angular-cache": "^4.5.0",
     "angular-offline": "^0.1.0",
     "ngQueue": "^0.1.0",
     "angular-pouchdb": "^4.1.0",
-    "pouchdb": "^5.3.0"
+    "pouchdb": "^5.3.0",
+    "pouchdb-find": "^0.9.0",
+    "angular-ivh-treeview": "^1.0.3",
+    "jquery-mousewheel": "^3.1.13",
+    "angular-underscore-module": "^1.0.3"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.14.2",

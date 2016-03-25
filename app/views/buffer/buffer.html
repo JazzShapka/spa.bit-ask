@@ -1,5 +1,5 @@
-<md-button ng-click="bufferService.getCard(12)">
-POST1
+<md-button ng-click="bufferService.sendData()">
+SEND
 </md-button>
 <md-button ng-click="bufferService.setTask('Новая задача 002')">
 setTask
@@ -7,8 +7,8 @@ setTask
 <md-button ng-click="bufferService.getTasks()">
 getTasks
 </md-button>
-<md-button ng-click="bufferService.test()">
-Test
+<md-button ng-click="bufferService.deleteTask('ba1eb446-0bb3-ab0a-3e44-a182fc48d724')">
+deleteTask
 </md-button>
 
 
@@ -27,7 +27,15 @@ Test
 
 <pre>{{ makePOST | json }}</pre>
 
-<pre>{{ test }}</pre>
+Queue:
+<div ng-repeat="queue in queues">
+	<pre>{{ queue }}</pre>
+</div>
+<br>
+Tasks:
+<div ng-repeat="doc in docs">
+	<pre>{{ doc }}</pre>
+</div>
 
 <div ng-repeat="doc in docs">
     <pre><code ng-bind="doc | json"></code></pre>

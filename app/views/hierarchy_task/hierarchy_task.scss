@@ -1,3 +1,7 @@
+body *{
+    //background-color: rgba(0, 0, 0, .05);
+}
+
 .hierarchy_task_window{
     left: 0;
     top: 0;
@@ -15,6 +19,25 @@
     float: left;
     position: absolute;
     //border: 1px solid black;
+}
+
+// Кнопки управления
+.hierarchy_task_window .button_panel{
+    left: 0;
+
+    width: 100%;
+    height: 40px;
+    position: fixed;
+    display: flex;
+    z-index: 2;
+}
+.hierarchy_task_window .button_panel .md-icon-button{
+    top: 64px;
+    position: relative;
+}
+.hierarchy_task_window .button_panel .switch{
+    top: 54px;
+    position: relative;
 }
 
 // Блок задачи
@@ -173,12 +196,17 @@
 .task_background .task .sub_buttons:hover{
     display: flex;
 }
-.task_background .task .buttons:hover + .sub_buttons{
+.task_background .task:hover .sub_buttons{
     display: flex;
 }
 .task_background .task .buttons .material-icons.gray.none{
     display: none;
 }
+.task_background .task md-icon{
+    outline: none;
+}
+
+// Кнопки разворачивания
 .task_background .expand_block{
     width: 18px;
     height: 18px;
@@ -188,6 +216,9 @@
 .task_background .expand_block svg{
     outline: none;
 }
+.task_background .expand_block .arrow_main{
+    position: relative;
+}
 .task_background .expand_block .arrow_middle{
     //display: none;
     opacity: 0;
@@ -196,6 +227,7 @@
     -ms-transition: opacity 200ms ease-out 400ms;
     -o-transition: opacity 200ms ease-out 400ms;
     transition: opacity 200ms ease-out 400ms;
+
     position: relative;
 
 }
@@ -207,11 +239,23 @@
     display: block;
     opacity: 1;
 }
-.task_background .expand_block.right{
+
+.task_background .expand_block.right .arrow_main{
     left: 12px;
 }
 .task_background .expand_block.right .arrow_middle{
+    left: 12px;
     top: -2px;
+}
+.task_background .expand_block.bottom .arrow_main{
+    left: -210px;
+    top: 17px;
+    transform: rotate(90deg);
+}
+.task_background .expand_block.bottom .arrow_middle{
+    left: -187px;
+    top: -5px;
+    transform: rotate(-90deg);
 }
 
 .task_background .expand_block.open .arrow_right{

@@ -1,41 +1,94 @@
 // Верхняя часть
-.editor md-toolbar{
-    background-color: $main-color !important;
+.editor .close_button{
+    top: 0;
+    left: 4px;
+    align-self: flex-end;
+    position: relative;
 }
 
 // Средняя часть
 .editor md-dialog-content{
     width: 780px;
 }
-.editor md-dialog-content .task-name{
+.editor md-dialog-content .name{
     margin-right: 10px;
 }
-.editor md-dialog-content .task-name input{
+.editor md-dialog-content .name input{
     width: 500px;
 }
-.editor md-dialog-content .task-name md-checkbox{
+.editor md-dialog-content .name md-checkbox{
     top: 5px;
     margin-left: -31px;
     position: relative;
     float: left;
 }
-.editor md-dialog-content .task-date{
+.editor md-dialog-content .date{
 
 }
-.editor md-dialog-content .task-performer{
+.editor md-dialog-content .performer{
     margin-right: 10px;
 }
-.editor md-dialog-content .task-performer input{
+.editor md-dialog-content .performer input{
     width: 380px;
 }
-.editor md-dialog-content .task-parent input{
+.editor md-dialog-content .parent input{
     width: 333px;
 }
-.editor md-dialog-content .task-description textarea{
+.editor md-dialog-content .description textarea{
     width: 725px;
 }
 
-// Кнопки внизу
+// Стиль редактора целей
+.editor.goal .option_buttons{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.editor.goal .option_buttons .label{
+
+}
+.editor.goal .option_buttons .date{
+    width:85px;
+    margin: 0 5px;
+}
+.editor.goal .option_buttons .date button{
+    display: none;
+}
+.editor.goal .option_buttons .date .md-datepicker-input-container{
+    margin: 0;
+}
+.editor.goal .option_buttons .period-btn{
+    margin: 0;
+}
+.editor.goal .option_buttons .period-btn.selected{
+    background: #D6D6D6;
+}
+
+// Таблица редактора целей
+.editor.goal .indicators-table{
+    width: 100%;
+    margin: 20px 0;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-collapse: collapse;
+}
+.editor.goal .indicators-table tr{
+    height: 30px;
+}
+.editor.goal .indicators-table tr:nth-child(2n){
+    background: #EEEEEE;
+}
+.editor.goal .indicators-table td{
+    text-align: center;
+    vertical-align: middle;
+    border-left: 1px solid rgba(0,0,0,0.12);
+}
+.editor.goal .indicators-table td.caption{
+    background: #CCCCCC;
+}
+
+
+    // Кнопки внизу
 .editor md-dialog-actions{
-    padding-bottom: 25px;
+    padding: 0 24px 25px 16px;
 }

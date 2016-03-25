@@ -1,45 +1,40 @@
 <md-dialog aria-label="task editor"  ng-cloak class="task editor">
     <!-- Шапка -->
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>{{form_name}}</h2>
-            <span flex></span>
-            <md-button class="md-icon-button" ng-click="close()">
-                <md-tooltip md-direction="top">Сохранить и закрыть</md-tooltip>
-                <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
-            </md-button>
-        </div>
-    </md-toolbar>
+    <md-button class="close_button md-icon-button" ng-click="close()">
+        <md-tooltip md-direction="top">Закрыть</md-tooltip>
+        <md-icon class="material-icons" aria-label="Close dialog">close</md-icon>
+    </md-button>
+
 
     <!-- Контент -->
     <md-dialog-content ng-nicescroll nice-option="{cursorcolor: '#424242', zindex:81}">
         <div class="md-dialog-content">
 
             <div layout-gt-sm="row">
-                <md-input-container class="md-block task-name md-icon-left" md-no-float>
-                    <md-checkbox ng-if="show_completebox" class="md-primary"></md-checkbox>
+                <md-input-container class="md-block name md-icon-left" md-no-float>
+                    <md-checkbox ng-click="setStatus()" ng-checked="task.status=='completed'" ng-if="show_completebox" class="md-primary" aria-label="complete"></md-checkbox>
                     <md-icon ng-if="!show_completebox" class="material-icons">assignment_turned_in</md-icon>
-                    <input placeholder="Добавить задачу" ng-model="task.taskName" />
+                    <input maxlength="800" placeholder="Добавить задачу" ng-model="task.taskName" />
                 </md-input-container>
 
-                <md-input-container class="md-block task-date" md-no-float>
-                    <input placeholder="Срок" ng-model="date"/>
+                <md-input-container class="md-block date" md-no-float>
+                    <input disabled placeholder="Срок" ng-model="date"/>
                 </md-input-container>
             </div>
 
 
             <div layout-gt-sm="row">
-                <md-input-container class="md-block task-performer" md-no-float>
-                    <input placeholder="Исполнитель" ng-model="task.performer" />
+                <md-input-container class="md-block performer" md-no-float>
+                    <input disabled placeholder="Исполнитель"  value="Я" />
                 </md-input-container>
 
-                <md-input-container class="md-block task-parent" md-no-float>
-                    <input placeholder="Создать в папке" ng-model="task.parentId" />
+                <md-input-container class="md-block parent" md-no-float>
+                    <input disabled placeholder="Создать в папке" ng-model="parent"/>
                 </md-input-container>
             </div>
 
-            <md-input-container class="md-block task-description" md-no-float>
-                <textarea placeholder="Описание задачи" ng-model="task.taskDescription"></textarea>
+            <md-input-container class="md-block description" md-no-float>
+                <textarea maxlength="3000" placeholder="Описание задачи" ng-model="task.taskDescription"></textarea>
             </md-input-container>
 
         </div>
@@ -56,9 +51,10 @@
             <md-tooltip md-direction="bottom">Поделиться...</md-tooltip>
             <md-icon class="material-icons">share</md-icon>
         </md-button>
-        <md-button class="md-icon-button">
+        <md-button class="md-icon-button" ng-click="delete()">
             <md-tooltip md-direction="bottom">Удалить</md-tooltip>
             <md-icon class="material-icons">delete_forever</md-icon>
         </md-button>
+        <md-button class="md-raised submit-button" ng-click="save()">OK</md-button>
     </md-dialog-actions>
 </md-dialog>

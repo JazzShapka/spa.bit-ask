@@ -15,13 +15,13 @@
 <body ng-app="bitaskApp">
 
     <!-- Показываем шапку, если вход выполнен -->
-    <div ng-show="show_menu" ng-include="'app/views/header/header.html'"></div>
+    <div ng-if="show_menu" ng-include="'app/views/header/header.html'"></div>
 
     <!-- Вид (сюда загружаются представления) -->
     <div ng-view></div>
 
     <!-- Круглая кнопка меню -->
-    <div ng-show="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
+    <div ng-if="show_menu" ng-include="'app/views/floating_button/floating_button.html'"></div>
 
 
     <!-- Конфиги -->
@@ -30,6 +30,7 @@
 
     <!-- Загруженные компоненты -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-aria/angular-aria.js"></script>
@@ -39,19 +40,23 @@
 
     <script src="bower_components/satellizer/satellizer.js"></script>
 
-    <script src="bower_components/sockjs-client/dist/sockjs-1.0.3.js"></script>
+    <script src="bower_components/sockjs-client/dist/sockjs-1.0.3.min.js"></script>
     <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
-    <script src="bower_components/AngularStompDK/dist/angular-stomp.js"></script>
+    <script src="bower_components/AngularStompDK/dist/angular-stomp.min.js"></script>
 
     <script src="bower_components/DateJS/build/date.js"></script>
     <script src="bower_components/angular-draggable-bt/draggable.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-uuid4/angular-uuid4.js"></script>
-    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
     <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
-    <script src="bower_components/angular-offline/angular-offline.js"></script>
     <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
+    <script src="bower_components/pouchdb-find/dist/pouchdb.find.js"></script>
     <script src="bower_components/angular-pouchdb/angular-pouchdb.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/angular-underscore-module/angular-underscore-module.js"></script>
+    <script src="bower_components/angular-ivh-treeview/dist/ivh-treeview.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ivh-treeview/dist/ivh-treeview.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css">
     <script src="bower_components/angular-nicescroll/angular-nicescroll.js"></script>
     <script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
 
@@ -62,14 +67,13 @@
     <script src="app/views/header/header.js"></script>
     <script src="app/views/config/config.js"></script>
     <script src="app/views/floating_button/floating_button.js"></script>
-    <script src="app/views/index/index.js"></script>
+    <script src="app/views/feed/feed.js"></script>
     <script src="app/views/goals/goals.js"></script>
     <script src="app/views/schedule/schedule.js"></script>
     <script src="app/views/login/login.js"></script>
     <script src="app/views/hierarchy_task/hierarchy_task.js"></script>
-    <script src="app/views/buffer/buffer.js"></script>
     <script src="app/views/editors/task/taskEditor.js"></script>
-    <script src="app/views/buffer/stompdk.js"></script>
+    <script src="app/views/editors/goal/goalEditor.js"></script>
 
     <!-- Фактори -->
     <script src="app/components/factory/localStorage.js"></script>
@@ -78,12 +82,14 @@
     <script src="app/components/services/taskService.js"></script>
     <script src="app/components/services/dateService.js"></script>
     <script src="app/components/services/bufferService.js"></script>
-    <script src="app/components/services/stompService.js"></script>
-    <script src="app/components/services/dbService.js"></script>
     <script src="app/components/services/keyboardService.js"></script>
     <script src="app/components/services/userService.js"></script>
+    <script src="app/components/services/feedService.js"></script>
+    <script src="app/components/services/goalService.js"></script>
 
     <!-- Директивы -->
     <script src="app/components/directive/onFinishRender.js"></script>
+    <script src="app/components/directive/onRightClick.js"></script>
+    <script src="app/components/directive/contextMenu.js"></script>
 </body>
 </html>

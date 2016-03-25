@@ -18,14 +18,22 @@ angular.module('bitaskApp.hierarchy_task', [
         });
     }])
     .controller('HierarchyTaskCtrl', ['$scope', '$log', 'taskService', 'dateService', '$document', 'keyboardService',
-        'userService', '$timeout',
-        function($scope, $log, taskService, dateService, $document, keyboardService, userService, $timeout) {
+        'userService', '$timeout', '$location',
+        function($scope, $log, taskService, dateService, $document, keyboardService, userService, $timeout, $location) {
 
             var selected_element = false,   // Выбранный элемент (с классом task_background)
                 selected_id = false;        // id выбранного элемента
 
             $scope.tasks = taskService.tasks;
+            $scope.show_completed = true;
 
+            /**
+             * Отслеживать изменение в задачах.
+             * Обновляет счетчик детей задачи
+             */
+            $scope.$watch(function () {
+                return taskService.tasks;
+            }, taskService.refreshChildren, true);
             /**
              * Центровка холста.
              *
@@ -33,6 +41,8 @@ angular.module('bitaskApp.hierarchy_task', [
              * нужную сторону, если нужно.
              */
             $scope.dropCanvas = function (){
+
+                // TODO: движеие холста в карте задач, сделоно на jquery, по возможности использовать агуляр
 
                 var canvas = $(this);
                 var window = $($document);
@@ -62,31 +72,58 @@ angular.module('bitaskApp.hierarchy_task', [
                 else if(canvas_pos.left < 0 && canvas_pos.top > 0 && canvas_pos.right > 0 && canvas_pos.bottom < 0)
                     canvas.animate({left:-(canvas_width-window_width), top: 0}, 200);
             };
-
             /**
-             * Отслеживать изменение в задачах.
-             * Обновляет счетчик детей задачи
+             * Кнопка - вернуться назад
              */
-            $scope.$watch(function () {
-                    return taskService.tasks;
-                }, taskService.refreshChildren, true);
+            $scope.goBack = function (){
 
+                if($location.history[$location.history.length - 2])
+                {
+                    $location.url($location.history[$location.history.length - 2]);
+                }
+                else
+                {
+                    $location.url('/');
+                }
+
+            };
+            /**
+             * Свернуть все задачи
+             */
+            $scope.shrinkAllTasks = function (){
+                taskService.shrinkAllTasks();
+
+                var task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+                distinguishTask(task_elem);
+                userService.setValue('selected_task', selected_id);
+            }
+            /**
+             * Переключение выключателя выполненных задач
+             *
+             */
+            $scope.changeCompletedSwitch = function (){
+                if($scope.show_completed)
+                    userService.setValue('show_completed', 'true');
+                else
+                    userService.setValue('show_completed', 'false');
+            }
             /**
              * Галочка - выполнить задачу.
              * @param taskId
+             * @param $event - объект события (не обязательно)
              */
             $scope.comleteTask = function (taskId, $event){
-                $event.stopPropagation();
+                if($event)
+                    $event.stopPropagation();
 
                 if(taskService.tasks_indexed[taskId].status == 'delivered')
-                    taskService.tasks_indexed[taskId].status = 'completed';
+                    taskService.editTask(taskId, {status:'completed'});
 
                 else if(taskService.tasks_indexed[taskId].status == 'completed')
-                    taskService.tasks_indexed[taskId].status = 'delivered';
+                    taskService.editTask(taskId, {status:'delivered'});
 
-                taskService.setTask(taskId, {status:taskService.tasks_indexed[taskId].status});
+
             };
-
             /**
              * Кнопка - развернуть задачу
              * @param taskId - id задачи
@@ -108,7 +145,7 @@ angular.module('bitaskApp.hierarchy_task', [
                         // Загружаем наперед
                         taskService.loadingAdvance();
                     }
-                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
+                    taskService.editTask(taskId, {viewBranch:task.viewBranch});
                 }
                 // Если не задано то просто меняем на противоположное
                 else
@@ -122,39 +159,241 @@ angular.module('bitaskApp.hierarchy_task', [
                         taskService.loadingAdvance();
                     }
 
-                    taskService.setTask(taskId, {viewBranch:task.viewBranch});
+                    taskService.editTask(taskId, {viewBranch:task.viewBranch});
                 }
 
 
             };
+            /**
+             * Изменить направление раскрытия задачи
+             * @param taskId - id задачи
+             */
+            $scope.setDirection = function (taskId){
 
+                var task = taskService.tasks_indexed[taskId];
+
+                if(task.directionBranch == 'right')
+                    task.directionBranch = 'bottom';
+                else
+                    task.directionBranch = 'right';
+
+            }
+            /**
+             * Выделение задачи мышью
+             * @param taskId - id Задачи
+             */
             $scope.selectTask = function (taskId){
-                var task_elem = angular.element('.hierarchy_task_background').find('[data-id = "'+ taskId +'"]');
-                if(task_elem.length)
-                {
-                    if(selected_element)
-                        selected_element.removeClass('selected');
-
-                    selected_element = task_elem.parent().addClass('selected');
-                    selected_id = taskId;
-
-                    userService.setValue('selected_task', selected_id);
-                }
+                if(distinguishTask(taskId, 'border'))
+                    userService.setValue('selected_task', taskId);
             };
-
+            /**
+             * Обработчик события окончательной отрисовки задач
+             */
             $scope.onRenderTask = function (){
                 userService.getValue('selected_task', function (response){
                     if(response.value)
                     {
-                        var task_elem = angular.element('.hierarchy_task_background').find('[data-id = "'+ response.value +'"]');
-                        if(task_elem.length)
-                        {
-                            selected_element = task_elem.parent().addClass('selected');
-                            selected_id = response.value;
-                        }
+                        distinguishTask(response.value);
                     }
                 })
-            }
+            };
+            /**
+             * Обработка нажатий клавиш
+             */
+            keyboardService.on(null, function (event){
+
+                var task_elem, self_task, old_selected_id = selected_id;
+
+                var focusToFirstElement = function (){
+                    task_elem = angular.element('.hierarchy_task_background').find('.task:first');
+                    distinguishTask(task_elem);
+                }
+
+                // Если нажаты клавиши стрелок, а элемент еще не выбран
+                if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
+                {
+                    focusToFirstElement();
+                    return;
+                }
+
+                switch (event.keyCode)
+                {
+                    case 38:    // up
+                    {
+                        var prev_element = selected_element.prev ();
+                        if (prev_element.length)
+                            distinguishTask(prev_element.find ('.task:first'));
+                        break;
+                    }
+                    case 40:    // down
+                    {
+                        var next_element = selected_element.next ();
+                        if (next_element.length)
+                            distinguishTask(next_element.find ('.task:first'));
+                        break;
+                    }
+                    case 37:    // left
+                    {
+                        self_task = taskService.tasks_indexed[selected_id];
+                        if(self_task == undefined)
+                            focusToFirstElement();
+
+                        if(self_task.children_quantity && self_task.viewBranch == 'show')
+                        {
+                            $scope.expandTask(self_task.id, 'hide');
+                            $scope.$apply();
+
+                            $timeout(function (){
+                                alignToSenter(selected_element.find('.task:first'));
+                            });
+                        }
+                        else
+                        {
+                            var new_selected_element = selected_element.parent().parent();
+                            if(new_selected_element.hasClass('task_background'))
+                            {
+                                distinguishTask(new_selected_element.find ('.task:first'));
+                            }
+                        }
+
+                        break;
+                    }
+                    case 39:    // right
+                    {
+                        self_task = taskService.tasks_indexed[selected_id];
+                        if(self_task == undefined)
+                            focusToFirstElement();
+
+                        if(self_task.children_quantity)
+                        {
+                            if(self_task.viewBranch == 'hide')
+                            {
+                                $scope.expandTask(self_task.id, 'show');
+                                $scope.$apply();
+
+                                $timeout(function (){
+                                    alignToSenter(selected_element.find('.task:first'));
+                                });
+                            }
+                            else
+                            {
+                                // Ищем первый дочерний элемент
+                                task_elem = selected_element.find('.children:first').find('.task:first');
+                                if(task_elem.length > 0)
+                                {
+                                    distinguishTask(task_elem);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case 13:    // enter
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('brother', selected_id)
+                        break;
+                    }
+                    case 32:    // space
+                    {
+                        if(selected_id)
+                            $scope.comleteTask(selected_id);
+                        break;
+                    }
+                    case 9:     // tab
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('sub', selected_id)
+                        break;
+                    }
+                    case 113:   // f2
+                    {
+                        if(selected_id)
+                            taskService.showTaskEditor('edit', selected_id)
+                        break;
+                    }
+                    case 46:    // Del
+                    {
+                        if(selected_id)
+                            taskService.showDeleteTaskDialog(selected_id);
+                        break
+                    }
+                    default:
+                    {
+                        return true;
+                    }
+                }
+
+                // Если изменится id выбранной задачи, то зохраняем на сервере
+                if(old_selected_id != selected_id)
+                {
+                    userService.setValue('selected_task', selected_id);
+                }
+
+            });
+            /**
+             * Кнопка контекстного меню
+             * @param taskId
+             * @param event
+             */
+            $scope.contextmenu = function (taskId, event){
+
+                // Вызываем щелчек правой кнопки мыши
+                var task_element = angular.element(event.currentTarget).parent().parent().parent();
+                event.type = 'contextmenu';
+                task_element.trigger(event);
+            };
+            /**
+             * Двойой клик по задаче
+             * @param taskId
+             */
+            $scope.taskDbclick = function (taskId){
+                taskService.showTaskEditor('edit', selected_id)
+            };
+
+            /**
+             * Обьект контекстного меню
+             * @type {*[]}
+             */
+            $scope.ngContextMenu = [
+                function(attrs)         // Редактировать задачу
+                {
+                    return {name: "Редактировать задачу", hotkey:"F2", handler: function (){
+                        taskService.showTaskEditor('edit', attrs.id);
+                    }}
+                },
+                function(attrs)         // Выполнить
+                {
+                    var task = taskService.tasks_indexed[attrs.id];
+                    var name = '';
+                    if(task.status == 'delivered')
+                        name = "Выполнить задачу";
+                    else if(task.status == 'completed')
+                        name = "Отменить выполнение";
+
+                    return {name: name, hotkey:"Space", handler: function (){
+                        $scope.comleteTask(task.id);
+                    }}
+                },
+                function(attrs)         // Добавить задачу
+                {
+                    return {name: "Добавить задачу", hotkey:"Enter", handler: function (){
+                        taskService.showTaskEditor('brother', attrs.id);
+                    }}
+                },
+                function(attrs)         // Добавить подзадачу
+                {
+                    return {name: "Добавить подзадачу", hotkey:"Tab", handler: function (){
+                        taskService.showTaskEditor('sub', attrs.id);
+                    }}
+                },
+                'divider',
+                function(attrs)         // Удалить
+                {
+                    return {name: "Удалить", hotkey:"Del", handler:function (){
+                        taskService.showDeleteTaskDialog(attrs.id);
+                    }}
+                }
+            ];
 
 
             /**
@@ -424,122 +663,144 @@ angular.module('bitaskApp.hierarchy_task', [
                 return "Не настроено";
             };
 
+
             /**
-             * Обработка нажатий клавиш
+             * Выделить задачу бордером
+             *
+             * @param task - id задачи(string) || Jquery объект
+             * @param align - выравнивание ('center' || 'border')
+             *
+             * @returns {boolean} - удалось ли изменить выделение
              */
-            keyboardService.on(null, function (event){
+            var distinguishTask = function (task, align){
+                var task_elem;
 
-                var task_elem, self_task, old_selected_id = selected_id;
+                if(typeof task == 'string')
+                    task_elem = angular.element('.hierarchy_task_background').find('[data-id = "'+ task +'"]');
+                else if(typeof task == 'object')
+                    task_elem = task;
+                else
+                    return false;
 
-                // Если нажаты клавиши стрелок, а элемент еще не выбран
-                if(!selected_element && event.keyCode >= 37 && event.keyCode <= 40)
+                if(task_elem.length)
                 {
-                    task_elem = angular.element('.hierarchy_task_background').find('.task:first');
-                    selected_id = task_elem.data('id');
+                    if(selected_element)
+                        selected_element.removeClass('selected');
+
                     selected_element = task_elem.parent().addClass('selected');
+                    selected_id = task_elem.data('id');
 
-                    return;
+                    if(align == 'border')
+                        alignToBorder(task_elem)
+                    else
+                        alignToSenter(task_elem);
+
+                    return true;
+                }
+                else
+                    return false;
+            };
+            /**
+             * Выровнять блок по центру
+             * @param elem
+             */
+            var alignToSenter = function (elem){
+
+                var elem_offset = elem.offset();
+                var elem_width = elem.width();
+                var elem_height = elem.height();
+
+                var window_width = $(window).width();
+                var window_height = $(window).height();
+
+                var canvas = $('.hierarchy_task_background');
+                var canvas_offset = canvas.offset();
+                var canvas_width = canvas.width();
+                var canvas_height = canvas.height();
+
+                // находим координаты центра
+                var center = {left:window_width/2, top:window_height/2};
+
+                // находим координаты верхнего левого угла задачи которая должна быть по центру.
+                var center_task = {left:center.left-elem_width/2, top:center.top-elem_height/2};
+
+                // находим на сколько нужно сдвинуть задачу, что бы она была по центру
+                var task_delta = {left:center_task.left-elem_offset.left, top:center_task.top-elem_offset.top};
+
+                // находим новые координаты холста
+                var new_canvas_offset = {left:canvas_offset.left+task_delta.left, top:canvas_offset.top+task_delta.top};
+
+
+                canvas.stop().animate(new_canvas_offset, 200);
+                //debugger;
+            };
+            /**
+             * Показать в видимой зоне
+             * @param elem
+             */
+            var alignToBorder = function (elem){
+
+                var elem_offset = elem.offset();
+                var elem_width = elem.width();
+                var elem_height = elem.height();
+
+                var window_width = $(window).width();
+                var window_height = $(window).height();
+
+                var canvas = $('.hierarchy_task_background');
+                var canvas_offset = canvas.offset();
+                var canvas_width = canvas.width();
+                var canvas_height = canvas.height();
+
+                var padding = 15; // отступ
+
+                // Находим границы объекта с учетом отступа
+                var borders = {
+                    left: elem_offset.left - padding,
+                    top: elem_offset.top - padding - 55, // 60px - шапка
+                    right: elem_offset.left + elem_width + padding,
+                    bottom: elem_offset.top + elem_height + padding
                 }
 
+                var crossing = false, new_canvas_position = {};
 
-                switch (event.keyCode)
+
+                // Проверяем, не вышел ли элемент за рамки окна
+                if(borders.top < 0)
                 {
-                    case 38:    // up
-                    {
-                        var prev_element = selected_element.prev ();
-                        if (prev_element.length)
-                        {
-                            selected_element.removeClass ('selected');
-                            selected_element = prev_element;
-                            selected_element.addClass ('selected');
-                            selected_id = selected_element.find ('.task:first').data ('id');
-                        }
-
-                        break;
-                    }
-                    case 40:    // down
-                    {
-                        var next_element = selected_element.next ();
-                        if (next_element.length)
-                        {
-                            selected_element.removeClass ('selected');
-                            selected_element = next_element;
-                            selected_element.addClass ('selected');
-                            selected_id = selected_element.find ('.task:first').data ('id');
-                        }
-                        break;
-                    }
-                    case 37:    // left
-                    {
-                        self_task = taskService.tasks_indexed[selected_id];
-
-                        if(self_task.children && self_task.viewBranch == 'show')
-                        {
-                            $scope.expandTask(self_task.id, 'hide');
-                            $scope.$apply();
-                        }
-                        else
-                        {
-                            var new_selected_element = selected_element.parent().parent();
-                            if(new_selected_element.hasClass('task_background'))
-                            {
-                                selected_element.removeClass('selected');
-                                task_elem = new_selected_element.find('.task');
-
-                                selected_id = task_elem.data('id');
-                                selected_element = new_selected_element.addClass('selected');
-                            }
-                        }
-
-                        break;
-                    }
-                    case 39:    // right
-                    {
-                        self_task = taskService.tasks_indexed[selected_id];
-                        if(self_task.children)
-                        {
-                            if(self_task.viewBranch == 'hide')
-                            {
-                                $scope.expandTask(self_task.id, 'show');
-                                $scope.$apply();
-                            }
-                            else
-                            {
-                                // Ищем первый дочерний элемент
-                                task_elem = selected_element.find('.children:first').find('.task:first');
-                                if(task_elem.length > 0)
-                                {
-                                    // Снимаем старое выделение
-                                    selected_element.removeClass ('selected');
-
-                                    selected_id = task_elem.data('id');
-                                    selected_element = task_elem.parent().addClass('selected');
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case 13:    // enter
-
-                        break;
-                    case 32:    // space
-
-                        break;
-                    case 9:     // tab
-
-                        break;
+                    new_canvas_position.top = canvas_offset.top - borders.top;
+                    crossing = true;
                 }
-
-                // Если изменится id выбранной задачи, то зохраняем на сервере
-                if(old_selected_id != selected_id)
+                else if(borders.bottom > window_height)
                 {
-                    userService.setValue('selected_task', selected_id);
+                    new_canvas_position.top = canvas_offset.top + (window_height - borders.bottom);
+                    crossing = true;
                 }
 
-            });
+                if(borders.left < 0)
+                {
+                    new_canvas_position.left = canvas_offset.left - borders.left;
+                    crossing = true;
+                }
+                else if(borders.right > window_width)
+                {
+                    new_canvas_position.left = canvas_offset.left + (window_width - borders.right);
+                    crossing = true;
+                }
+
+                if(crossing)
+                    canvas.stop().animate(new_canvas_position, 200);
+
+
+            };
 
             var __construct = function (){
-
+                userService.getValue('show_completed', function (data){
+                    if(data.value == 'false')
+                        $scope.show_completed = false;
+                    else
+                        $scope.show_completed = true;
+                });
             }
             __construct();
     }]);
