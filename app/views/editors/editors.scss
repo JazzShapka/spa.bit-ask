@@ -86,6 +86,24 @@
 .editor.goal .indicators-table td.caption{
     background: #CCCCCC;
 }
+.editor.goal .indicators-table md-select{
+    margin: 0;
+}
+.editor.goal .indicators-table md-select md-select-value{
+    border: none;
+    padding: 0;
+}
+.editor.goal .indicators-table md-input-container{
+    height: 27px;
+    margin: 0;
+    padding: 0 2px;
+}
+.editor.goal .indicators-table md-input-container input{
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-align: center;
+}
 
 
     // Кнопки внизу

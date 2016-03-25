@@ -16,11 +16,15 @@ angular.module('bitaskApp.editors.goalEditor', [
             $scope.goal = {
                 description: '',
                 divisionId: null,
-                parentId: null
+                parentId: null,
+                limitDate: null,
+                period: null,  // (day,week,month,year)
+                indicators: []
             };
-            $scope.begin_date = '';
-            $scope.end_date = '';
+            $scope.begin_date = new Date('2016.03.01');
+            $scope.end_date = new Date('2016.03.30');
             $scope.indicators_open = false;
+
 
 
             /**
@@ -103,6 +107,12 @@ angular.module('bitaskApp.editors.goalEditor', [
                 return {cursorcolor: '#424242', zindex:81};
             };
             /**
+             * Изменить период отображения
+             */
+            $scope.selectPeriod = function (period){
+                $scope.goal.period = period;
+            };
+            /**
              * Обработчик клавиш
              */
             keyboardService.on(null, function (event){
@@ -140,27 +150,85 @@ angular.module('bitaskApp.editors.goalEditor', [
                         "description": "",
                         "divisionId": "",
                         "parentId": null,
-                        "limitDate": null,
-                        "beginDate": 0,
-                        "endDate": 0,
-                        "period": "day"//,  // (day,week,month,year)
-                        /*"indicators": [
+                        "limitDate": 0,
+                        "period": "day",  // (day,week,month,year)
+                        "indicators": [
                             {
                                 "id": uuid4.generate(),
-                                "indicatorName":null,
-                                "type": null,
-                                "lineNumber": null,
-                                "formula": null,
-                                "startValue": null,
+                                "indicatorName":'plan',
+                                "type": 'sum',
+                                "lineNumber": 0,
+                                "formula": 'manual',
+                                "startValue": 0,
                                 "measures": [
                                     {
-                                        "date":null,
-                                        "value": null,
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": uuid4.generate(),
+                                "indicatorName":'fact',
+                                "type": 'sum',
+                                "lineNumber": 1,
+                                "formula": 'manual',
+                                "startValue": 0,
+                                "measures": [
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": uuid4.generate(),
+                                "indicatorName":'fact',
+                                "type": 'sum',
+                                "lineNumber": 1,
+                                "formula": 'manual',
+                                "startValue": 0,
+                                "measures": [
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
+                                        "auto": false
+                                    },
+                                    {
+                                        "date":0,
+                                        "value": 0,
                                         "auto": false
                                     }
                                 ]
                             }
-                        ]*/
+                        ]
                     };
 
                 // Определяем родителя
@@ -192,6 +260,9 @@ angular.module('bitaskApp.editors.goalEditor', [
                 $scope.goal.description = goal.description;
                 $scope.goal.divisionId = goal.divisionId;
                 $scope.goal.parentId = goal.parentId;
+                $scope.goal.limitDate = goal.limitDate;
+                $scope.goal.period =  goal.period; // (day,week,month,year)
+                $scope.goal.indicators = goal.indicators;
             };
             /**
              * Конструктор
