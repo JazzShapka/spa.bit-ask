@@ -1,4 +1,7 @@
-<md-datepicker ng-model="fromDate" md-placeholder="с даты"></md-datepicker>
-<md-datepicker ng-model="toDate" md-placeholder="по дату"></md-datepicker>
+<md-datepicker ng-model="fromGoalDate" md-placeholder="с даты" ng-change="changeGoalDate()"></md-datepicker>
+<md-datepicker ng-model="toGoalDate" md-placeholder="по дату" ng-change="changeGoalDate()"></md-datepicker>
+
+{{ fromDate }}
+{{ toDate }}
 
 <div ng-include="'app/views/goals/one_goal.html'"></div>
